@@ -1,13 +1,86 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence, Variants } from 'motion/react';
 import { BOTANICAL_SPECIES } from '../data/mockData';
 import { BotanicalSpecies } from '../types';
-import { Leaf, Volume2, Sun, Camera, Check, ArrowRight } from 'lucide-react';
+import { Leaf, Volume2, Sun, Camera, Check, ArrowRight, Sparkles } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
 
 interface BotanicalCatalogProps {
   onSimulateSpecies: (speciesName: string) => void;
   onOpenQuote: () => void;
 }
+
+// Framer-motion variants for sequential staggered entrance of species cards
+const listContainerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.07,
+      delayChildren: 0.08,
+    },
+  },
+};
+
+const cardItemVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 22,
+    scale: 0.96,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.45,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const detailContentVariants: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: [0.22, 1, 0.36, 1],
+      staggerChildren: 0.06,
+      delayChildren: 0.04,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -12,
+    transition: { duration: 0.25, ease: 'easeInOut' },
+  },
+};
+
+const metricBoxVariants: Variants = {
+  hidden: { opacity: 0, x: 12 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.35,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const tagVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.3,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
 
 export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
   onSimulateSpecies,
@@ -77,9 +150,14 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
         {/* Interactive Split View */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Left Species List */}
-          <ScrollReveal animation="fade-right" delay={0.1} distance={25} className="lg:col-span-5">
-            <div 
+          {/* Left Species List with Staggered Entrance Animation */}
+          <div className="lg:col-span-5">
+            <motion.div
+              key={filter}
+              variants={listContainerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
               className="space-y-3 max-h-[580px] overflow-y-auto pr-2 custom-scrollbar"
               role="listbox"
               aria-label="Lista de espécies botânicas disponíveis"
@@ -87,9 +165,12 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
               {filteredList.map((item) => {
                 const isSelected = selectedSpecies.id === item.id;
                 return (
-                  <button
+                  <motion.button
                     type="button"
                     key={item.id}
+                    variants={cardItemVariants}
+                    whileHover={{ scale: 1.015, x: 4 }}
+                    whileTap={{ scale: 0.985 }}
                     onClick={() => setSelectedSpecies(item)}
                     role="option"
                     aria-selected={isSelected}
@@ -125,121 +206,152 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
                         {item.scientificName}
                       </p>
                     </div>
-                  </button>
+                  </motion.button>
                 );
               })}
-            </div>
-          </ScrollReveal>
+            </motion.div>
+          </div>
 
           {/* Right Detail Card - FICHA TÉCNICA DE ESPECIFICAÇÃO */}
           <ScrollReveal animation="fade-left" delay={0.15} distance={25} className="lg:col-span-7">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-xl space-y-6">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-xl overflow-hidden">
               
-              {/* Header Badge */}
-              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                <div>
-                  <span className="text-[10px] font-extrabold text-[#15803d] uppercase tracking-widest">
-                    FICHA TÉCNICA DE ESPECIFICAÇÃO
-                  </span>
-                  <h3 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900 mt-1">
-                    {selectedSpecies.name}
-                  </h3>
-                  <p className="text-xs text-gray-500 italic font-mono mt-0.5">
-                    Nome Científico: {selectedSpecies.scientificName}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={selectedSpecies.id}
+                  variants={detailContentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="space-y-6"
+                >
+                  {/* Header Badge */}
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                    <div>
+                      <span className="text-[10px] font-extrabold text-[#15803d] uppercase tracking-widest">
+                        FICHA TÉCNICA DE ESPECIFICAÇÃO
+                      </span>
+                      <h3 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900 mt-1">
+                        {selectedSpecies.name}
+                      </h3>
+                      <p className="text-xs text-gray-500 italic font-mono mt-0.5">
+                        Nome Científico: {selectedSpecies.scientificName}
+                      </p>
+                    </div>
+
+                    <span className="px-3 py-1 bg-[#072a1a] text-[#86efac] text-xs font-bold rounded-full shrink-0">
+                      {selectedSpecies.line}
+                    </span>
+                  </div>
+
+                  {/* Image & Metric Cards Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                    
+                    {/* Species Preview Image */}
+                    <motion.div 
+                      variants={metricBoxVariants}
+                      className="sm:col-span-5 h-56 rounded-2xl overflow-hidden border border-gray-200 group"
+                    >
+                      <img
+                        src={selectedSpecies.image}
+                        alt={selectedSpecies.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </motion.div>
+
+                    {/* Metrics */}
+                    <div className="sm:col-span-7 space-y-3">
+                      <motion.div
+                        variants={metricBoxVariants}
+                        whileHover={{ y: -2 }}
+                        className="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-100/80 transition-shadow hover:shadow-xs"
+                      >
+                        <span className="text-[10px] font-bold text-[#072a1a] uppercase tracking-wider block">
+                          SENSAÇÃO TÁTIL & TEXTURA
+                        </span>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">
+                          {selectedSpecies.tactileFeel}
+                        </p>
+                      </motion.div>
+
+                      <motion.div
+                        variants={metricBoxVariants}
+                        whileHover={{ y: -2 }}
+                        className="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-100/80 transition-shadow hover:shadow-xs"
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <Volume2 className="w-3.5 h-3.5 text-[#15803d]" />
+                          <span className="text-[10px] font-bold text-[#072a1a] uppercase tracking-wider">
+                            ÍNDICE DE ABSORÇÃO ACÚSTICA
+                          </span>
+                        </div>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">
+                          {selectedSpecies.acousticAbsorption}
+                        </p>
+                      </motion.div>
+
+                      <motion.div
+                        variants={metricBoxVariants}
+                        whileHover={{ y: -2 }}
+                        className="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-100/80 transition-shadow hover:shadow-xs"
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <Sun className="w-3.5 h-3.5 text-[#15803d]" />
+                          <span className="text-[10px] font-bold text-[#072a1a] uppercase tracking-wider">
+                            ILUMINAÇÃO RECOMENDADA
+                          </span>
+                        </div>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">
+                          {selectedSpecies.recommendedLighting}
+                        </p>
+                      </motion.div>
+                    </div>
+
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
+                    {selectedSpecies.description}
                   </p>
-                </div>
 
-                <span className="px-3 py-1 bg-[#072a1a] text-[#86efac] text-xs font-bold rounded-full shrink-0">
-                  {selectedSpecies.line}
-                </span>
-              </div>
-
-              {/* Image & Metric Cards Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
-                
-                {/* Species Preview Image */}
-                <div className="sm:col-span-5 h-56 rounded-2xl overflow-hidden border border-gray-200">
-                  <img
-                    src={selectedSpecies.image}
-                    alt={selectedSpecies.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                {/* Metrics */}
-                <div className="sm:col-span-7 space-y-3">
-                  <div className="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-100/80">
-                    <span className="text-[10px] font-bold text-[#072a1a] uppercase tracking-wider block">
-                      SENSAÇÃO TÁTIL & TEXTURA
+                  {/* Ideal Environments */}
+                  <div>
+                    <span className="text-[11px] font-bold text-[#072a1a] uppercase tracking-wider block mb-2">
+                      AMBIENTES IDEAIS DE APLICAÇÃO:
                     </span>
-                    <p className="text-xs font-semibold text-gray-800 mt-0.5">
-                      {selectedSpecies.tactileFeel}
-                    </p>
-                  </div>
-
-                  <div className="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-100/80">
-                    <div className="flex items-center gap-1.5">
-                      <Volume2 className="w-3.5 h-3.5 text-[#15803d]" />
-                      <span className="text-[10px] font-bold text-[#072a1a] uppercase tracking-wider">
-                        ÍNDICE DE ABSORÇÃO ACÚSTICA
-                      </span>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedSpecies.idealEnvironments.map((env, idx) => (
+                        <motion.span
+                          key={idx}
+                          variants={tagVariants}
+                          className="text-xs bg-emerald-100/80 text-[#072a1a] font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1"
+                        >
+                          <Check className="w-3 h-3 text-[#15803d]" />
+                          <span>{env}</span>
+                        </motion.span>
+                      ))}
                     </div>
-                    <p className="text-xs font-semibold text-gray-800 mt-0.5">
-                      {selectedSpecies.acousticAbsorption}
-                    </p>
                   </div>
 
-                  <div className="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-100/80">
-                    <div className="flex items-center gap-1.5">
-                      <Sun className="w-3.5 h-3.5 text-[#15803d]" />
-                      <span className="text-[10px] font-bold text-[#072a1a] uppercase tracking-wider">
-                        ILUMINAÇÃO RECOMENDADA
-                      </span>
-                    </div>
-                    <p className="text-xs font-semibold text-gray-800 mt-0.5">
-                      {selectedSpecies.recommendedLighting}
-                    </p>
+                  {/* Actions */}
+                  <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+                    <button
+                      onClick={() => onSimulateSpecies(selectedSpecies.name)}
+                      className="w-full sm:flex-1 py-3 bg-[#072a1a] text-white font-bold rounded-xl text-xs hover:bg-[#15803d] transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow-md"
+                    >
+                      <Camera className="w-4 h-4 text-[#86efac]" />
+                      <span>Simular Esta Folhagem</span>
+                    </button>
+
+                    <button
+                      onClick={onOpenQuote}
+                      className="w-full sm:w-auto py-3 px-6 bg-emerald-50 text-[#072a1a] hover:bg-emerald-100 font-bold rounded-xl text-xs transition-colors cursor-pointer"
+                    >
+                      Incluir na Amostra
+                    </button>
                   </div>
-                </div>
-
-              </div>
-
-              {/* Description */}
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
-                {selectedSpecies.description}
-              </p>
-
-              {/* Ideal Environments */}
-              <div>
-                <span className="text-[11px] font-bold text-[#072a1a] uppercase tracking-wider block mb-2">
-                  AMBIENTES IDEAIS DE APLICAÇÃO:
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {selectedSpecies.idealEnvironments.map((env, idx) => (
-                    <span key={idx} className="text-xs bg-emerald-100/80 text-[#072a1a] font-semibold px-3 py-1 rounded-full">
-                      ✓ {env}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
-                <button
-                  onClick={() => onSimulateSpecies(selectedSpecies.name)}
-                  className="w-full sm:flex-1 py-3 bg-[#072a1a] text-white font-bold rounded-xl text-xs hover:bg-[#15803d] transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Camera className="w-4 h-4 text-[#86efac]" />
-                  <span>Simular Esta Folhagem</span>
-                </button>
-
-                <button
-                  onClick={onOpenQuote}
-                  className="w-full sm:w-auto py-3 px-6 bg-emerald-50 text-[#072a1a] hover:bg-emerald-100 font-bold rounded-xl text-xs transition-colors cursor-pointer"
-                >
-                  Incluir na Amostra
-                </button>
-              </div>
+                </motion.div>
+              </AnimatePresence>
 
             </div>
           </ScrollReveal>
@@ -250,3 +362,4 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
     </section>
   );
 };
+
