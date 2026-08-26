@@ -47,6 +47,8 @@ interface GlobalCommandPaletteProps {
   onTogglePortal: () => void;
   onOpenNotifications: () => void;
   onOpenShortcutsModal: () => void;
+  onOpenConsultation?: () => void;
+  onOpenProjectPdfReport?: () => void;
 }
 
 export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
@@ -58,6 +60,8 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onTogglePortal,
   onOpenNotifications,
   onOpenShortcutsModal,
+  onOpenConsultation,
+  onOpenProjectPdfReport,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -137,6 +141,50 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
           onOpenQuote('Solicitação via Busca Global');
         },
         keywords: ['orçamento', 'proposta', 'preço', 'amostra', 'contato', 'comercial', 'maleta'],
+      },
+      {
+        id: 'cmd-consultation',
+        category: 'Ações Rápidas',
+        title: 'Agendar Consultoria Técnica com Engenharia (Calendly / Meet)',
+        subtitle: 'Marque reunião de especificação, laudos ou compatibilização DWG/BIM',
+        badge: 'Calendly & Meet',
+        icon: Clock,
+        action: () => {
+          onClose();
+          if (onOpenConsultation) {
+            onOpenConsultation();
+          }
+        },
+        keywords: ['agendar', 'consultoria', 'calendly', 'reuniao', 'meet', 'engenharia', 'compatibilizacao', 'visita', 'horario'],
+      },
+      {
+        id: 'cmd-pdf-report',
+        category: 'Laudos & Ferramentas',
+        title: 'Gerar Laudo & Relatório Consolidado do Projeto em PDF',
+        subtitle: 'Exportação executiva com dados da simulação, WELL/LEED e laudos IPT',
+        badge: 'Download PDF',
+        icon: FileText,
+        action: () => {
+          onClose();
+          if (onOpenProjectPdfReport) {
+            onOpenProjectPdfReport();
+          }
+        },
+        keywords: ['pdf', 'laudo', 'relatorio', 'gerar', 'download', 'consolidado', 'leed', 'well', 'imprimir', 'exportar'],
+      },
+      {
+        id: 'cmd-testimonials',
+        category: 'Laudos & Ferramentas',
+        title: 'Ver Depoimentos & Resultados de Impacto Biofílico',
+        subtitle: 'Casos reais com dados de produtividade, acústica e certificações de clientes',
+        badge: '5.0 ★ Avaliações',
+        icon: Sparkles,
+        action: () => {
+          onClose();
+          const elem = document.getElementById('customer-testimonials');
+          if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+        },
+        keywords: ['depoimentos', 'avaliacoes', 'cases', 'clientes', 'carrossel', 'impacto', 'produtividade', 'well'],
       },
       {
         id: 'cmd-notif',

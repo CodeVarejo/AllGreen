@@ -30,6 +30,8 @@ interface NewsletterAndFooterProps {
   onOpenQuote: () => void;
   onOpenLogin: () => void;
   onOpenShortcutsModal?: () => void;
+  onOpenConsultation?: () => void;
+  onOpenProjectPdfReport?: () => void;
 }
 
 export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
@@ -38,6 +40,8 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
   onOpenQuote,
   onOpenLogin,
   onOpenShortcutsModal,
+  onOpenConsultation,
+  onOpenProjectPdfReport,
 }) => {
   const [email, setEmail] = useState('');
   const [newsMessage, setNewsMessage] = useState('');
@@ -292,6 +296,7 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
               <ul className="space-y-2 text-gray-300">
                 <li>
                   <button 
+                    type="button"
                     onClick={onOpenLogin}
                     className="font-bold text-[#86efac] hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
                   >
@@ -299,8 +304,35 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
                     <span>Portal do Arquiteto (BIM/CAD)</span>
                   </button>
                 </li>
+                {onOpenConsultation && (
+                  <li>
+                    <button 
+                      type="button"
+                      id="footer-book-consultation-btn"
+                      onClick={onOpenConsultation}
+                      className="font-bold text-emerald-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
+                    >
+                      <Clock className="w-3.5 h-3.5 text-[#86efac]" />
+                      <span>Agendar Consultoria Técnica</span>
+                    </button>
+                  </li>
+                )}
+                {onOpenProjectPdfReport && (
+                  <li>
+                    <button 
+                      type="button"
+                      id="footer-generate-pdf-btn"
+                      onClick={onOpenProjectPdfReport}
+                      className="font-bold text-emerald-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
+                    >
+                      <Download className="w-3.5 h-3.5 text-[#86efac]" />
+                      <span>Gerar PDF do Projeto (Laudo)</span>
+                    </button>
+                  </li>
+                )}
                 <li>
                   <button 
+                    type="button"
                     onClick={onOpenSimulator}
                     className="hover:text-white transition-colors cursor-pointer text-left"
                   >
@@ -309,6 +341,7 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
                 </li>
                 <li>
                   <button 
+                    type="button"
                     onClick={() => scrollToSection('leed-calculator')}
                     className="hover:text-white transition-colors cursor-pointer text-left"
                   >
@@ -317,6 +350,7 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
                 </li>
                 <li>
                   <button 
+                    type="button"
                     onClick={() => scrollToSection('biophilic-roi-calculator')}
                     className="hover:text-white transition-colors cursor-pointer text-left flex items-center gap-1.5 text-emerald-300 font-semibold"
                   >
@@ -326,6 +360,7 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
                 </li>
                 <li>
                   <button 
+                    type="button"
                     onClick={() => scrollToSection('botanical-catalog')}
                     className="hover:text-white transition-colors cursor-pointer text-left"
                   >
@@ -334,6 +369,7 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
                 </li>
                 <li>
                   <button 
+                    type="button"
                     onClick={() => scrollToSection('comparison-matrix')}
                     className="hover:text-white transition-colors cursor-pointer text-left"
                   >
@@ -342,6 +378,7 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
                 </li>
                 <li>
                   <button 
+                    type="button"
                     onClick={onOpenLogin}
                     className="hover:text-white transition-colors cursor-pointer text-left text-emerald-200"
                   >

@@ -12,13 +12,17 @@ import { ComparisonMatrix } from './components/ComparisonMatrix';
 import { LeedCalculator } from './components/LeedCalculator';
 import { BiophilicRoiCalculator } from './components/BiophilicRoiCalculator';
 import { BeforeAfterGallery } from './components/BeforeAfterGallery';
+import { CustomerTestimonials } from './components/CustomerTestimonials';
 import { NewsletterAndFooter } from './components/NewsletterAndFooter';
 
 import { SimulatorModal } from './components/SimulatorModal';
 import { ProjectLookupModal } from './components/ProjectLookupModal';
 import { QuoteModal } from './components/QuoteModal';
 import { LoginModal } from './components/LoginModal';
+import { ConsultationBookingModal } from './components/ConsultationBookingModal';
+import { ProjectPdfReportModal } from './components/ProjectPdfReportModal';
 import { ArchitectPortal } from './components/ArchitectPortal';
+import { ScrollReveal } from './components/ScrollReveal';
 import { LgpdBanner } from './components/LgpdBanner';
 import { BioTipWidget } from './components/BioTipWidget';
 import { ProjectSample, SimulationResult, UserProfile, PortalNotification } from './types';
@@ -47,6 +51,10 @@ function AppContent() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
+  const [isConsultationModalOpen, setIsConsultationModalOpen] = useState(false);
+  const [isPdfReportModalOpen, setIsPdfReportModalOpen] = useState(false);
+  const [consultationPrefillType, setConsultationPrefillType] = useState<string | undefined>();
+  const [consultationPrefillProjectCode, setConsultationPrefillProjectCode] = useState<string | undefined>();
 
   // Prefilled contexts
   const [selectedProjectForLookup, setSelectedProjectForLookup] = useState<ProjectSample | null>(null);
@@ -57,6 +65,16 @@ function AppContent() {
 
   const handleOpenSimulator = () => {
     setIsSimulatorOpen(true);
+  };
+
+  const handleOpenConsultation = (type?: string, projectCode?: string) => {
+    setConsultationPrefillType(type);
+    setConsultationPrefillProjectCode(projectCode);
+    setIsConsultationModalOpen(true);
+  };
+
+  const handleOpenPdfReport = () => {
+    setIsPdfReportModalOpen(true);
   };
 
   const handleOpenProjectLookup = (project?: ProjectSample) => {
@@ -102,6 +120,8 @@ function AppContent() {
     setIsNotificationCenterOpen(false);
     setIsCommandPaletteOpen(false);
     setIsShortcutsModalOpen(false);
+    setIsConsultationModalOpen(false);
+    setIsPdfReportModalOpen(false);
   };
 
   // Wire Global Keyboard Shortcuts
@@ -374,6 +394,8 @@ function AppContent() {
               unreadNotificationsCount={unreadNotificationsCount}
               onOpenSearch={() => setIsCommandPaletteOpen(true)}
               onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
+              onOpenConsultation={() => handleOpenConsultation()}
+              onOpenProjectPdfReport={handleOpenPdfReport}
             />
 
             {/* Main Hero Section with interactive before/after slider */}
@@ -431,6 +453,13 @@ function AppContent() {
               onOpenProjectDetail={(project) => handleOpenProjectLookup(project)}
             />
 
+            {/* Depoimentos de Clientes & Impacto Biofílico (Carrossel) */}
+            <CustomerTestimonials
+              onOpenConsultation={() => handleOpenConsultation()}
+              onOpenSimulator={handleOpenSimulator}
+              onOpenProjectDetail={(projectCode) => handleOpenProjectLookup()}
+            />
+
             {/* Newsletter & Footer */}
             <NewsletterAndFooter
               onOpenSimulator={handleOpenSimulator}
@@ -438,6 +467,8 @@ function AppContent() {
               onOpenQuote={() => handleOpenQuote('Solicitação via Rodapé')}
               onOpenLogin={handleOpenLogin}
               onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
+              onOpenConsultation={() => handleOpenConsultation()}
+              onOpenProjectPdfReport={handleOpenPdfReport}
             />
           </motion.div>
         )}
@@ -469,6 +500,20 @@ function AppContent() {
         onLoginSuccess={handleLoginSuccess}
       />
 
+      {/* Agendamento de Consultoria Técnica Modal (Calendly / Meet) */}
+      <ConsultationBookingModal
+        isOpen={isConsultationModalOpen}
+        onClose={() => setIsConsultationModalOpen(false)}
+        prefilledType={consultationPrefillType}
+        prefilledProjectCode={consultationPrefillProjectCode}
+      />
+
+      {/* Gerador de Laudo & Relatório Consolidado do Projeto em PDF */}
+      <ProjectPdfReportModal
+        isOpen={isPdfReportModalOpen}
+        onClose={() => setIsPdfReportModalOpen(false)}
+      />
+
       {/* Real-time Notification Center */}
       <NotificationCenter
         isOpen={isNotificationCenterOpen}
@@ -491,6 +536,8 @@ function AppContent() {
         onTogglePortal={() => handleOpenLogin()}
         onOpenNotifications={() => setIsNotificationCenterOpen(true)}
         onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
+        onOpenConsultation={() => handleOpenConsultation()}
+        onOpenProjectPdfReport={handleOpenPdfReport}
       />
 
       {/* Global Keyboard Shortcuts Cheatsheet Modal (?) */}

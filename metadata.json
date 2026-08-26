@@ -1,6 +1,6 @@
 {
   "name": "All Green Decor & Biofilia",
-  "description": "Simulador de Inteligência Artificial, catálogo botânico, calculadora WELL/LEED, calculadora de ROI Biofílico (absenteísmo e produtividade) e soluções completas em jardins verticais.",
+  "description": "Simulador IA de Ambientes Biofílicos, catálogo botânico, calculadora WELL/LEED, calculadora de ROI, agendamento de consultoria técnica, geração de laudos em PDF e depoimentos de clientes.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
