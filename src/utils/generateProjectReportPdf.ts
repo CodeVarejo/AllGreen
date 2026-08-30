@@ -1,5 +1,13 @@
 import { jsPDF } from 'jspdf';
-import { ProjectSample, SimulationResult, UserProfile } from '../types';
+
+export interface ProjectReportSectionToggles {
+  overview: boolean;        // 1. Dados Cadastrais e Tipologia
+  sustainability: boolean;  // 2. Metas de Sustentabilidade (WELL & LEED)
+  roi: boolean;             // 3. Impacto Financeiro & ROI Biofílico
+  botanical: boolean;       // 4. Especificação Botânica & Espécies
+  technicalCerts: boolean;  // 5. Laudos Técnicos & Conformidade Normativa (IPT/NBR)
+  footerValidation: boolean;// 6. Validação Digital & Assinatura
+}
 
 export interface ProjectReportPdfOptions {
   projectName?: string;
@@ -18,7 +26,17 @@ export interface ProjectReportPdfOptions {
   absenteeismReductionPercent?: number;
   annualSavingsFormatted?: string;
   paybackMonths?: number;
+  sections?: Partial<ProjectReportSectionToggles>;
 }
+
+export const DEFAULT_PDF_SECTIONS: ProjectReportSectionToggles = {
+  overview: true,
+  sustainability: true,
+  roi: true,
+  botanical: true,
+  technicalCerts: true,
+  footerValidation: true,
+};
 
 export function generateProjectReportPdf(options: ProjectReportPdfOptions = {}) {
   const {
@@ -38,7 +56,17 @@ export function generateProjectReportPdf(options: ProjectReportPdfOptions = {}) 
     absenteeismReductionPercent = 28,
     annualSavingsFormatted = 'R$ 48.600 / ano',
     paybackMonths = 7.2,
+    sections = DEFAULT_PDF_SECTIONS,
   } = options;
+
+  const activeSections: ProjectReportSectionToggles = {
+    overview: sections.overview ?? true,
+    sustainability: sections.sustainability ?? true,
+    roi: sections.roi ?? true,
+    botanical: sections.botanical ?? true,
+    technicalCerts: sections.technicalCerts ?? true,
+    footerValidation: sections.footerValidation ?? true,
+  };
 
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -82,226 +110,289 @@ export function generateProjectReportPdf(options: ProjectReportPdfOptions = {}) 
   doc.text(`EMISSÃO: ${todayStr}`, pageWidth - margin - 38, 21);
   doc.text('STATUS: HOMOLOGADO', pageWidth - margin - 38, 26);
 
-  let curY = 44;
+  let curY = 42;
+  let sectionIndex = 1;
 
   // Section 1: Project Overview Card
-  doc.setFillColor(255, 255, 255);
-  doc.setDrawColor(229, 231, 235);
-  doc.roundedRect(margin, curY, contentWidth, 34, 3, 3, 'FD');
+  if (activeSections.overview) {
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(229, 231, 235);
+    doc.roundedRect(margin, curY, contentWidth, 34, 3, 3, 'FD');
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(7, 42, 26);
-  doc.text('1. DADOS CADASTRAIS DO PROJETO', margin + 4, curY + 6);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(7, 42, 26);
+    doc.text(`${sectionIndex}. DADOS CADASTRAIS DO PROJETO`, margin + 4, curY + 6);
 
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(55, 65, 81);
-  doc.text('Nome do Projeto:', margin + 4, curY + 13);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(17, 24, 39);
-  doc.text(projectName, margin + 35, curY + 13);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(55, 65, 81);
+    doc.text('Nome do Projeto:', margin + 4, curY + 13);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(17, 24, 39);
+    doc.text(projectName, margin + 35, curY + 13);
 
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(55, 65, 81);
-  doc.text('Arquiteto/Especificador:', margin + 4, curY + 19);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(17, 24, 39);
-  doc.text(architectName, margin + 40, curY + 19);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(55, 65, 81);
+    doc.text('Arquiteto/Especificador:', margin + 4, curY + 19);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(17, 24, 39);
+    doc.text(architectName, margin + 40, curY + 19);
 
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(55, 65, 81);
-  doc.text('Cliente / Organização:', margin + 4, curY + 25);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(17, 24, 39);
-  doc.text(clientName, margin + 37, curY + 25);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(55, 65, 81);
+    doc.text('Cliente / Organização:', margin + 4, curY + 25);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(17, 24, 39);
+    doc.text(clientName, margin + 37, curY + 25);
 
-  // Right side of Project Overview
-  const rightColX = margin + (contentWidth / 2) + 2;
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(55, 65, 81);
-  doc.text('Ambiente / Tipologia:', rightColX, curY + 13);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(17, 24, 39);
-  doc.text(roomType, rightColX + 33, curY + 13);
+    // Right side of Project Overview
+    const rightColX = margin + (contentWidth / 2) + 2;
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(55, 65, 81);
+    doc.text('Ambiente / Tipologia:', rightColX, curY + 13);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(17, 24, 39);
+    doc.text(roomType, rightColX + 33, curY + 13);
 
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(55, 65, 81);
-  doc.text('Área Vegetada Total:', rightColX, curY + 19);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(17, 24, 39);
-  doc.text(`${totalAreaM2} m² (Módulos Plug & Play)`, rightColX + 32, curY + 19);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(55, 65, 81);
+    doc.text('Área Vegetada Total:', rightColX, curY + 19);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(17, 24, 39);
+    doc.text(`${totalAreaM2} m² (Módulos Plug & Play)`, rightColX + 32, curY + 19);
 
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(55, 65, 81);
-  doc.text('Investimento Estimado:', rightColX, curY + 25);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(21, 128, 61);
-  doc.text(estimatedBudget, rightColX + 34, curY + 25);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(55, 65, 81);
+    doc.text('Investimento Estimado:', rightColX, curY + 25);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(21, 128, 61);
+    doc.text(estimatedBudget, rightColX + 34, curY + 25);
 
-  curY += 39;
+    curY += 39;
+    sectionIndex++;
+  }
 
   // Section 2: Sustainability & Green Certifications (WELL & LEED)
-  doc.setFillColor(255, 255, 255);
-  doc.setDrawColor(229, 231, 235);
-  doc.roundedRect(margin, curY, contentWidth, 48, 3, 3, 'FD');
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(7, 42, 26);
-  doc.text('2. METAS DE SUSTENTABILIDADE & PONTUAÇÃO (WELL v2 / LEED v4.1)', margin + 4, curY + 6);
-
-  // 4 Key Badges for Certifications
-  const cardW = (contentWidth - 10) / 4;
-  const badges = [
-    { label: 'PONTOS WELL v2', value: `${wellScore} pts`, sub: 'Classificação Platinum', color: [16, 185, 129] },
-    { label: 'CRÉDITOS LEED', value: `${leedCredits} cr`, sub: 'Materiais & Água Zero', color: [5, 150, 105] },
-    { label: 'ABSORÇÃO ACÚSTICA', value: `NRC ${acousticNrc}`, sub: 'Laudo IPT ISO 354', color: [13, 148, 136] },
-    { label: 'ECONOMIA DE ÁGUA', value: '100%', sub: 'Zero Consumo Hídrico', color: [14, 165, 233] },
-  ];
-
-  badges.forEach((b, i) => {
-    const bx = margin + 2 + i * (cardW + 2);
-    const by = curY + 10;
-    doc.setFillColor(243, 247, 244);
-    doc.setDrawColor(209, 250, 229);
-    doc.roundedRect(bx, by, cardW, 20, 2, 2, 'FD');
+  if (activeSections.sustainability) {
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(229, 231, 235);
+    doc.roundedRect(margin, curY, contentWidth, 48, 3, 3, 'FD');
 
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(6.5);
-    doc.setTextColor(75, 85, 99);
-    doc.text(b.label, bx + cardW / 2, by + 5, { align: 'center' });
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setTextColor(7, 42, 26);
-    doc.text(b.value, bx + cardW / 2, by + 12, { align: 'center' });
+    doc.text(`${sectionIndex}. METAS DE SUSTENTABILIDADE & PONTUAÇÃO (WELL v2 / LEED v4.1)`, margin + 4, curY + 6);
 
+    // 4 Key Badges for Certifications
+    const cardW = (contentWidth - 10) / 4;
+    const badges = [
+      { label: 'PONTOS WELL v2', value: `${wellScore} pts`, sub: 'Classificação Platinum', color: [16, 185, 129] },
+      { label: 'CRÉDITOS LEED', value: `${leedCredits} cr`, sub: 'Materiais & Água Zero', color: [5, 150, 105] },
+      { label: 'ABSORÇÃO ACÚSTICA', value: `NRC ${acousticNrc}`, sub: 'Laudo IPT ISO 354', color: [13, 148, 136] },
+      { label: 'ECONOMIA DE ÁGUA', value: '100%', sub: 'Zero Consumo Hídrico', color: [14, 165, 233] },
+    ];
+
+    badges.forEach((b, i) => {
+      const bx = margin + 2 + i * (cardW + 2);
+      const by = curY + 10;
+      doc.setFillColor(243, 247, 244);
+      doc.setDrawColor(209, 250, 229);
+      doc.roundedRect(bx, by, cardW, 20, 2, 2, 'FD');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6.5);
+      doc.setTextColor(75, 85, 99);
+      doc.text(b.label, bx + cardW / 2, by + 5, { align: 'center' });
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(7, 42, 26);
+      doc.text(b.value, bx + cardW / 2, by + 12, { align: 'center' });
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6);
+      doc.setTextColor(21, 128, 61);
+      doc.text(b.sub, bx + cardW / 2, by + 17, { align: 'center' });
+    });
+
+    // Brief detail text on WELL/LEED
+    doc.setFontSize(7.5);
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(6);
-    doc.setTextColor(21, 128, 61);
-    doc.text(b.sub, bx + cardW / 2, by + 17, { align: 'center' });
-  });
+    doc.setTextColor(75, 85, 99);
+    doc.text('• WELL Mind & Sound: Redução de estresse cortisol (-22%), atenuação acústica de reverberação em frequências de voz humana (500Hz-2000Hz).', margin + 4, curY + 36);
+    doc.text('• LEED v4.1 BD+C / ID+C: Créditos de Materiais Regionais, Avaliação de Ciclo de Vida (LCA) favorável e 0 litros de água para irrigação.', margin + 4, curY + 42);
 
-  // Brief detail text on WELL/LEED
-  doc.setFontSize(7.5);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(75, 85, 99);
-  doc.text('• WELL Mind & Sound: Redução de estresse cortisol (-22%), atenuação acústica de reverberação em frequências de voz humana (500Hz-2000Hz).', margin + 4, curY + 36);
-  doc.text('• LEED v4.1 BD+C / ID+C: Créditos de Materiais Regionais, Avaliação de Ciclo de Vida (LCA) favorável e 0 litros de água para irrigação.', margin + 4, curY + 42);
-
-  curY += 53;
+    curY += 53;
+    sectionIndex++;
+  }
 
   // Section 3: Biophilic ROI & Financial Impact
-  doc.setFillColor(255, 255, 255);
-  doc.setDrawColor(229, 231, 235);
-  doc.roundedRect(margin, curY, contentWidth, 44, 3, 3, 'FD');
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(7, 42, 26);
-  doc.text('3. IMPACTO FINANCEIRO & ROI BIOFÍLICO (ESTUDOS HARVARD & TERRA PIN)', margin + 4, curY + 6);
-
-  const roiColW = (contentWidth - 8) / 3;
-  const roiCards = [
-    { title: 'GANHO DE PRODUTIVIDADE', val: `+${productivityGainPercent}%`, desc: 'Foco cognitivo & tomada de decisão ágil' },
-    { title: 'QUEDA NO ABSENTEÍSMO', val: `-${absenteeismReductionPercent}%`, desc: 'Menos licenças e queixas por estresse' },
-    { title: 'RETORNO ANUAL ESTIMADO', val: annualSavingsFormatted, desc: `Payback estimado em ~${paybackMonths} meses` },
-  ];
-
-  roiCards.forEach((c, i) => {
-    const rx = margin + 2 + i * (roiColW + 2);
-    const ry = curY + 10;
-    doc.setFillColor(240, 253, 244);
-    doc.setDrawColor(187, 247, 208);
-    doc.roundedRect(rx, ry, roiColW, 20, 2, 2, 'FD');
+  if (activeSections.roi) {
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(229, 231, 235);
+    doc.roundedRect(margin, curY, contentWidth, 44, 3, 3, 'FD');
 
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(6.5);
-    doc.setTextColor(21, 128, 61);
-    doc.text(c.title, rx + roiColW / 2, ry + 5, { align: 'center' });
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setTextColor(7, 42, 26);
-    doc.text(c.val, rx + roiColW / 2, ry + 12, { align: 'center' });
+    doc.text(`${sectionIndex}. IMPACTO FINANCEIRO & ROI BIOFÍLICO (ESTUDOS HARVARD & TERRA PIN)`, margin + 4, curY + 6);
 
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(6);
-    doc.setTextColor(75, 85, 99);
-    doc.text(c.desc, rx + roiColW / 2, ry + 17, { align: 'center' });
-  });
+    const roiColW = (contentWidth - 8) / 3;
+    const roiCards = [
+      { title: 'GANHO DE PRODUTIVIDADE', val: `+${productivityGainPercent}%`, desc: 'Foco cognitivo & tomada de decisão ágil' },
+      { title: 'QUEDA NO ABSENTEÍSMO', val: `-${absenteeismReductionPercent}%`, desc: 'Menos licenças e queixas por estresse' },
+      { title: 'RETORNO ANUAL ESTIMADO', val: annualSavingsFormatted, desc: `Payback estimado em ~${paybackMonths} meses` },
+    ];
 
-  doc.setFontSize(7.5);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(75, 85, 99);
-  doc.text('• Metodologia fundamentada nos estudos de economia biofílica da Harvard School of Public Health (COGfx) e Relatório 14 Patterns of Biophilic Design.', margin + 4, curY + 36);
+    roiCards.forEach((c, i) => {
+      const rx = margin + 2 + i * (roiColW + 2);
+      const ry = curY + 10;
+      doc.setFillColor(240, 253, 244);
+      doc.setDrawColor(187, 247, 208);
+      doc.roundedRect(rx, ry, roiColW, 20, 2, 2, 'FD');
 
-  curY += 49;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6.5);
+      doc.setTextColor(21, 128, 61);
+      doc.text(c.title, rx + roiColW / 2, ry + 5, { align: 'center' });
 
-  // Section 4: Botanical Specifications & Technical Certifications
-  doc.setFillColor(255, 255, 255);
-  doc.setDrawColor(229, 231, 235);
-  doc.roundedRect(margin, curY, contentWidth, 42, 3, 3, 'FD');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(7, 42, 26);
+      doc.text(c.val, rx + roiColW / 2, ry + 12, { align: 'center' });
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(7, 42, 26);
-  doc.text('4. ESPECIFICAÇÃO BOTÂNICA & NORMAS TÉCNICAS ATENDIDAS', margin + 4, curY + 6);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6);
+      doc.setTextColor(75, 85, 99);
+      doc.text(c.desc, rx + roiColW / 2, ry + 17, { align: 'center' });
+    });
 
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(55, 65, 81);
-  doc.text('Espécies Selecionadas:', margin + 4, curY + 13);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(17, 24, 39);
-  doc.text(speciesSelected.join(', '), margin + 37, curY + 13);
-
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(55, 65, 81);
-  doc.text('Tecnologia Empregada:', margin + 4, curY + 19);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(17, 24, 39);
-  doc.text(solutionType, margin + 37, curY + 19);
-
-  // Technical certifications badges
-  const certs = [
-    '✓ Retardante a Fogo NBR 9442 (Classe B)',
-    '✓ Acústica ISO 354 (Laudo IPT nº 1.189.432)',
-    '✓ Isento de Pragas e Fungos (Preservação Glicerinada)',
-    '✓ 5 Anos de Garantia Estrutural Fabril All Green',
-  ];
-
-  certs.forEach((cert, i) => {
-    const col = i % 2;
-    const row = Math.floor(i / 2);
-    const cx = margin + 4 + col * (contentWidth / 2);
-    const cy = curY + 26 + row * 6;
     doc.setFontSize(7.5);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(21, 128, 61);
-    doc.text(cert, cx, cy);
-  });
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(75, 85, 99);
+    doc.text('• Metodologia fundamentada nos estudos de economia biofílica da Harvard School of Public Health (COGfx) e Relatório 14 Patterns of Biophilic Design.', margin + 4, curY + 36);
 
-  curY += 46;
+    curY += 49;
+    sectionIndex++;
+  }
+
+  // Section 4: Botanical Specifications
+  if (activeSections.botanical) {
+    const cardHeight = activeSections.technicalCerts ? 30 : 38;
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(229, 231, 235);
+    doc.roundedRect(margin, curY, contentWidth, cardHeight, 3, 3, 'FD');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(7, 42, 26);
+    doc.text(`${sectionIndex}. ESPECIFICAÇÃO BOTÂNICA & COMPOSIÇÃO VEGETAL`, margin + 4, curY + 6);
+
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(55, 65, 81);
+    doc.text('Espécies Selecionadas:', margin + 4, curY + 13);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(17, 24, 39);
+    doc.text(speciesSelected.join(', '), margin + 37, curY + 13);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(55, 65, 81);
+    doc.text('Tecnologia Empregada:', margin + 4, curY + 19);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(17, 24, 39);
+    doc.text(solutionType, margin + 37, curY + 19);
+
+    if (!activeSections.technicalCerts) {
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(75, 85, 99);
+      doc.text('• Módulos pré-cultivados com sistema de fixação rápida em perfis de alumínio naval anodizado.', margin + 4, curY + 28);
+    }
+
+    curY += cardHeight + 5;
+    sectionIndex++;
+  }
+
+  // Section 5: Technical Certifications & Norms
+  if (activeSections.technicalCerts) {
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(229, 231, 235);
+    doc.roundedRect(margin, curY, contentWidth, 32, 3, 3, 'FD');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(7, 42, 26);
+    doc.text(`${sectionIndex}. LAUDOS TÉCNICOS & HOMOLOGAÇÃO NORMATIVA (IPT / NBR)`, margin + 4, curY + 6);
+
+    const certs = [
+      '✓ Retardante a Fogo NBR 9442 (Classe B)',
+      '✓ Acústica ISO 354 (Laudo IPT nº 1.189.432)',
+      '✓ Isento de Pragas e Fungos (Preservação Glicerinada)',
+      '✓ 5 Anos de Garantia Estrutural Fabril All Green',
+    ];
+
+    certs.forEach((cert, i) => {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      const cx = margin + 4 + col * (contentWidth / 2);
+      const cy = curY + 14 + row * 7;
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(21, 128, 61);
+      doc.text(cert, cx, cy);
+    });
+
+    curY += 37;
+    sectionIndex++;
+  }
+
+  // If no main sections are selected, display friendly placeholder note
+  if (
+    !activeSections.overview &&
+    !activeSections.sustainability &&
+    !activeSections.roi &&
+    !activeSections.botanical &&
+    !activeSections.technicalCerts
+  ) {
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(229, 231, 235);
+    doc.roundedRect(margin, curY, contentWidth, 50, 3, 3, 'FD');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(7, 42, 26);
+    doc.text('DOCUMENTO EXECUTIVO PERSONALIZADO', margin + 10, curY + 15);
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(107, 114, 128);
+    doc.text('Nenhuma seção de conteúdo detalhado foi habilitada para esta emissão.', margin + 10, curY + 24);
+    doc.text('Selecione os módulos desejados nas opções do gerador para incluir tabelas técnicas.', margin + 10, curY + 31);
+
+    curY += 55;
+  }
 
   // Footer Signatures & Validation Stamp
-  doc.setFillColor(7, 42, 26);
-  doc.rect(margin, pageHeight - 20, contentWidth, 14, 'F');
+  if (activeSections.footerValidation) {
+    doc.setFillColor(7, 42, 26);
+    doc.rect(margin, pageHeight - 20, contentWidth, 14, 'F');
 
-  doc.setFontSize(7);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(134, 239, 172);
-  doc.text('ALL GREEN ENGENHARIA & BIOFILIA LTDA • CNPJ 38.412.980/0001-54', margin + 4, pageHeight - 13);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(134, 239, 172);
+    doc.text('ALL GREEN ENGENHARIA & BIOFILIA LTDA • CNPJ 38.412.980/0001-54', margin + 4, pageHeight - 13);
 
-  doc.setFontSize(6.5);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(209, 250, 229);
-  doc.text('Showroom: Av. Faria Lima / Jardins, SP • Suporte Técnico: (11) 98765-4321 • allgreendecor.com.br', margin + 4, pageHeight - 8);
+    doc.setFontSize(6.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(209, 250, 229);
+    doc.text('Showroom: Av. Faria Lima / Jardins, SP • Suporte Técnico: (11) 98765-4321 • allgreendecor.com.br', margin + 4, pageHeight - 8);
 
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(255, 255, 255);
-  doc.text(`VALIDAÇÃO DIGITAL: #AG-${Date.now().toString(36).toUpperCase()}`, pageWidth - margin - 50, pageHeight - 11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(255, 255, 255);
+    doc.text(`VALIDAÇÃO DIGITAL: #AG-${Date.now().toString(36).toUpperCase()}`, pageWidth - margin - 50, pageHeight - 11);
+  }
 
   // Save / Download PDF
   const filename = `Laudo_Tecnico_AllGreen_${projectCode.replace(/\s+/g, '_')}.pdf`;

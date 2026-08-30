@@ -11,6 +11,8 @@ export interface BotanicalSpecies {
   description: string;
   idealEnvironments: string[];
   uvProtection?: boolean;
+  tags?: string[];
+  propertyBadges?: { label: string; tagKey: string }[];
 }
 
 export interface ComparisonRow {
@@ -102,6 +104,9 @@ export interface PortalProject {
   specPdfUrl?: string;
   cadUrl?: string;
   thumbnail: string;
+  beforeImage?: string;
+  afterImage?: string;
+  description?: string;
   notes?: string;
   // Technical Specifications & Sustainability Metrics
   speciesUsed?: string[];

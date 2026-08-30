@@ -14,6 +14,12 @@ export const BOTANICAL_SPECIES: BotanicalSpecies[] = [
     description: 'Planta natural estabilizada através de processo biológico. Mantém textura aveludada macia sem necessidade de água nem luz solar direta.',
     idealEnvironments: ['Salas de Reunião Corporativas', 'Recepção Executiva', 'Quartos & Livings'],
     uvProtection: false,
+    tags: ['acustica', 'baixa-manutencao', 'purificacao', 'textura-3d'],
+    propertyBadges: [
+      { label: 'Acústica NRC 0.85', tagKey: 'acustica' },
+      { label: 'Zero Manutenção', tagKey: 'baixa-manutencao' },
+      { label: 'Purificação & Bem-Estar', tagKey: 'purificacao' },
+    ],
   },
   {
     id: 'samambaia-chorona',
@@ -28,6 +34,12 @@ export const BOTANICAL_SPECIES: BotanicalSpecies[] = [
     description: 'Composição foliar com tratamento de proteção UV avançado contra desbotamento. Ideal para varandas gourmet e ambientes com incidência direta de luz.',
     idealEnvironments: ['Varandas Gourmet', 'Fachadas Internas', 'Atriums Comercial'],
     uvProtection: true,
+    tags: ['anti-uv', 'baixa-manutencao', 'acustica'],
+    propertyBadges: [
+      { label: 'Proteção Anti-UV', tagKey: 'anti-uv' },
+      { label: 'Baixa Manutenção', tagKey: 'baixa-manutencao' },
+      { label: 'Conforto Acústico', tagKey: 'acustica' },
+    ],
   },
   {
     id: 'costela-de-adao',
@@ -42,6 +54,12 @@ export const BOTANICAL_SPECIES: BotanicalSpecies[] = [
     description: 'Planta natural de grande porte preservada. Proporciona imponência visual e presença tropical sofisticada sem necessitar de rega.',
     idealEnvironments: ['Halls de Entrada', 'Restaurantes de Alto Padrão', 'Salas de Estar'],
     uvProtection: false,
+    tags: ['acustica', 'purificacao', 'baixa-manutencao'],
+    propertyBadges: [
+      { label: 'Acústica NRC 0.70', tagKey: 'acustica' },
+      { label: 'Purificação & Bem-Estar', tagKey: 'purificacao' },
+      { label: 'Zero Poda/Rega', tagKey: 'baixa-manutencao' },
+    ],
   },
   {
     id: 'eucalipto-perfumado',
@@ -56,6 +74,12 @@ export const BOTANICAL_SPECIES: BotanicalSpecies[] = [
     description: 'Eucalipto selecionado e estabilizado biologicamente que preserva textura suave e aroma refrescante sutil no ambiente.',
     idealEnvironments: ['Spas & Espaços de Bem-Estar', 'Suítes e Closets', 'Recepções de Clínicas'],
     uvProtection: false,
+    tags: ['purificacao', 'baixa-manutencao', 'acustica'],
+    propertyBadges: [
+      { label: 'Purificação de Ar & Aroma', tagKey: 'purificacao' },
+      { label: 'Aroma Natural Relaxante', tagKey: 'purificacao' },
+      { label: 'Zero Manutenção', tagKey: 'baixa-manutencao' },
+    ],
   },
   {
     id: 'jiboia-imperial',
@@ -70,6 +94,12 @@ export const BOTANICAL_SPECIES: BotanicalSpecies[] = [
     description: 'Folhagem pendente de alta densidade que imita perfeitamente o caimento natural da jiboia viva em composições de jardim vertical.',
     idealEnvironments: ['Escritórios em Open Space', 'Varandas Fechadas', 'Lojas de Varejo'],
     uvProtection: true,
+    tags: ['anti-uv', 'baixa-manutencao', 'acustica', 'purificacao'],
+    propertyBadges: [
+      { label: 'Proteção Anti-UV', tagKey: 'anti-uv' },
+      { label: 'Efeito Cascata', tagKey: 'purificacao' },
+      { label: 'Sem Manutenção', tagKey: 'baixa-manutencao' },
+    ],
   },
   {
     id: 'avenca-selvagem',
@@ -84,6 +114,11 @@ export const BOTANICAL_SPECIES: BotanicalSpecies[] = [
     description: 'Composição de folhagem ultra-detalhada com tom verde fresco vívido, ideal para preencher lacunas e criar volumes naturais.',
     idealEnvironments: ['Paredes de Destaque Residencial', 'Fachadas de Lojas', 'Salas de Reunião'],
     uvProtection: true,
+    tags: ['anti-uv', 'baixa-manutencao'],
+    propertyBadges: [
+      { label: 'Proteção Anti-UV', tagKey: 'anti-uv' },
+      { label: 'Zero Manutenção', tagKey: 'baixa-manutencao' },
+    ],
   }
 ];
 

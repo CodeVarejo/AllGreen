@@ -593,7 +593,7 @@ export const ProjectsPerformanceHeatmap: React.FC<ProjectsPerformanceHeatmapProp
     },
   };
 
-  const kpiItemVariants = {
+  const kpiItemVariants: any = {
     hidden: { opacity: 0, y: 14 },
     visible: {
       opacity: 1,
@@ -1095,7 +1095,7 @@ export const ProjectsPerformanceHeatmap: React.FC<ProjectsPerformanceHeatmapProp
                         isAnimationActive={true}
                         animationDuration={800}
                         animationEasing="ease-out"
-                        onClick={(node) => {
+                        onClick={(node: any) => {
                           if (node && node.id) setSelectedProjectId(node.id);
                         }}
                       >

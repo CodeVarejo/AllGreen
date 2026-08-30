@@ -25,6 +25,7 @@ interface PortalHeaderProps {
   onOpenSimulator: () => void;
   onOpenNewProjectModal: () => void;
   onToggleUserRole?: () => void;
+  onTriggerSimulation?: (type: 'leed' | 'botanical') => void;
 }
 
 export const PortalHeader: React.FC<PortalHeaderProps> = ({

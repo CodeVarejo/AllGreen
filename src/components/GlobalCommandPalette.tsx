@@ -28,7 +28,7 @@ import { useAccessibility } from '../context/AccessibilityContext';
 
 export interface CommandItem {
   id: string;
-  category: 'Ações Rápidas' | 'Espécies Botânicas' | 'Soluções & Produtos' | 'Laudos & Ferramentas' | 'Acessibilidade';
+  category: 'Ações Rápidas' | 'Espécies Botânicas' | 'Soluções & Produtos' | 'Laudos & Ferramentas' | 'Acessibilidade' | 'Desenvolvedor & QA';
   title: string;
   subtitle?: string;
   badge?: string;
@@ -49,6 +49,7 @@ interface GlobalCommandPaletteProps {
   onOpenShortcutsModal: () => void;
   onOpenConsultation?: () => void;
   onOpenProjectPdfReport?: () => void;
+  onTriggerBreakTest?: () => void;
 }
 
 export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
@@ -62,6 +63,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenShortcutsModal,
   onOpenConsultation,
   onOpenProjectPdfReport,
+  onTriggerBreakTest,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -305,6 +307,21 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
           onOpenShortcutsModal();
         },
         keywords: ['atalhos', 'teclado', 'shortcuts', 'ajuda', 'comandos', 'hotkeys'],
+      },
+      {
+        id: 'cmd-dev-break',
+        category: 'Desenvolvedor & QA',
+        title: '💥 Break Component (Simular Erro no ErrorBoundary)',
+        subtitle: 'Provoca uma falha proposital no Catálogo para testar a tela Oops! e o botão Reload',
+        badge: 'QA Teste',
+        icon: Zap,
+        action: () => {
+          onClose();
+          if (onTriggerBreakTest) {
+            onTriggerBreakTest();
+          }
+        },
+        keywords: ['break', 'quebrar', 'erro', 'crash', 'errorboundary', 'oops', 'reload', 'qa', 'dev', 'teste'],
       },
     ];
 
