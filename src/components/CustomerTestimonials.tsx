@@ -8,7 +8,6 @@ import {
   Building,
   TrendingUp,
   Award,
-  Sparkles,
   Play,
   Pause,
   ArrowRight,

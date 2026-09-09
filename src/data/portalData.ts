@@ -1,4 +1,6 @@
 import { UserProfile, PortalProject, TechnicalAsset } from '../types';
+import { seedProjectHistory } from '../utils/versionControl';
+import { calculateBiophilicProfile } from './quizData';
 
 export const DEFAULT_USER: UserProfile = {
   id: 'usr_arq_742',
@@ -12,9 +14,17 @@ export const DEFAULT_USER: UserProfile = {
   points: 4850,
   tier: 'Platinum',
   avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80',
+  savedBiophilicProfile: calculateBiophilicProfile({
+    lighting: 'indirect_moderate',
+    acoustics: 'high_reverberation',
+    wellness_goal: 'focus_productivity',
+    spatial_layout: 'full_accent_wall',
+    aesthetic_style: 'tropical_urban_jungle',
+  }),
+  savedBiophilicProfileDate: '28/08/2026',
 };
 
-export const INITIAL_PORTAL_PROJECTS: PortalProject[] = [
+const RAW_PORTAL_PROJECTS: PortalProject[] = [
   {
     id: 'proj_1',
     code: 'AG-8492',
@@ -206,6 +216,8 @@ export const INITIAL_PORTAL_PROJECTS: PortalProject[] = [
     weightPerM2: 12.0,
   }
 ];
+
+export const INITIAL_PORTAL_PROJECTS: PortalProject[] = RAW_PORTAL_PROJECTS.map(seedProjectHistory);
 
 export const TECHNICAL_ASSETS: TechnicalAsset[] = [
   {

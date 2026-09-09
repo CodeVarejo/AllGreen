@@ -1,11 +1,42 @@
 import React, { useState } from 'react';
 import { ArrowRight, Leaf, X, Check } from 'lucide-react';
+import { motion, AnimatePresence, Variants } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
+import { PageHeader } from './PageHeader';
 
 interface SolutionsGridProps {
   onSelectSolution: (solutionTitle: string) => void;
   onOpenQuote: () => void;
 }
+
+// Framer-motion scroll entrance variants
+const gridContainerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 36,
+    scale: 0.96,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.65,
+      ease: [0.22, 1, 0.36, 1], // Smooth cubic ease-out
+    },
+  },
+};
 
 export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
   onSelectSolution,
@@ -106,126 +137,162 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
         
         {/* Section Header */}
         <ScrollReveal animation="fade-up" distance={25}>
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="text-xs font-bold text-[#15803d] uppercase tracking-widest bg-emerald-100/80 px-3.5 py-1 rounded-full">
-              PORTFÓLIO & SOLUÇÕES ALL GREEN
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-gray-900 leading-tight">
-              Verde autoral desenhado para <br className="hidden sm:inline" />
-              <span className="italic font-light text-[#15803d]">cada projeto e ambiente</span>
-            </h2>
-            <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-              Conheça as linhas completas de jardins verticais preservados, permanentes hiper-realistas, musgo polar moss e módulos prontos para instalar em todo o Brasil.
-            </p>
-          </div>
+          <PageHeader
+            align="center"
+            badge="PORTFÓLIO & SOLUÇÕES ALL GREEN"
+            badgeIcon={Leaf}
+            title={
+              <>
+                Verde autoral desenhado para <br className="hidden sm:inline" />
+                <span className="italic font-light text-[#15803d]">cada projeto e ambiente</span>
+              </>
+            }
+            description="Conheça as linhas completas de jardins verticais preservados, permanentes hiper-realistas, musgo polar moss e módulos prontos para instalar em todo o Brasil."
+          />
         </ScrollReveal>
 
-        {/* 6 Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-          {solutions.map((item, idx) => (
-            <ScrollReveal
+        {/* 6 Cards Grid with Framer Motion Scroll Entrance */}
+        <motion.div
+          id="solutions-grid"
+          variants={gridContainerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12"
+        >
+          {solutions.map((item) => (
+            <motion.div
               key={item.id}
-              animation="fade-up"
-              delay={idx * 0.12}
-              distance={30}
-              className="h-full"
+              id={`solution-card-${item.id}`}
+              variants={cardVariants}
+              whileHover={{ y: -6 }}
+              transition={{
+                y: { duration: 0.25, ease: 'easeOut' },
+              }}
+              className="bg-white rounded-2xl overflow-hidden border border-gray-200/90 shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between group h-full cursor-pointer"
+              onClick={() => setSelectedModal(item)}
             >
-              <div className="bg-white rounded-2xl overflow-hidden border border-gray-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group h-full">
-                <div>
-                  {/* Image Box */}
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute top-3 left-3">
-                      <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md shadow-xs ${item.tagBg}`}>
-                        {item.tag}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-5 space-y-2">
-                    <h3 className="font-serif font-bold text-gray-900 text-lg leading-snug group-hover:text-[#15803d] transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs text-gray-600 leading-relaxed line-clamp-3">
-                      {item.desc}
-                    </p>
+              <div>
+                {/* Image Box */}
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md shadow-xs ${item.tagBg}`}>
+                      {item.tag}
+                    </span>
                   </div>
                 </div>
 
-                {/* Action Button */}
-                <div className="p-5 pt-0">
-                  <button
-                    onClick={() => setSelectedModal(item)}
-                    className="w-full flex items-center justify-between text-xs font-semibold text-[#072a1a] hover:text-[#15803d] pt-3 border-t border-gray-100 transition-colors group/btn cursor-pointer"
-                  >
-                    <span>Saiba mais sobre esta solução</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                {/* Content */}
+                <div className="p-5 space-y-2">
+                  <h3 className="font-serif font-bold text-gray-900 text-lg leading-snug group-hover:text-[#15803d] transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-gray-600 leading-relaxed line-clamp-3">
+                    {item.desc}
+                  </p>
                 </div>
               </div>
-            </ScrollReveal>
+
+              {/* Action Button */}
+              <div className="p-5 pt-0">
+                <button
+                  type="button"
+                  id={`btn-solution-details-${item.id}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedModal(item);
+                  }}
+                  className="w-full flex items-center justify-between text-xs font-semibold text-[#072a1a] hover:text-[#15803d] pt-3 border-t border-gray-100 transition-colors group/btn cursor-pointer"
+                >
+                  <span>Saiba mais sobre esta solução</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
       </div>
 
-      {/* Solution Detail Modal */}
-      {selectedModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 relative shadow-2xl space-y-5 animate-in fade-in zoom-in duration-200">
-            <button
-              onClick={() => setSelectedModal(null)}
-              className="absolute top-5 right-5 p-1.5 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-pointer"
+      {/* Solution Detail Modal with Smooth Motion Entrance */}
+      <AnimatePresence>
+        {selectedModal && (
+          <motion.div
+            id="solution-modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+            onClick={() => setSelectedModal(null)}
+          >
+            <motion.div
+              id="solution-modal-content"
+              initial={{ opacity: 0, scale: 0.94, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 relative shadow-2xl space-y-5"
             >
-              <X className="w-5 h-5" />
-            </button>
-
-            <span className={`text-[10px] font-extrabold uppercase px-3 py-1 rounded-md ${selectedModal.tagBg}`}>
-              {selectedModal.tag}
-            </span>
-
-            <h3 className="text-2xl font-serif font-bold text-gray-900">
-              {selectedModal.title}
-            </h3>
-
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {selectedModal.desc}
-            </p>
-
-            <div className="bg-emerald-50 p-4 rounded-2xl space-y-2 border border-emerald-100">
-              <p className="text-xs font-bold text-[#072a1a] uppercase tracking-wider">
-                Destaques & Especificações:
-              </p>
-              <ul className="space-y-1.5 text-xs text-gray-700">
-                {selectedModal.highlights.map((h: string, idx: number) => (
-                  <li key={idx} className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#15803d] shrink-0" />
-                    <span>{h}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="pt-2 flex items-center gap-3">
               <button
-                onClick={() => {
-                  const title = selectedModal.title;
-                  setSelectedModal(null);
-                  onSelectSolution(title);
-                }}
-                className="flex-1 py-3 bg-[#072a1a] text-white font-bold rounded-xl text-xs hover:bg-[#15803d] transition-colors cursor-pointer"
+                type="button"
+                id="btn-close-solution-modal"
+                onClick={() => setSelectedModal(null)}
+                className="absolute top-5 right-5 p-1.5 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 cursor-pointer"
               >
-                Solicitar Orçamento para esta Linha
+                <X className="w-5 h-5" />
               </button>
-            </div>
-          </div>
-        </div>
-      )}
+
+              <span className={`text-[10px] font-extrabold uppercase px-3 py-1 rounded-md ${selectedModal.tagBg}`}>
+                {selectedModal.tag}
+              </span>
+
+              <h3 className="text-2xl font-serif font-bold text-gray-900">
+                {selectedModal.title}
+              </h3>
+
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {selectedModal.desc}
+              </p>
+
+              <div className="bg-emerald-50 p-4 rounded-2xl space-y-2 border border-emerald-100">
+                <p className="text-xs font-bold text-[#072a1a] uppercase tracking-wider">
+                  Destaques & Especificações:
+                </p>
+                <ul className="space-y-1.5 text-xs text-gray-700">
+                  {selectedModal.highlights.map((h: string, idx: number) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-[#15803d] shrink-0" />
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="pt-2 flex items-center gap-3">
+                <button
+                  type="button"
+                  id="btn-quote-solution-modal"
+                  onClick={() => {
+                    const title = selectedModal.title;
+                    setSelectedModal(null);
+                    onSelectSolution(title);
+                  }}
+                  className="flex-1 py-3 bg-[#072a1a] text-white font-bold rounded-xl text-xs hover:bg-[#15803d] transition-colors cursor-pointer shadow-md"
+                >
+                  Solicitar Orçamento para esta Linha
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

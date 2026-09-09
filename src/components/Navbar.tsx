@@ -38,10 +38,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   const isMac = useMemo(() => isMacUser(), []);
   const modKey = isMac ? '⌘' : 'Ctrl';
 
-  // Close drawer on window resize to md (>= 768px)
+  // Close drawer on window resize to xl (>= 1280px)
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1280) {
         setIsDrawerOpen(false);
       }
     };
@@ -92,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header
       id="main-app-header"
-      className="sticky top-0 z-40 bg-[#f3f7f4]/95 backdrop-blur-md border-b border-[#0d3822]/10 transition-all max-h-[20vh]"
+      className="sticky top-0 z-40 bg-[#f3f7f4]/95 backdrop-blur-md border-b border-[#0d3822]/10 transition-all"
     >
       <div className="max-w-7xl mx-auto px-2.5 sm:px-4 md:px-6 lg:px-8 h-14 sm:h-16 md:h-20 flex items-center justify-between gap-1.5 sm:gap-3 md:gap-4">
         
@@ -115,10 +115,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </a>
 
-        {/* Desktop Navigation Links (Visible on screens >= 768px) */}
+        {/* Desktop Navigation Links (Visible on screens >= 1280px / xl) */}
         <nav
           id="desktop-navigation-links"
-          className="hidden md:flex items-center gap-3 lg:gap-6 text-xs lg:text-sm font-semibold text-[#0d3822]"
+          className="hidden xl:flex items-center gap-3.5 2xl:gap-6 text-xs lg:text-sm font-semibold text-[#0d3822]"
         >
           <button 
             type="button"
@@ -135,6 +135,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
             Catálogo
+          </button>
+          <button 
+            type="button"
+            id="nav-link-quiz"
+            onClick={() => scrollToSection('biophilic-quiz')}
+            className="hover:text-[#15803d] transition-colors py-1 cursor-pointer flex items-center gap-1 whitespace-nowrap text-emerald-800 font-bold"
+          >
+            <span>Quiz Biofílico</span>
+            <span className="px-1.5 py-0.2 bg-emerald-200 text-[#072a1a] rounded-md text-[10px] font-extrabold">5 Perguntas</span>
           </button>
           <button 
             type="button"
@@ -171,8 +180,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </nav>
 
-        {/* Search Bar - Desktop with Ctrl+K trigger */}
-        <div className="hidden xl:flex items-center relative max-w-[240px] 2xl:max-w-[260px] w-full">
+        {/* Search Bar - Desktop with Ctrl+K trigger (Wide screens >= 1536px) */}
+        <div className="hidden 2xl:flex items-center relative max-w-[220px] w-full">
           <form onSubmit={handleSearchSubmit} className="relative w-full">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#15803d]" />
             <input
@@ -197,12 +206,12 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Action Buttons (Desktop & Mobile) */}
         <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0">
           
-          {/* Quick Search Button (Mobile & Tablet < 1280px) */}
+          {/* Quick Search Button (All screens < 1536px) */}
           <button
             type="button"
             id="header-quick-search-btn"
             onClick={onOpenSearch}
-            className="flex xl:hidden p-1.5 sm:p-2 md:p-2.5 rounded-full bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300/80 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer active:scale-95"
+            className="flex 2xl:hidden p-1.5 sm:p-2 md:p-2.5 rounded-full bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300/80 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer active:scale-95"
             title={`Buscar (${modKey}+K)`}
             aria-label="Abrir busca e comandos"
           >
@@ -215,7 +224,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="button"
               id="header-shortcuts-btn"
               onClick={onOpenShortcutsModal}
-              className="hidden lg:flex items-center gap-1 p-2 rounded-full bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer group active:scale-95"
+              className="hidden 2xl:flex items-center gap-1 p-2 rounded-full bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer group active:scale-95"
               title="Guia de Atalhos de Teclado (Pressione ?)"
               aria-label="Ver atalhos de teclado globais"
             >
@@ -242,19 +251,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          {/* Portal do Arquiteto CTA (Desktop & Tablet >= 768px) */}
+          {/* Portal do Arquiteto CTA (Screens >= 640px) */}
           <button
             type="button"
             id="header-portal-cta-btn"
             onClick={onOpenLogin}
-            className="hidden md:flex items-center gap-1.5 bg-emerald-100/90 text-[#0d3822] hover:bg-emerald-200 border border-emerald-300 px-2.5 lg:px-3.5 py-1.5 lg:py-2 rounded-full font-bold text-xs shadow-xs transition-all cursor-pointer whitespace-nowrap"
+            className="hidden sm:flex items-center gap-1.5 bg-emerald-100/90 text-[#0d3822] hover:bg-emerald-200 border border-emerald-300 px-2.5 lg:px-3.5 py-1.5 lg:py-2 rounded-full font-bold text-xs shadow-xs transition-all cursor-pointer whitespace-nowrap shrink-0"
             title={`Acessar Área do Arquiteto (${modKey}+P)`}
           >
             <UserCheck className="w-3.5 h-3.5 text-[#15803d]" />
             <span>{currentUser ? currentUser.name.split(' ')[0] : 'Portal Arquiteto'}</span>
           </button>
 
-          {/* IA Simulator CTA (Sleek, Single-line, scales gracefully) */}
+          {/* IA Simulator CTA (Sleek, Single-line, scales gracefully on all mobile viewports) */}
           <button
             type="button"
             id="header-simulator-cta-btn"
@@ -263,7 +272,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             title={`Simulador IA de Ambientes (${modKey}+M)`}
           >
             <Camera className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-[#86efac] shrink-0" />
-            <span className="leading-none">Simulador IA</span>
+            <span className="hidden xs:inline sm:inline leading-none">Simulador IA</span>
+            <span className="inline xs:hidden sm:hidden leading-none">Simulador</span>
             <kbd className="hidden 2xl:inline-block ml-0.5 px-1 py-0.2 bg-[#072a1a] text-[#86efac] border border-emerald-700/50 rounded text-[9px] font-mono font-bold">
               {modKey}M
             </kbd>
@@ -274,20 +284,21 @@ export const Navbar: React.FC<NavbarProps> = ({
             type="button"
             id="header-quote-cta-btn"
             onClick={onOpenQuote}
-            className="hidden md:flex items-center gap-1.5 bg-white text-[#0d3822] hover:bg-emerald-50 border border-[#0d3822]/30 px-3 lg:px-3.5 py-1.5 lg:py-2.5 rounded-full font-semibold text-xs lg:text-sm transition-all cursor-pointer whitespace-nowrap"
+            className="hidden md:flex items-center gap-1.5 bg-white text-[#0d3822] hover:bg-emerald-50 border border-[#0d3822]/30 px-3 lg:px-3.5 py-1.5 lg:py-2.5 rounded-full font-semibold text-xs lg:text-sm transition-all cursor-pointer whitespace-nowrap shrink-0"
           >
             <PhoneCall className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-[#15803d]" />
             <span>Orçamento</span>
           </button>
 
-          {/* Hamburger Menu Toggle - Displayed on screens < 768px via 'flex md:hidden' */}
+          {/* Hamburger Menu Toggle - Displayed on all screens < 1280px via 'flex xl:hidden' */}
           <button
             type="button"
             id="header-mobile-hamburger-btn"
             onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-            aria-label={isDrawerOpen ? "Fechar Menu" : "Abrir Menu"}
+            aria-label={isDrawerOpen ? "Fechar Menu de Navegação" : "Abrir Menu de Navegação"}
             aria-expanded={isDrawerOpen}
-            className="flex md:hidden p-1.5 sm:p-2 rounded-full bg-white text-[#0d3822] border border-gray-300/80 hover:bg-emerald-50 hover:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-[#0d3822] cursor-pointer shadow-2xs active:scale-95 transition-all items-center justify-center shrink-0"
+            aria-controls="mobile-menu-drawer"
+            className="flex xl:hidden p-1.5 sm:p-2 rounded-full bg-white text-[#0d3822] border border-gray-300/80 hover:bg-emerald-50 hover:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-[#0d3822] cursor-pointer shadow-2xs active:scale-95 transition-all items-center justify-center shrink-0"
           >
             {isDrawerOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5" /> : <MenuIcon className="w-4 h-4 sm:w-5 sm:h-5" />}
           </button>
@@ -295,7 +306,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       </div>
 
-      {/* Extracted MobileMenuDrawer component for mobile screens (< 768px) */}
+      {/* Extracted MobileMenuDrawer component (Rendered via React Portal for flawless full-screen coverage) */}
       <MobileMenuDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}

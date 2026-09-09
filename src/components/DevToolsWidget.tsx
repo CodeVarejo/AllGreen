@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Wrench,
   Bug,
-  Sparkles,
   RefreshCw,
   AlertTriangle,
   CheckCircle2,

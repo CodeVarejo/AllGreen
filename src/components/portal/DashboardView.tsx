@@ -16,7 +16,7 @@ import {
   ArrowLeftRight,
   ShieldCheck,
   Zap,
-  Sparkles,
+  Activity,
   Truck,
   Building,
   TrendingUp,
@@ -25,10 +25,14 @@ import {
   SlidersHorizontal,
   MapPin,
   Flame,
-  Volume2
+  Volume2,
+  BookmarkCheck,
+  RotateCcw,
+  FileDown
 } from 'lucide-react';
 import { PortalProject, UserProfile, PortalNotification } from '../../types';
 import { ProjectsPerformanceHeatmap } from './ProjectsPerformanceHeatmap';
+import { generateBiophilicGuidePdf } from '../../utils/generateBiophilicGuidePdf';
 
 interface DashboardViewProps {
   user: UserProfile;
@@ -42,6 +46,9 @@ interface DashboardViewProps {
   onOpenProjectDetail: (project: PortalProject) => void;
   onActionClick: (notification: PortalNotification) => void;
   onCompareProjects?: (projAId: string, projBId: string) => void;
+  onRetakeQuiz?: () => void;
+  onDownloadBiophilicGuide?: (profile: any) => void;
+  onRestoreDemoProjects?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -56,6 +63,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onOpenProjectDetail,
   onActionClick,
   onCompareProjects,
+  onRetakeQuiz,
+  onDownloadBiophilicGuide,
+  onRestoreDemoProjects,
 }) => {
   const isArchitect = user.role === 'arquiteto' || user.role === 'especificador';
 
@@ -140,7 +150,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="flex flex-wrap items-center gap-2">
               <div className="inline-flex items-center gap-1.5 bg-emerald-950/90 border border-emerald-500/40 px-3.5 py-1.5 rounded-full text-xs text-emerald-200 font-bold shadow-xs">
                 <Award className="w-3.5 h-3.5 text-yellow-400 fill-current" />
-                <span>{isArchitect ? 'Parceiro Homologado Pro' : 'Área do Empreendimento'} • Nível {user.tier}</span>
+                <span>{isArchitect ? 'Parceiro Homologado Pro' : 'Área do Empreendimento & Facilities'} • Nível {user.tier}</span>
               </div>
               <span className="text-xs text-emerald-300 font-mono font-medium">
                 {user.company}
@@ -149,10 +159,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <div className="space-y-2">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white tracking-tight leading-tight">
-                Painel Biofílico de Obras
+                {isArchitect ? 'Painel Biofílico de Obras' : 'Painel Corporativo de Empreendimentos'}
               </h1>
               <p className="text-sm sm:text-base text-emerald-100/90 leading-relaxed font-sans max-w-2xl">
-                Acompanhe o cronograma fabril dos seus jardins verticais, baixe famílias BIM paramétricas, consulte laudos de absorção acústica e gere memoriais descritivos LEED/WELL com um clique.
+                {isArchitect
+                  ? 'Acompanhe o cronograma fabril dos seus jardins verticais, baixe famílias BIM paramétricas, consulte laudos de absorção acústica e gere memoriais descritivos LEED/WELL com um clique.'
+                  : 'Acompanhe o cronograma de entrega e instalação dos jardins verticais dos seus empreendimentos, consulte laudos de garantia botânica, reduções de consumo hídrico e certificações ambientais corporativas.'}
               </p>
             </div>
 
@@ -160,27 +172,49 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 onClick={onOpenSimulator}
-                className="px-6 py-3.5 bg-[#86efac] text-[#072a1a] font-bold rounded-full text-xs sm:text-sm hover:bg-emerald-300 transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
+                className="px-6 py-3.5 bg-[#86efac] text-[#072a1a] font-bold rounded-full text-xs sm:text-sm hover:bg-emerald-300 transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95 min-h-[44px]"
               >
                 <Camera className="w-4 h-4 text-[#072a1a]" />
                 <span>Simulador IA no Ambiente</span>
               </button>
 
-              <button
-                onClick={() => onSelectTab('bim_cad')}
-                className="px-5 py-3.5 bg-emerald-950/80 hover:bg-emerald-900 text-white font-semibold rounded-full text-xs sm:text-sm border border-emerald-600/50 transition-all flex items-center gap-2 cursor-pointer shadow-xs active:scale-95"
-              >
-                <Download className="w-4 h-4 text-[#86efac]" />
-                <span>Baixar Famílias BIM / DWG</span>
-              </button>
+              {isArchitect ? (
+                <>
+                  <button
+                    onClick={() => onSelectTab('bim_cad')}
+                    className="px-5 py-3.5 bg-emerald-950/80 hover:bg-emerald-900 text-white font-semibold rounded-full text-xs sm:text-sm border border-emerald-600/50 transition-all flex items-center gap-2 cursor-pointer shadow-xs active:scale-95 min-h-[44px]"
+                  >
+                    <Download className="w-4 h-4 text-[#86efac]" />
+                    <span>Baixar Famílias BIM / DWG</span>
+                  </button>
 
-              <button
-                onClick={() => onSelectTab('samples')}
-                className="px-5 py-3.5 bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 hover:text-white font-semibold rounded-full text-xs sm:text-sm border border-emerald-700/50 transition-all flex items-center gap-2 cursor-pointer shadow-xs active:scale-95"
-              >
-                <Package className="w-4 h-4 text-amber-300" />
-                <span>Pedir Maleta de Amostras</span>
-              </button>
+                  <button
+                    onClick={() => onSelectTab('samples')}
+                    className="px-5 py-3.5 bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 hover:text-white font-semibold rounded-full text-xs sm:text-sm border border-emerald-700/50 transition-all flex items-center gap-2 cursor-pointer shadow-xs active:scale-95 min-h-[44px]"
+                  >
+                    <Package className="w-4 h-4 text-amber-300" />
+                    <span>Pedir Maleta de Amostras</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => onSelectTab('esg')}
+                    className="px-5 py-3.5 bg-emerald-950/80 hover:bg-emerald-900 text-white font-semibold rounded-full text-xs sm:text-sm border border-emerald-600/50 transition-all flex items-center gap-2 cursor-pointer shadow-xs active:scale-95 min-h-[44px]"
+                  >
+                    <Leaf className="w-4 h-4 text-[#86efac]" />
+                    <span>Balanço ESG & Sustentabilidade</span>
+                  </button>
+
+                  <button
+                    onClick={() => onSelectTab('samples')}
+                    className="px-5 py-3.5 bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 hover:text-white font-semibold rounded-full text-xs sm:text-sm border border-emerald-700/50 transition-all flex items-center gap-2 cursor-pointer shadow-xs active:scale-95 min-h-[44px]"
+                  >
+                    <Package className="w-4 h-4 text-amber-300" />
+                    <span>Solicitar Vistoria & Amostras</span>
+                  </button>
+                </>
+              )}
             </div>
 
           </div>
@@ -189,7 +223,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="lg:col-span-4 bg-emerald-950/80 backdrop-blur-md rounded-2xl p-5 border border-emerald-700/60 space-y-4 shadow-lg">
             <h3 className="font-serif font-bold text-base text-white border-b border-emerald-800/80 pb-2 flex items-center justify-between">
               <span>Indicadores em Tempo Real</span>
-              <Sparkles className="w-4 h-4 text-[#86efac]" />
+              <Activity className="w-4 h-4 text-[#86efac]" />
             </h3>
 
             <div className="grid grid-cols-2 gap-3 text-left">
@@ -227,6 +261,186 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         </div>
 
+      </div>
+
+      {/* Biophilic Profile Diagnosis Card */}
+      {user.savedBiophilicProfile ? (
+        <div className="bg-gradient-to-br from-[#072a1a] via-[#093522] to-[#051c11] text-white rounded-3xl p-6 sm:p-7 shadow-lg border-2 border-emerald-500/40 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[#86efac]/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 space-y-5">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-emerald-800/80 pb-4">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-3 py-1 rounded-full bg-[#86efac] text-[#072a1a] font-mono font-extrabold text-xs flex items-center gap-1.5 shadow-2xs">
+                    <BookmarkCheck className="w-3.5 h-3.5" />
+                    <span>PERFIL BIOFÍLICO SALVO NO USUÁRIO</span>
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-900/80 border border-emerald-600/50 text-emerald-200 text-xs font-mono">
+                    {user.savedBiophilicProfile.badge}
+                  </span>
+                  <span className="text-xs text-emerald-300/80 font-mono">
+                    Salvo em {user.savedBiophilicProfileDate || 'Recente'}
+                  </span>
+                </div>
+
+                <h3 className="text-xl sm:text-2xl font-serif font-bold text-white tracking-tight">
+                  {user.savedBiophilicProfile.archetypeTitle}
+                </h3>
+                <p className="text-xs sm:text-sm text-emerald-100/80 max-w-2xl leading-relaxed">
+                  {user.savedBiophilicProfile.archetypeTagline}
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+                <button
+                  type="button"
+                  id="btn-portal-download-biophilic-guide"
+                  onClick={() => {
+                    if (onDownloadBiophilicGuide) {
+                      onDownloadBiophilicGuide(user.savedBiophilicProfile);
+                    } else {
+                      generateBiophilicGuidePdf(user.savedBiophilicProfile!, {
+                        user,
+                        downloadImmediately: true,
+                      });
+                    }
+                  }}
+                  className="px-4 py-2.5 bg-[#86efac] hover:bg-emerald-300 text-[#072a1a] font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                  title="Baixar Guia Técnico Personalizado em PDF"
+                >
+                  <FileDown className="w-4 h-4 text-[#072a1a]" />
+                  <span>Baixar Guia Personalizado (PDF)</span>
+                </button>
+
+                {onRetakeQuiz && (
+                  <button
+                    type="button"
+                    onClick={onRetakeQuiz}
+                    className="px-3.5 py-2.5 bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 hover:text-white font-semibold text-xs rounded-xl border border-emerald-700/60 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                    title="Refazer o Quiz de Perfil Biofílico"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Refazer Diagnóstico</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* 5 Key Metrics for Saved Profile */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
+              <div className="p-3 bg-emerald-950/80 rounded-xl border border-emerald-700/50 text-center">
+                <span className="text-[10px] font-mono text-emerald-300 font-bold block">PONTUAÇÃO WELL</span>
+                <strong className="text-base font-bold text-[#86efac]">{user.savedBiophilicProfile.scoreWell} pts</strong>
+                <span className="text-[9px] text-emerald-400 block">Classificação Platinum</span>
+              </div>
+
+              <div className="p-3 bg-emerald-950/80 rounded-xl border border-emerald-700/50 text-center">
+                <span className="text-[10px] font-mono text-emerald-300 font-bold block">CRÉDITOS LEED</span>
+                <strong className="text-base font-bold text-[#86efac]">{user.savedBiophilicProfile.scoreLeed} cr</strong>
+                <span className="text-[9px] text-emerald-400 block">v4.1 BD+C / ID+C</span>
+              </div>
+
+              <div className="p-3 bg-emerald-950/80 rounded-xl border border-emerald-700/50 text-center">
+                <span className="text-[10px] font-mono text-emerald-300 font-bold block">ABSORÇÃO ACÚSTICA</span>
+                <strong className="text-base font-bold text-[#86efac]">NRC {user.savedBiophilicProfile.acousticNRC}</strong>
+                <span className="text-[9px] text-emerald-400 block">Laudo IPT ISO 354</span>
+              </div>
+
+              <div className="p-3 bg-emerald-950/80 rounded-xl border border-emerald-700/50 text-center">
+                <span className="text-[10px] font-mono text-emerald-300 font-bold block">PRODUTIVIDADE</span>
+                <strong className="text-base font-bold text-emerald-200">+{user.savedBiophilicProfile.productivityBoost}%</strong>
+                <span className="text-[9px] text-emerald-400 block">Harvard COGfx</span>
+              </div>
+
+              <div className="p-3 bg-emerald-950/80 rounded-xl border border-emerald-700/50 text-center col-span-2 sm:col-span-1">
+                <span className="text-[10px] font-mono text-emerald-300 font-bold block">QUEDA CORTISOL</span>
+                <strong className="text-base font-bold text-emerald-200">-{user.savedBiophilicProfile.stressReduction}%</strong>
+                <span className="text-[9px] text-emerald-400 block">Estresse Ocupacional</span>
+              </div>
+            </div>
+
+            {/* Botanical Curation Preview */}
+            {user.savedBiophilicProfile.recommendedSpecies && user.savedBiophilicProfile.recommendedSpecies.length > 0 && (
+              <div className="pt-2 border-t border-emerald-800/60 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2">
+                  <Leaf className="w-4 h-4 text-[#86efac]" />
+                  <span className="text-emerald-200 font-semibold">Espécies Curadas:</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {user.savedBiophilicProfile.recommendedSpecies.slice(0, 4).map((sp, idx) => (
+                      <span key={idx} className="px-2 py-0.5 rounded-md bg-emerald-900/60 text-white text-[11px] border border-emerald-700/40">
+                        {sp.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <span className="text-[11px] text-emerald-300 font-mono">
+                  Código de Homologação: <strong>{user.savedBiophilicProfile.recommendedSolutionCode}</strong>
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="bg-gradient-to-r from-emerald-950 via-[#072a1a] to-emerald-950 text-white rounded-3xl p-6 shadow-md border border-emerald-500/30 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-800 text-[#86efac] flex items-center justify-center shrink-0">
+              <BookmarkCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-base font-bold text-white">Descubra seu Perfil Biofílico & Baixe seu Guia Personalizado</h4>
+              <p className="text-xs text-emerald-200/80">Faça o quiz de 2 minutos para homologar o laudo acústico, LEED/WELL e curadoria botânica da sua conta.</p>
+            </div>
+          </div>
+          {onRetakeQuiz && (
+            <button
+              type="button"
+              onClick={onRetakeQuiz}
+              className="px-4 py-2.5 bg-[#86efac] hover:bg-emerald-300 text-[#072a1a] font-bold text-xs rounded-xl shadow-xs transition-all shrink-0 cursor-pointer"
+            >
+              Realizar Diagnóstico Agora
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* ESG Sustainability Executive Summary Card */}
+      <div className="bg-gradient-to-br from-emerald-900 via-[#072a1a] to-emerald-950 text-white rounded-3xl p-6 sm:p-7 shadow-lg border border-emerald-500/30 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden">
+        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-[#86efac]/10 rounded-full blur-2xl pointer-events-none" />
+        
+        <div className="space-y-2 relative z-10 max-w-2xl">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#86efac]/20 text-[#86efac] border border-[#86efac]/40 text-[11px] font-mono font-bold flex items-center gap-1.5">
+              <Leaf className="w-3.5 h-3.5 text-[#86efac]" />
+              BALANÇO ESG CUMULATIVO
+            </span>
+            <span className="text-xs text-emerald-200 font-mono">
+              {projects.length} Obras Auditadas
+            </span>
+          </div>
+
+          <h3 className="text-xl sm:text-2xl font-serif font-bold text-white leading-snug">
+            Economia de {(totalWaterSaved / 1000).toFixed(1)}k m³ de Água e {projects.reduce((acc, p) => acc + (p.energySavedKwhYear || Math.round(p.area * 130)), 0).toLocaleString('pt-BR')} kWh de Energia
+          </h3>
+
+          <p className="text-xs sm:text-sm text-emerald-100/80 leading-relaxed">
+            Painéis All Green com isenção total de irrigação hídrica, atenuação térmica passiva até 3.6°C e laudos IPT homologados para certificações LEED v4.1 & WELL.
+          </p>
+        </div>
+
+        <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => onSelectTab('esg')}
+            className="px-6 py-3.5 bg-[#86efac] hover:bg-white text-[#072a1a] font-extrabold text-xs sm:text-sm rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+          >
+            <Leaf className="w-4 h-4 text-[#072a1a]" />
+            <span>Abrir Dashboard ESG Completo</span>
+            <ChevronRight className="w-4 h-4 text-[#072a1a]" />
+          </button>
+        </div>
       </div>
 
       {/* 6 Visual Navigation Hub Cards (Identical in Intuitiveness to Landing) */}
@@ -288,8 +502,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-900 flex items-center justify-center font-bold mb-2 group-hover:scale-105 transition-transform border border-amber-100">
             <Package className="w-5 h-5 text-amber-700" />
           </div>
-          <span className="text-xs font-bold text-gray-950 block leading-tight">Maleta Tátil</span>
-          <span className="text-[10px] text-gray-500 block mt-0.5">Amostras grátis</span>
+          <span className="text-xs font-bold text-gray-950 block leading-tight">
+            {isArchitect ? 'Maleta Tátil' : 'Vistoria & Amostras'}
+          </span>
+          <span className="text-[10px] text-gray-500 block mt-0.5">
+            {isArchitect ? 'Amostras grátis' : 'Agendar visita'}
+          </span>
         </button>
 
         <button
@@ -300,14 +518,63 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-900 flex items-center justify-center font-bold mb-2 group-hover:scale-105 transition-transform border border-teal-100">
             <Award className="w-5 h-5 text-teal-700" />
           </div>
-          <span className="text-xs font-bold text-gray-950 block leading-tight">Laudo LEED</span>
-          <span className="text-[10px] text-gray-500 block mt-0.5">Memoriais PDF</span>
+          <span className="text-xs font-bold text-gray-950 block leading-tight">
+            {isArchitect ? 'Laudo LEED' : 'Laudos & ROI'}
+          </span>
+          <span className="text-[10px] text-gray-500 block mt-0.5">
+            {isArchitect ? 'Memoriais PDF' : 'Certificados ESG'}
+          </span>
         </button>
 
       </div>
 
+      {/* Zero Data Onboarding State */}
+      {projects.length === 0 && (
+        <div className="bg-white rounded-3xl p-8 sm:p-12 border border-gray-200 shadow-sm text-center space-y-5">
+          <div className="w-16 h-16 rounded-3xl bg-emerald-50 text-[#15803d] flex items-center justify-center mx-auto border border-emerald-100 shadow-sm">
+            <Layers className="w-8 h-8 text-[#15803d]" />
+          </div>
+          <div className="space-y-1.5 max-w-lg mx-auto">
+            <h3 className="font-serif font-bold text-2xl text-gray-950">
+              Nenhuma obra cadastrada ainda
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+              Inicie cadastrando seu primeiro ambiente biofílico para gerar memoriais técnicos, laudos acústicos e acompanhar o cronograma fabril em tempo real.
+            </p>
+          </div>
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={onOpenNewProjectModal}
+              className="px-6 py-3 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold text-xs sm:text-sm rounded-xl transition-all cursor-pointer shadow-md active:scale-95 flex items-center gap-2 min-h-[44px]"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Cadastrar Primeira Obra</span>
+            </button>
+            <button
+              type="button"
+              onClick={onOpenSimulator}
+              className="px-5 py-3 bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] font-bold text-xs sm:text-sm rounded-xl border border-emerald-200 transition-all cursor-pointer active:scale-95 flex items-center gap-2 min-h-[44px]"
+            >
+              <Camera className="w-4 h-4 text-[#15803d]" />
+              <span>Simular com IA</span>
+            </button>
+            {onRestoreDemoProjects && (
+              <button
+                type="button"
+                onClick={onRestoreDemoProjects}
+                className="px-5 py-3 bg-white hover:bg-gray-100 text-gray-700 font-bold text-xs sm:text-sm rounded-xl border border-gray-300 transition-all cursor-pointer active:scale-95 flex items-center gap-2 min-h-[44px]"
+              >
+                <RotateCcw className="w-4 h-4 text-gray-500" />
+                <span>Carregar Obras de Demonstração</span>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Spotlight: Active Project with Interactive Before/After Slider (Like Landing Page!) */}
-      {activeProject && (
+      {projects.length > 0 && activeProject && (
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-md hover:shadow-lg transition-all space-y-6">
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
@@ -469,16 +736,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       )}
 
       {/* Data Visualization Feature: Heatmap of Energy Savings and Acoustic Performance across all Active Projects */}
-      <ProjectsPerformanceHeatmap
-        projects={projects}
-        onOpenProjectDetail={onOpenProjectDetail}
-        onDownloadSpecPdf={onDownloadSpecPdf}
-        onSelectProjectForCompare={(projId) => {
-          if (onCompareProjects) {
-            onCompareProjects(projId, projects.find(p => p.id !== projId)?.id || projId);
-          }
-        }}
-      />
+      {projects.length > 0 && (
+        <ProjectsPerformanceHeatmap
+          projects={projects}
+          onOpenProjectDetail={onOpenProjectDetail}
+          onDownloadSpecPdf={onDownloadSpecPdf}
+          onSelectProjectForCompare={(projId) => {
+            if (onCompareProjects) {
+              onCompareProjects(projId, projects.find(p => p.id !== projId)?.id || projId);
+            }
+          }}
+        />
+      )}
 
       {/* Projects Grid Overview */}
       <div className="space-y-4">
@@ -501,75 +770,81 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((proj) => (
-            <div
-              key={proj.id}
-              className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-xl transition-all duration-300 group"
-            >
-              <div>
-                <div className="relative h-48 w-full overflow-hidden bg-gray-950">
-                  <img
-                    src={proj.thumbnail}
-                    alt={proj.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        {projects.length === 0 ? (
+          <div className="bg-white rounded-2xl p-8 text-center border border-gray-200 text-gray-500 text-xs">
+            Nenhuma obra cadastrada até o momento. Utilize o botão acima para adicionar seu primeiro projeto biofílico.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((proj) => (
+              <div
+                key={proj.id}
+                className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-xl transition-all duration-300 group"
+              >
+                <div>
+                  <div className="relative h-48 w-full overflow-hidden bg-gray-950">
+                    <img
+                      src={proj.thumbnail}
+                      alt={proj.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                  <span className="absolute top-3.5 left-3.5 px-2.5 py-0.5 rounded-md bg-[#072a1a] text-[#86efac] text-[10px] font-mono font-bold shadow-md border border-emerald-500/50">
-                    {proj.code}
-                  </span>
-
-                  <span className="absolute top-3.5 right-3.5">
-                    {getStatusBadge(proj.status)}
-                  </span>
-
-                  <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white">
-                    <span className="text-[10px] text-emerald-300 font-semibold block uppercase">
-                      {proj.category} • {proj.style}
+                    <span className="absolute top-3.5 left-3.5 px-2.5 py-0.5 rounded-md bg-[#072a1a] text-[#86efac] text-[10px] font-mono font-bold shadow-md border border-emerald-500/50">
+                      {proj.code}
                     </span>
-                    <h4 className="font-serif font-bold text-base text-white truncate">
-                      {proj.title}
-                    </h4>
+
+                    <span className="absolute top-3.5 right-3.5">
+                      {getStatusBadge(proj.status)}
+                    </span>
+
+                    <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white">
+                      <span className="text-[10px] text-emerald-300 font-semibold block uppercase">
+                        {proj.category} • {proj.style}
+                      </span>
+                      <h4 className="font-serif font-bold text-base text-white truncate">
+                        {proj.title}
+                      </h4>
+                    </div>
+                  </div>
+
+                  <div className="p-5 space-y-2.5 text-xs">
+                    <div className="flex justify-between items-center text-gray-600">
+                      <span>Cliente / Local:</span>
+                      <span className="font-semibold text-gray-900 truncate max-w-[160px]">{proj.client}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-gray-600">
+                      <span>Área Projetada:</span>
+                      <span className="font-bold text-gray-900">{proj.area} m²</span>
+                    </div>
+                    <div className="flex justify-between items-center text-gray-600">
+                      <span>Créditos LEED:</span>
+                      <span className="font-bold text-[#15803d]">+{proj.leedPointsTotal || 12} créditos</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="p-5 space-y-2.5 text-xs">
-                  <div className="flex justify-between items-center text-gray-600">
-                    <span>Cliente / Local:</span>
-                    <span className="font-semibold text-gray-900 truncate max-w-[160px]">{proj.client}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-gray-600">
-                    <span>Área Projetada:</span>
-                    <span className="font-bold text-gray-900">{proj.area} m²</span>
-                  </div>
-                  <div className="flex justify-between items-center text-gray-600">
-                    <span>Créditos LEED:</span>
-                    <span className="font-bold text-[#15803d]">+{proj.leedPointsTotal || 12} créditos</span>
-                  </div>
+                <div className="p-5 pt-0 grid grid-cols-2 gap-2.5">
+                  <button
+                    onClick={() => onDownloadSpecPdf(proj)}
+                    className="py-2.5 bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] font-bold text-xs rounded-xl border border-emerald-200 transition-all flex items-center justify-center gap-1 cursor-pointer active:scale-95 min-h-[44px]"
+                  >
+                    <Download className="w-3.5 h-3.5 text-[#15803d]" />
+                    <span>Memorial PDF</span>
+                  </button>
+
+                  <button
+                    onClick={() => onOpenProjectDetail(proj)}
+                    className="py-2.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer shadow-sm active:scale-95 min-h-[44px]"
+                  >
+                    <span>Ver Obra</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
-
-              <div className="p-5 pt-0 grid grid-cols-2 gap-2.5">
-                <button
-                  onClick={() => onDownloadSpecPdf(proj)}
-                  className="py-2.5 bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] font-bold text-xs rounded-xl border border-emerald-200 transition-all flex items-center justify-center gap-1 cursor-pointer active:scale-95"
-                >
-                  <Download className="w-3.5 h-3.5 text-[#15803d]" />
-                  <span>Memorial PDF</span>
-                </button>
-
-                <button
-                  onClick={() => onOpenProjectDetail(proj)}
-                  className="py-2.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer shadow-sm active:scale-95"
-                >
-                  <span>Ver Obra</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
     </div>

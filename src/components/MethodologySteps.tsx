@@ -1,6 +1,7 @@
 import React from 'react';
 import { Camera, Layers, Wrench, ShieldCheck, ArrowRight } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
+import { PageHeader } from './PageHeader';
 
 interface MethodologyStepsProps {
   onOpenSimulator: () => void;
@@ -52,21 +53,19 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
         
         {/* Header */}
         <ScrollReveal animation="fade-up" distance={25}>
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="text-xs font-bold text-emerald-300 uppercase tracking-widest bg-emerald-950 px-3.5 py-1 rounded-full border border-emerald-800/80 inline-flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-emerald-400" />
-              <span>METODOLOGIA TURNKEY ALL GREEN</span>
-            </span>
-
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-white leading-tight">
-              Do conceito à transformação em <br className="hidden sm:inline" />
-              <span className="italic font-light text-emerald-300">4 passos simples</span>
-            </h2>
-
-            <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-              Inspirado nos mais rigorosos processos de arquitetura paisagística corporativa e residencial. Cuidamos de todas as etapas com agilidade e precisão.
-            </p>
-          </div>
+          <PageHeader
+            theme="dark"
+            align="center"
+            badge="METODOLOGIA TURNKEY ALL GREEN"
+            badgeIcon={Layers}
+            title={
+              <>
+                Do conceito à transformação em <br className="hidden sm:inline" />
+                <span className="italic font-light text-emerald-300">4 passos simples</span>
+              </>
+            }
+            description="Inspirado nos mais rigorosos processos de arquitetura paisagística corporativa e residencial. Cuidamos de todas as etapas com agilidade e precisão."
+          />
         </ScrollReveal>
 
         {/* 4 Steps Grid */}

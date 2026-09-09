@@ -86,6 +86,29 @@ export interface UserProfile {
   points: number;
   tier: 'Gold' | 'Platinum' | 'Diamond';
   avatar: string;
+  savedBiophilicProfile?: BiophilicProfileResult;
+  savedBiophilicProfileDate?: string;
+}
+
+export interface ProjectDiffItem {
+  field: string;
+  label: string;
+  oldValue: string | number;
+  newValue: string | number;
+}
+
+export interface ProjectVersion {
+  id: string;
+  projectId: string;
+  versionNumber: number;
+  versionLabel: string;
+  author: string;
+  authorRole: string;
+  timestamp: string;
+  changeType: 'created' | 'status_change' | 'dimensions_edit' | 'botanical_edit' | 'specs_edit' | 'reverted' | 'ai_simulation';
+  changeSummary: string;
+  diffs?: ProjectDiffItem[];
+  snapshot: Omit<PortalProject, 'versionHistory'>;
 }
 
 export interface PortalProject {
@@ -108,6 +131,8 @@ export interface PortalProject {
   afterImage?: string;
   description?: string;
   notes?: string;
+  versionHistory?: ProjectVersion[];
+  currentVersionId?: string;
   // Technical Specifications & Sustainability Metrics
   speciesUsed?: string[];
   structureType?: string;
@@ -171,6 +196,68 @@ export interface PortalNotification {
   };
   actionLabel?: string;
   actionType?: 'view_project' | 'recalculate_leed' | 'view_botanical' | 'download_report' | 'open_simulator' | 'open_chat';
+  actionPayload?: { tab?: string; projectId?: string; };
 }
 
+export interface QuizOption {
+  id: string;
+  label: string;
+  description: string;
+  tag: string;
+  badge?: string;
+  statsNote?: string;
+}
+
+export interface QuizQuestion {
+  id: string;
+  number: number;
+  category: string;
+  title: string;
+  subtitle: string;
+  iconName: string;
+  options: QuizOption[];
+}
+
+export interface BiophilicProfileResult {
+  archetypeId: string;
+  archetypeTitle: string;
+  archetypeTagline: string;
+  badge: string;
+  scoreWell: number;
+  scoreLeed: number;
+  acousticRating: string;
+  acousticNRC: number;
+  productivityBoost: number;
+  stressReduction: number;
+  waterSaved: string;
+  maintenanceFrequency: string;
+  designStyle: {
+    title: string;
+    description: string;
+    colorPalette: { name: string; hex: string }[];
+    framing: string;
+    lightingRec: string;
+    textureNotes: string;
+  };
+  recommendedSpecies: Array<{
+    id: string;
+    name: string;
+    scientificName: string;
+    category: 'preservado' | 'permanente';
+    image: string;
+    acousticAbsorption: string;
+    matchReason: string;
+    tactileFeel: string;
+    tags: string[];
+  }>;
+  whyItMatches: string[];
+  recommendedSolutionCode: string;
+}
+
+export interface BiophilicChatMessage {
+  id: string;
+  sender: 'user' | 'assistant';
+  text: string;
+  timestamp: string;
+}
 

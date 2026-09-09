@@ -8,6 +8,7 @@ import { SolutionsGrid } from './components/SolutionsGrid';
 import { SmartSearchHub } from './components/SmartSearchHub';
 import { MethodologySteps } from './components/MethodologySteps';
 import { BotanicalCatalog } from './components/BotanicalCatalog';
+import { BiophilicQuiz } from './components/BiophilicQuiz';
 import { ComparisonMatrix } from './components/ComparisonMatrix';
 import { LeedCalculator } from './components/LeedCalculator';
 import { BiophilicRoiCalculator } from './components/BiophilicRoiCalculator';
@@ -25,13 +26,15 @@ import { ArchitectPortal } from './components/ArchitectPortal';
 import { ScrollReveal } from './components/ScrollReveal';
 import { LgpdBanner } from './components/LgpdBanner';
 import { BioTipWidget } from './components/BioTipWidget';
-import { ProjectSample, SimulationResult, UserProfile, PortalNotification } from './types';
+import { ProjectSample, SimulationResult, UserProfile, PortalNotification, BiophilicProfileResult } from './types';
 import { DEFAULT_USER, INITIAL_PORTAL_NOTIFICATIONS } from './data/portalData';
+import { generateBiophilicGuidePdf } from './utils/generateBiophilicGuidePdf';
 import { NotificationCenter } from './components/NotificationCenter';
 import { GlobalCommandPalette } from './components/GlobalCommandPalette';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { AccessibilityProvider, useAccessibility } from './context/AccessibilityContext';
+import { ConfirmationDialogProvider } from './context/ConfirmationDialogContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { DevToolsWidget, BreakableSectionKey } from './components/DevToolsWidget';
 import { BuggyTester } from './components/BuggyTester';
@@ -56,7 +59,53 @@ function AppContent() {
 
   // Navigation View State
   const [currentView, setCurrentView] = useState<'landing' | 'portal'>('landing');
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
+    try {
+      const saved = localStorage.getItem('allgreen_user_profile');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return DEFAULT_USER;
+  });
+
+  const handleSaveBiophilicProfile = (
+    profile: BiophilicProfileResult,
+    userOverride?: Partial<UserProfile>,
+    autoDownload: boolean = true
+  ) => {
+    const baseUser = currentUser || DEFAULT_USER;
+    const updatedUser: UserProfile = {
+      ...baseUser,
+      ...(userOverride || {}),
+      savedBiophilicProfile: profile,
+      savedBiophilicProfileDate: new Date().toLocaleDateString('pt-BR'),
+    };
+
+    setCurrentUser(updatedUser);
+    try {
+      localStorage.setItem('allgreen_user_profile', JSON.stringify(updatedUser));
+    } catch (e) {}
+
+    const newNotif: PortalNotification = {
+      id: `notif_bio_${Date.now()}`,
+      type: 'botanical_update',
+      title: `Perfil Biofílico Salvo: ${profile.archetypeTitle}`,
+      description: `Diagnóstico vinculado com sucesso ao perfil de ${updatedUser.name}. Guia técnico homologado gerado (Cód. ${profile.recommendedSolutionCode}).`,
+      timestamp: 'Agora mesmo',
+      isRead: false,
+      actionLabel: 'Ver Perfil no Painel',
+      actionType: 'view_project',
+    };
+    setNotifications((prev) => [newNotif, ...prev]);
+
+    if (autoDownload) {
+      generateBiophilicGuidePdf(profile, {
+        user: updatedUser,
+        downloadImmediately: true,
+      });
+    }
+
+    return updatedUser;
+  };
 
   // Notifications State
   const [notifications, setNotifications] = useState<PortalNotification[]>(INITIAL_PORTAL_NOTIFICATIONS);
@@ -389,6 +438,19 @@ function AppContent() {
                 onLogout={handleLogout}
                 onOpenSimulator={handleOpenSimulator}
                 onOpenQuote={handleOpenQuote}
+                onRetakeQuiz={() => {
+                  setCurrentView('landing');
+                  setTimeout(() => {
+                    const el = document.getElementById('biophilic-quiz');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }, 150);
+                }}
+                onDownloadBiophilicGuide={(profile) => {
+                  generateBiophilicGuidePdf(profile, {
+                    user: currentUser || DEFAULT_USER,
+                    downloadImmediately: true,
+                  });
+                }}
               />
             </ErrorBoundary>
           </motion.div>
@@ -479,9 +541,27 @@ function AppContent() {
               />
             </ErrorBoundary>
 
-            {/* Matriz Comparativa das Tecnologias Verticais */}
+            {/* Diagnóstico Interativo de Perfil Biofílico (Quiz 5 Perguntas) */}
+            <ErrorBoundary sectionName="Diagnóstico de Perfil Biofílico">
+              <BiophilicQuiz
+                onOpenSimulator={handleOpenSimulator}
+                onOpenQuote={(ctx) => handleOpenQuote(ctx || 'Diagnóstico de Perfil Biofílico')}
+                onOpenPdfReport={handleOpenPdfReport}
+                onScrollToCatalog={handleScrollToBotanical}
+                currentUser={currentUser}
+                onSaveProfile={handleSaveBiophilicProfile}
+                onOpenLogin={handleOpenLogin}
+                onNavigateToPortal={() => setCurrentView('portal')}
+              />
+            </ErrorBoundary>
+
+            {/* Matriz Comparativa das Tecnologias Verticais (com Modo Lado a Lado 1x1) */}
             <ErrorBoundary sectionName="Matriz Comparativa">
-              <ComparisonMatrix />
+              <ComparisonMatrix
+                onOpenSimulator={handleOpenSimulator}
+                onOpenQuote={(ctx) => handleOpenQuote(ctx || 'Matriz Comparativa das Tecnologias Verticais')}
+                onOpenPdfReport={handleOpenPdfReport}
+              />
             </ErrorBoundary>
 
             {/* Calculadora de Créditos WELL & LEED */}
@@ -638,7 +718,9 @@ function AppContent() {
 export function App() {
   return (
     <AccessibilityProvider>
-      <AppContent />
+      <ConfirmationDialogProvider>
+        <AppContent />
+      </ConfirmationDialogProvider>
     </AccessibilityProvider>
   );
 }

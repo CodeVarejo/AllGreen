@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import {
   Keyboard,
   X,
-  Sparkles,
+  Camera,
   Search,
   Layers,
   Clock,
@@ -48,7 +48,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
           title: 'Simulador IA de Ambientes Biofílicos',
           description: 'Abre a ferramenta de cálculo botânico, acústico e investimento',
           keys: [isMac ? '⌘' : 'Ctrl', 'M'],
-          icon: Sparkles,
+          icon: Camera,
         },
         {
           id: 'portal',

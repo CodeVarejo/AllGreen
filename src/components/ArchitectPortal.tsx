@@ -3,20 +3,21 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   Zap,
   X,
-  ChevronRight,
-  Sparkles
+  ChevronRight
 } from 'lucide-react';
 import {
   UserProfile,
   PortalProject,
   TechnicalAsset,
-  PortalNotification
+  PortalNotification,
+  ProjectVersion
 } from '../types';
 import {
   INITIAL_PORTAL_PROJECTS,
   TECHNICAL_ASSETS,
   INITIAL_PORTAL_NOTIFICATIONS
 } from '../data/portalData';
+import { createProjectVersion, revertProjectToVersion } from '../utils/versionControl';
 
 import { PortalHeader } from './portal/PortalHeader';
 import { PortalTabs, PortalTabKey } from './portal/PortalTabs';
@@ -27,10 +28,16 @@ import { SamplesView } from './portal/SamplesView';
 import { SpecifierView } from './portal/SpecifierView';
 import { ProjectDetailModal } from './portal/ProjectDetailModal';
 import { NewProjectModal } from './portal/NewProjectModal';
+import { EditProjectModal } from './portal/EditProjectModal';
+import { ProjectVersionHistoryModal } from './portal/ProjectVersionHistoryModal';
 import { DownloadToast } from './portal/DownloadToast';
+import { EsgSustainabilityDashboard } from './portal/EsgSustainabilityDashboard';
 
 import { ProjectComparison } from './ProjectComparison';
 import { NotificationCenter } from './NotificationCenter';
+import { PortalBreadcrumbs } from './portal/PortalBreadcrumbs';
+import { Breadcrumbs, BreadcrumbItem } from './Breadcrumbs';
+import { PageHeader } from './PageHeader';
 import { jsPDF } from 'jspdf';
 
 interface ArchitectPortalProps {
@@ -39,6 +46,8 @@ interface ArchitectPortalProps {
   onLogout: () => void;
   onOpenSimulator: () => void;
   onOpenQuote: (context: string) => void;
+  onRetakeQuiz?: () => void;
+  onDownloadBiophilicGuide?: (profile: any) => void;
 }
 
 export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
@@ -47,6 +56,8 @@ export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
   onLogout,
   onOpenSimulator,
   onOpenQuote,
+  onRetakeQuiz,
+  onDownloadBiophilicGuide,
 }) => {
   const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile>(user);
   const [activeTab, setActiveTab] = useState<PortalTabKey>('dashboard');
@@ -56,6 +67,8 @@ export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [selectedProjectForDetail, setSelectedProjectForDetail] = useState<PortalProject | null>(null);
+  const [selectedProjectForVersionHistory, setSelectedProjectForVersionHistory] = useState<PortalProject | null>(null);
+  const [selectedProjectForEdit, setSelectedProjectForEdit] = useState<PortalProject | null>(null);
   
   // Toast states
   const [activeDownloadToast, setActiveDownloadToast] = useState<{ fileName: string; fileFormat: string } | null>(null);
@@ -106,6 +119,10 @@ export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
     });
   };
 
+  const handleRestoreDemoProjects = () => {
+    setProjects(INITIAL_PORTAL_PROJECTS);
+  };
+
   const handleMarkAsRead = (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
   };
@@ -120,6 +137,18 @@ export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
 
   const handleActionClick = (notification: PortalNotification) => {
     setIsNotificationOpen(false);
+    if (notification.actionPayload?.projectId) {
+      const targetProj = projects.find(p => p.id === notification.actionPayload?.projectId);
+      if (targetProj) {
+        if (notification.title.includes('Versão') || notification.actionLabel?.includes('Histórico')) {
+          setSelectedProjectForVersionHistory(targetProj);
+        } else {
+          setSelectedProjectForDetail(targetProj);
+        }
+        return;
+      }
+    }
+
     if (notification.actionType === 'view_project' && notification.projectCode) {
       const targetProj = projects.find(p => p.code === notification.projectCode);
       if (targetProj) {
@@ -461,6 +490,110 @@ Portal do Arquiteto: https://allgreendecor.com.br
     setSelectedProjectForDetail(newProject);
   };
 
+  const handleOpenVersionHistory = (project: PortalProject) => {
+    // Find latest reference from current projects state
+    const current = projects.find(p => p.id === project.id) || project;
+    setSelectedProjectForVersionHistory(current);
+  };
+
+  const handleOpenEditProject = (project: PortalProject) => {
+    const current = projects.find(p => p.id === project.id) || project;
+    setSelectedProjectForEdit(current);
+  };
+
+  const handleSaveProject = (updatedProject: PortalProject, changeSummary?: string) => {
+    const existingProject = projects.find(p => p.id === updatedProject.id);
+    if (!existingProject) return;
+
+    const authorRole = currentUserProfile.role === 'arquiteto'
+      ? 'Arquiteta Especificadora'
+      : currentUserProfile.role === 'especificador'
+      ? 'Consultor LEED / Engenheiro'
+      : 'Cliente Corporativo';
+
+    const newVersion = createProjectVersion(
+      existingProject,
+      updatedProject,
+      currentUserProfile.name,
+      authorRole,
+      'specs_edit',
+      changeSummary
+    );
+
+    const fullHistory = [...(existingProject.versionHistory || []), newVersion];
+    const projectWithHistory: PortalProject = {
+      ...updatedProject,
+      versionHistory: fullHistory,
+      currentVersionId: newVersion.id
+    };
+
+    setProjects(prev => prev.map(p => p.id === updatedProject.id ? projectWithHistory : p));
+
+    if (selectedProjectForDetail?.id === updatedProject.id) {
+      setSelectedProjectForDetail(projectWithHistory);
+    }
+    if (selectedProjectForVersionHistory?.id === updatedProject.id) {
+      setSelectedProjectForVersionHistory(projectWithHistory);
+    }
+
+    // Trigger feedback notification & toast
+    const versionNotif: PortalNotification = {
+      id: `notif_v_${Date.now()}`,
+      title: `Nova Versão v${newVersion.versionNumber}.0 gravada no ${updatedProject.code}`,
+      description: `Alteração técnica registrada por ${currentUserProfile.name}: "${changeSummary || newVersion.changeSummary}". Histórico atualizado com sucesso.`,
+      timestamp: 'Agora',
+      type: 'project_status',
+      isRead: false,
+      actionLabel: 'Ver Histórico',
+      actionPayload: { tab: 'projects', projectId: updatedProject.id }
+    };
+
+    setNotifications(prev => [versionNotif, ...prev]);
+    setActiveToast(versionNotif);
+  };
+
+  const handleRevertToVersion = (targetVersion: ProjectVersion) => {
+    const currentProject = projects.find(p => p.id === targetVersion.projectId);
+    if (!currentProject) return;
+
+    const authorRole = currentUserProfile.role === 'arquiteto'
+      ? 'Arquiteta Especificadora'
+      : currentUserProfile.role === 'especificador'
+      ? 'Consultor LEED / Engenheiro'
+      : 'Cliente Corporativo';
+
+    const revertedProject = revertProjectToVersion(
+      currentProject,
+      targetVersion,
+      currentUserProfile.name,
+      authorRole
+    );
+
+    setProjects(prev => prev.map(p => p.id === currentProject.id ? revertedProject : p));
+
+    if (selectedProjectForDetail?.id === currentProject.id) {
+      setSelectedProjectForDetail(revertedProject);
+    }
+    if (selectedProjectForVersionHistory?.id === currentProject.id) {
+      setSelectedProjectForVersionHistory(revertedProject);
+    }
+
+    // Trigger revert notification & toast
+    const revertNotif: PortalNotification = {
+      id: `notif_rev_${Date.now()}`,
+      title: `Projeto ${revertedProject.code} restaurado para a Versão v${targetVersion.versionNumber}.0`,
+      description: `Parâmetros técnicos, botânicos e acústicos restaurados para o snapshot de ${targetVersion.timestamp}.`,
+      timestamp: 'Agora',
+      type: 'project_status',
+      isRead: false,
+      actionLabel: 'Ver Projeto',
+      actionPayload: { tab: 'projects', projectId: revertedProject.id }
+    };
+
+    setNotifications(prev => [revertNotif, ...prev]);
+    setActiveToast(revertNotif);
+  };
+
   const handleSelectForComparison = (projectId: string) => {
     setComparisonProjectAId(projectId);
     const other = projects.find(p => p.id !== projectId);
@@ -534,8 +667,29 @@ Portal do Arquiteto: https://allgreendecor.com.br
       )}
 
       {/* Portal Main Workspace Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-28 md:pb-12 space-y-6 sm:space-y-8">
         
+        {/* Unified Dynamic Breadcrumbs Trail for Authenticated Navigation */}
+        <div className="bg-white/80 backdrop-blur-md px-3.5 py-2 sm:px-4 rounded-2xl border border-emerald-900/10 shadow-2xs">
+          <PortalBreadcrumbs
+            activeTab={activeTab}
+            selectedProjectForDetail={selectedProjectForDetail}
+            selectedProjectForEdit={selectedProjectForEdit}
+            selectedProjectForVersionHistory={selectedProjectForVersionHistory}
+            isNewProjectModalOpen={isNewProjectModalOpen}
+            comparisonProjectAId={comparisonProjectAId}
+            comparisonProjectBId={comparisonProjectBId}
+            projects={projects}
+            userRole={currentUserProfile.role}
+            onNavigateTab={(tab) => setActiveTab(tab)}
+            onSelectProjectDetail={(proj) => setSelectedProjectForDetail(proj)}
+            onCancelEdit={() => setSelectedProjectForEdit(null)}
+            onCloseVersionHistory={() => setSelectedProjectForVersionHistory(null)}
+            onCloseNewProjectModal={() => setIsNewProjectModalOpen(false)}
+            onBackToLanding={onBackToLanding}
+          />
+        </div>
+
         {/* Navigation Tabs */}
         <PortalTabs
           activeTab={activeTab}
@@ -568,6 +722,9 @@ Portal do Arquiteto: https://allgreendecor.com.br
                 onDownloadSpecPdf={handleDownloadSpecSheet}
                 onOpenProjectDetail={(p) => setSelectedProjectForDetail(p)}
                 onActionClick={handleActionClick}
+                onRetakeQuiz={onRetakeQuiz}
+                onDownloadBiophilicGuide={onDownloadBiophilicGuide}
+                onRestoreDemoProjects={handleRestoreDemoProjects}
               />
             </motion.div>
           )}
@@ -589,6 +746,10 @@ Portal do Arquiteto: https://allgreendecor.com.br
                 onOpenProjectDetail={(p) => setSelectedProjectForDetail(p)}
                 onDownloadSpecPdf={handleDownloadSpecSheet}
                 onSelectForComparison={handleSelectForComparison}
+                onOpenVersionHistory={handleOpenVersionHistory}
+                onOpenEditProject={handleOpenEditProject}
+                onBackToDashboard={() => setActiveTab('dashboard')}
+                onRestoreDemoProjects={handleRestoreDemoProjects}
               />
             </motion.div>
           )}
@@ -608,11 +769,34 @@ Portal do Arquiteto: https://allgreendecor.com.br
                 initialProjectBId={comparisonProjectBId}
                 onOpenSimulator={onOpenSimulator}
                 onOpenQuote={onOpenQuote}
+                onBackToProjects={() => setActiveTab('projects')}
+                onBackToDashboard={() => setActiveTab('dashboard')}
               />
             </motion.div>
           )}
 
-          {/* TAB 4: BIM & CAD DOWNLOADS */}
+          {/* TAB 4: ESG SUSTAINABILITY DASHBOARD */}
+          {activeTab === 'esg' && (
+            <motion.div
+              key="tab-esg"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <EsgSustainabilityDashboard
+                user={currentUserProfile}
+                projects={projects}
+                onOpenProjectDetail={(p) => setSelectedProjectForDetail(p)}
+                onDownloadSpecPdf={handleDownloadSpecSheet}
+                onOpenSimulator={onOpenSimulator}
+                onOpenNewProjectModal={() => setIsNewProjectModalOpen(true)}
+                onBackToDashboard={() => setActiveTab('dashboard')}
+              />
+            </motion.div>
+          )}
+
+          {/* TAB 5: BIM & CAD DOWNLOADS */}
           {activeTab === 'bim_cad' && (
             <motion.div
               key="tab-bim_cad"
@@ -621,7 +805,10 @@ Portal do Arquiteto: https://allgreendecor.com.br
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             >
-              <BimCadView onDownloadAsset={handleDownloadAsset} />
+              <BimCadView 
+                onDownloadAsset={handleDownloadAsset}
+                onBackToDashboard={() => setActiveTab('dashboard')}
+              />
             </motion.div>
           )}
 
@@ -634,7 +821,10 @@ Portal do Arquiteto: https://allgreendecor.com.br
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             >
-              <SamplesView user={currentUserProfile} />
+              <SamplesView 
+                user={currentUserProfile} 
+                onBackToDashboard={() => setActiveTab('dashboard')}
+              />
             </motion.div>
           )}
 
@@ -658,6 +848,7 @@ Portal do Arquiteto: https://allgreendecor.com.br
                 setLeedAcousticPanel={setLeedAcousticPanel}
                 wellNatureAccess={wellNatureAccess}
                 setWellNatureAccess={setWellNatureAccess}
+                onBackToDashboard={() => setActiveTab('dashboard')}
               />
             </motion.div>
           )}
@@ -676,6 +867,30 @@ Portal do Arquiteto: https://allgreendecor.com.br
         onCompareWithAnother={(projId) => {
           setSelectedProjectForDetail(null);
           handleSelectForComparison(projId);
+        }}
+        onOpenVersionHistory={(proj) => handleOpenVersionHistory(proj)}
+        onOpenEditProject={(proj) => handleOpenEditProject(proj)}
+      />
+
+      {/* Edit Project Modal (creates a new snapshot version upon saving) */}
+      <EditProjectModal
+        project={selectedProjectForEdit}
+        user={currentUserProfile}
+        isOpen={Boolean(selectedProjectForEdit)}
+        onClose={() => setSelectedProjectForEdit(null)}
+        onSaveProject={handleSaveProject}
+      />
+
+      {/* Project Version History & Audit Modal (allows comparing diffs & reverting) */}
+      <ProjectVersionHistoryModal
+        project={selectedProjectForVersionHistory}
+        user={currentUserProfile}
+        isOpen={Boolean(selectedProjectForVersionHistory)}
+        onClose={() => setSelectedProjectForVersionHistory(null)}
+        onRevertToVersion={handleRevertToVersion}
+        onOpenEditModal={(proj) => {
+          setSelectedProjectForVersionHistory(null);
+          handleOpenEditProject(proj);
         }}
       />
 

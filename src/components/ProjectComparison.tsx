@@ -13,7 +13,6 @@ import {
   MapPin,
   Flame,
   Clock,
-  Sparkles,
   FileText,
   DollarSign,
   SunMedium,
@@ -31,6 +30,8 @@ interface ProjectComparisonProps {
   initialProjectBId?: string;
   onOpenSimulator: () => void;
   onOpenQuote: (context: string) => void;
+  onBackToProjects?: () => void;
+  onBackToDashboard?: () => void;
 }
 
 export const ProjectComparison: React.FC<ProjectComparisonProps> = ({
@@ -39,6 +40,8 @@ export const ProjectComparison: React.FC<ProjectComparisonProps> = ({
   initialProjectBId,
   onOpenSimulator,
   onOpenQuote,
+  onBackToProjects,
+  onBackToDashboard,
 }) => {
   // Default to first two projects if available
   const defaultA = initialProjectAId || projects[0]?.id || '';
@@ -168,7 +171,6 @@ export const ProjectComparison: React.FC<ProjectComparisonProps> = ({
 
   return (
     <div className="space-y-6">
-      
       {/* Header with Title and Global Actions */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

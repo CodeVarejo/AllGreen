@@ -21,7 +21,7 @@ import {
   Zap,
   Volume2,
   TrendingUp,
-  Sparkles,
+  Activity,
   Layers,
   Thermometer,
   FileText,
@@ -36,7 +36,6 @@ import {
   Leaf,
   ShieldCheck,
   DollarSign,
-  Activity,
   Maximize2
 } from 'lucide-react';
 import { PortalProject } from '../../types';
@@ -623,7 +622,7 @@ export const ProjectsPerformanceHeatmap: React.FC<ProjectsPerformanceHeatmapProp
 
           <h2 className="text-2xl sm:text-3xl font-serif font-bold text-gray-950 mt-1 flex items-center gap-2.5">
             <span>Heatmap de Energia & Desempenho Acústico</span>
-            <Sparkles className="w-5 h-5 text-[#15803d]" />
+            <Activity className="w-5 h-5 text-[#15803d]" />
           </h2>
           
           <p className="text-xs sm:text-sm text-gray-600 max-w-3xl mt-0.5">

@@ -4,7 +4,6 @@ import {
   Download,
   CheckCircle2,
   X,
-  Sparkles,
   ShieldCheck,
   Building,
   Award,

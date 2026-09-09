@@ -9,7 +9,7 @@ import {
   Leaf,
   ShieldCheck,
   Check,
-  Sparkles,
+  Zap,
   Layers,
   FileCode,
   Award
@@ -118,7 +118,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-extrabold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
+                <Zap className="w-3.5 h-3.5 text-emerald-700" />
                 <span>Acesso Rápido de Teste (1 Clique):</span>
               </span>
               <span className="text-[10px] text-emerald-800 font-bold bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200">

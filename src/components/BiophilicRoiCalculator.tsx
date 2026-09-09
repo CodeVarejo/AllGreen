@@ -9,7 +9,6 @@ import {
   Clock,
   Download,
   Sliders,
-  Sparkles,
   Award,
   CheckCircle2,
   ShieldCheck,
@@ -559,7 +558,7 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
             {/* Quick Preset Selector Chips */}
             <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
               <span className="text-xs font-semibold text-gray-500 mr-1 flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-[#15803d]" /> Cenários Típicos:
+                <Sliders className="w-3.5 h-3.5 text-[#15803d]" /> Cenários Típicos:
               </span>
               {PRESET_SCENARIOS.map((preset) => (
                 <button

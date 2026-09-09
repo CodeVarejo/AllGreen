@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Download, CheckCircle2, FileText, Sparkles, X } from 'lucide-react';
+import { Download, CheckCircle2, FileText, X } from 'lucide-react';
 
 interface DownloadToastProps {
   fileName: string;

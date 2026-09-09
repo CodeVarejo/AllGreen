@@ -14,7 +14,6 @@ import {
   FileText,
   ShieldCheck,
   RefreshCw,
-  Sparkles,
   Bot,
   Layers,
   Clock
@@ -61,7 +60,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       case 'ai_assistant_message':
         return (
           <div className="w-9 h-9 rounded-xl bg-emerald-100 text-[#072a1a] flex items-center justify-center shrink-0 border border-emerald-300 shadow-2xs">
-            <Sparkles className="w-5 h-5 text-[#15803d]" />
+            <Bot className="w-5 h-5 text-[#15803d]" />
           </div>
         );
       case 'project_status':
@@ -96,7 +95,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       case 'ai_assistant_message':
         return (
           <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-100 text-[#072a1a] border border-emerald-300 flex items-center gap-1">
-            <Sparkles className="w-2.5 h-2.5 text-[#15803d]" />
+            <Bot className="w-2.5 h-2.5 text-[#15803d]" />
             Assistente IA
           </span>
         );

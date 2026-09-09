@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   X,
   Plus,
@@ -9,9 +9,11 @@ import {
   FileText,
   Camera,
   CheckCircle2,
-  Sparkles
+  ChevronRight
 } from 'lucide-react';
 import { PortalProject, UserProfile } from '../../types';
+import { seedProjectHistory } from '../../utils/versionControl';
+import { useUnsavedChangesGuard } from '../../hooks/useUnsavedChangesGuard';
 
 interface NewProjectModalProps {
   user: UserProfile;
@@ -34,6 +36,26 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({
   const [area, setArea] = useState<number>(18.5);
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isDirty = useMemo(() => {
+    return title.trim() !== '' || client.trim() !== '' || notes.trim() !== '' || area !== 18.5;
+  }, [title, client, notes, area]);
+
+  const { confirmDiscard } = useUnsavedChangesGuard({
+    isDirty,
+    title: 'Descartar cadastro de nova obra?',
+    description: 'Você preencheu informações para o cadastro deste projeto. Se sair agora, todos os dados informados serão descartados.',
+    confirmText: 'Descartar Cadastro',
+    cancelText: 'Continuar Preenchendo',
+    variant: 'warning',
+    enabled: isOpen,
+    interceptEscapeKey: true,
+    onDiscard: onClose,
+  });
+
+  const handleRequestClose = () => {
+    confirmDiscard(onClose);
+  };
 
   if (!isOpen) return null;
 
@@ -81,170 +103,181 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({
         weightPerM2: 12.0,
       };
 
-      onAddProject(newProj);
+      const finalProj = seedProjectHistory(newProj);
+      onAddProject(finalProj);
       setIsSubmitting(false);
       onClose();
     }, 400);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs overflow-y-auto">
-      <div 
-        className="fixed inset-0"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+    <>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-xs overflow-y-auto">
+        <div 
+          className="fixed inset-0"
+          onClick={handleRequestClose}
+          aria-hidden="true"
+        />
 
-      <div className="bg-white rounded-3xl max-w-lg w-full my-auto overflow-hidden shadow-2xl relative border border-emerald-950/20 z-10 animate-in fade-in zoom-in-95 duration-200">
-        
-        {/* Header */}
-        <div className="bg-[#072a1a] text-white p-6 relative">
-          <button
-            onClick={onClose}
-            className="absolute top-5 right-5 w-8 h-8 rounded-full bg-black/30 text-gray-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-          >
-            <X className="w-4 h-4" />
-          </button>
-
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="px-2.5 py-0.5 rounded-full bg-[#86efac] text-[#072a1a] text-[10px] font-extrabold uppercase">
-              Nova Obra / Especificação
-            </span>
-          </div>
-
-          <h2 className="text-2xl font-serif font-bold text-white">
-            Cadastrar Novo Projeto
-          </h2>
-          <p className="text-xs text-emerald-200 mt-1">
-            Cadastre as diretrizes do seu projeto para emissão de memorial técnico e compatibilização BIM.
-          </p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <div className="bg-white rounded-3xl max-w-lg w-full my-auto overflow-hidden shadow-2xl relative border border-emerald-950/20 z-10 animate-in fade-in zoom-in-95 duration-200">
           
-          <div>
-            <label className="text-xs font-bold text-gray-700 block mb-1">
-              Nome do Projeto / Espaço *
-            </label>
-            <input
-              type="text"
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="ex: Lounge Corporativo Paulista, Recepção Sede..."
-              className="w-full px-3.5 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#072a1a] focus:bg-white"
-            />
+          {/* Header */}
+          <div className="bg-[#072a1a] text-white p-6 relative">
+            <button
+              type="button"
+              onClick={handleRequestClose}
+              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-black/30 text-gray-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              aria-label="Fechar cadastro"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-1.5 text-xs text-emerald-300 font-medium mb-1">
+              <span>Portal</span>
+              <ChevronRight className="w-3 h-3 text-emerald-400" />
+              <span>Obras</span>
+              <ChevronRight className="w-3 h-3 text-emerald-400" />
+              <span className="text-[#86efac] font-bold">Novo Cadastro</span>
+            </div>
+
+            <h2 className="text-2xl font-serif font-bold text-white flex items-center gap-2">
+              <span>Cadastrar Nova Obra</span>
+            </h2>
+            <p className="text-xs text-emerald-200 mt-1">
+              Registre a obra para gerar memorial descritivo automático, quantitativo e cálculo LEED.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+            
             <div>
               <label className="text-xs font-bold text-gray-700 block mb-1">
-                Cliente / Empreendimento *
+                Nome do Projeto / Espaço *
               </label>
               <input
                 type="text"
                 required
-                value={client}
-                onChange={(e) => setClient(e.target.value)}
-                placeholder="ex: Banco Alfa, Família Silva..."
+                placeholder="ex: Foyer Principal Sede XP ou Varanda Gourmet"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#072a1a]"
               />
             </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">
+                  Cliente / Empreendimento *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="ex: BTG Pactual ou Família Ribeiro"
+                  value={client}
+                  onChange={(e) => setClient(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#072a1a]"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">
+                  Cidade / UF
+                </label>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#072a1a]"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">
+                  Tipologia
+                </label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as any)}
+                  className="w-full px-3.5 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#072a1a]"
+                >
+                  <option value="Corporativo">Corporativo</option>
+                  <option value="Residencial">Residencial</option>
+                  <option value="Comercial">Comercial</option>
+                  <option value="Hospitalar">Hospitalar</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">
+                  Estilo All Green
+                </label>
+                <select
+                  value={style}
+                  onChange={(e) => setStyle(e.target.value as any)}
+                  className="w-full px-3.5 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#072a1a]"
+                >
+                  <option value="Jardim Preservado">Preservado</option>
+                  <option value="Musgo Polar Moss">Polar Moss</option>
+                  <option value="Jardim Permanente Hiper-Realista">Permanente Anti-UV</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">
+                  Área (m²) *
+                </label>
+                <input
+                  type="number"
+                  step="0.5"
+                  min="1"
+                  max="1000"
+                  required
+                  value={area}
+                  onChange={(e) => setArea(parseFloat(e.target.value) || 0)}
+                  className="w-full px-3.5 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#072a1a]"
+                />
+              </div>
+            </div>
+
             <div>
               <label className="text-xs font-bold text-gray-700 block mb-1">
-                Localização (Cidade, UF)
+                Observações Técnicas e Diretrizes de Projeto
               </label>
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="São Paulo, SP"
+              <textarea
+                rows={3}
+                placeholder="Indique pé-direito, tipo de fixação na alvenaria, restrições de peso ou iluminação..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#072a1a]"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-bold text-gray-700 block mb-1">
-                Segmento / Categoria
-              </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value as any)}
-                className="w-full px-3.5 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#072a1a]"
+            {/* Footer Buttons */}
+            <div className="pt-3 border-t border-gray-200 flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={handleRequestClose}
+                className="px-4 py-2.5 bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 text-xs font-bold rounded-xl cursor-pointer transition-all active:scale-95 min-h-[44px]"
               >
-                <option value="Corporativo">Corporativo & Escritórios</option>
-                <option value="Residencial">Residencial & Living</option>
-                <option value="Comercial">Comercial & Varejo</option>
-                <option value="Eventos">Eventos & Stands</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-xs font-bold text-gray-700 block mb-1">
-                Tipologia Biofílica
-              </label>
-              <select
-                value={style}
-                onChange={(e) => setStyle(e.target.value as any)}
-                className="w-full px-3.5 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#072a1a]"
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-5 py-2.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold rounded-xl text-xs flex items-center gap-2 cursor-pointer shadow-sm active:scale-95 disabled:opacity-50 min-h-[44px]"
               >
-                <option value="Jardim Preservado">Jardim Preservado Natural</option>
-                <option value="Musgo Polar Moss">Musgo Polar Moss Acústico</option>
-                <option value="Jardim Permanente Hiper-Realista">Permanente Hiper-Realista Anti-UV</option>
-                <option value="Misto Biofílico">Misto Biofílico Custom</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-1">
-              <label className="text-xs font-bold text-gray-700">Área Estimada da Parede</label>
-              <span className="text-xs font-bold text-[#072a1a]">{area} m²</span>
-            </div>
-            <input
-              type="range"
-              min={2}
-              max={100}
-              step={0.5}
-              value={area}
-              onChange={(e) => setArea(Number(e.target.value))}
-              className="w-full accent-[#072a1a] cursor-pointer"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-bold text-gray-700 block mb-1">
-              Notas Técnicas de Projeto (Opcional)
-            </label>
-            <textarea
-              rows={2}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Ex: Parede com pé direito de 3.2m, substrato alvenaria, iluminação com trilho spot 3000K..."
-              className="w-full px-3.5 py-2 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#072a1a]"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-3.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 active:scale-98"
-          >
-            {isSubmitting ? (
-              <span>Processando cadastro...</span>
-            ) : (
-              <>
                 <Plus className="w-4 h-4" />
-                <span>Salvar Projeto & Abrir Ficha Técnica</span>
-              </>
-            )}
-          </button>
+                <span>{isSubmitting ? 'Cadastrando...' : 'Cadastrar Obra no Portal'}</span>
+              </button>
+            </div>
 
-        </form>
+          </form>
 
+        </div>
       </div>
-    </div>
+    </>
   );
 };

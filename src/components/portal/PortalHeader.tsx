@@ -6,15 +6,13 @@ import {
   Camera,
   Plus,
   LogOut,
-  Sparkles,
   UserCheck,
   Building,
-  Download,
-  Package,
-  SlidersHorizontal,
-  ChevronRight
+  Search,
+  CheckCircle2
 } from 'lucide-react';
 import { UserProfile } from '../../types';
+import { isMacUser } from '../../hooks/useKeyboardShortcuts';
 
 interface PortalHeaderProps {
   user: UserProfile;
@@ -25,7 +23,8 @@ interface PortalHeaderProps {
   onOpenSimulator: () => void;
   onOpenNewProjectModal: () => void;
   onToggleUserRole?: () => void;
-  onTriggerSimulation?: (type: 'leed' | 'botanical') => void;
+  onOpenSearch?: () => void;
+  onTriggerSimulation?: (type: 'botanical' | 'leed') => void;
 }
 
 export const PortalHeader: React.FC<PortalHeaderProps> = ({
@@ -37,58 +36,83 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
   onOpenSimulator,
   onOpenNewProjectModal,
   onToggleUserRole,
+  onOpenSearch,
+  onTriggerSimulation,
 }) => {
   const isArchitect = user.role === 'arquiteto' || user.role === 'especificador';
+  const isMac = isMacUser();
+  const modKey = isMac ? '⌘' : 'Ctrl';
 
   return (
-    <header className="sticky top-0 z-40 bg-[#f3f7f4]/95 backdrop-blur-md border-b border-[#072a1a]/10 transition-all shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3 sm:gap-4">
+    <header className="sticky top-0 z-40 bg-[#f3f7f4]/95 backdrop-blur-md border-b border-[#072a1a]/10 transition-all shadow-2xs">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
         
-        {/* Left Side: Brand & Return */}
-        <div className="flex items-center gap-3 sm:gap-4">
+        {/* Left: Return to Landing & Brand Logo Identical to Landing */}
+        <div className="flex items-center gap-2 sm:gap-4">
           <button
+            type="button"
             onClick={onBackToLanding}
-            className="flex items-center gap-2 bg-white hover:bg-emerald-50 text-[#072a1a] px-3.5 py-2 rounded-full text-xs font-bold border border-[#072a1a]/15 shadow-2xs hover:border-[#15803d] transition-all cursor-pointer group active:scale-95"
-            title="Retornar à página inicial"
+            className="flex items-center gap-1.5 sm:gap-2 bg-white hover:bg-emerald-50 text-[#072a1a] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-bold border border-[#072a1a]/15 shadow-2xs hover:border-[#15803d] transition-all cursor-pointer group active:scale-95 min-h-[38px] sm:min-h-[44px]"
+            title="Retornar à Landing Page Principal"
+            aria-label="Voltar à página inicial do site"
           >
-            <ArrowLeft className="w-4 h-4 text-[#15803d] group-hover:-translate-x-0.5 transition-transform" />
+            <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#15803d] group-hover:-translate-x-0.5 transition-transform" />
             <span className="hidden sm:inline">Voltar ao Site</span>
+            <span className="inline sm:hidden">Site</span>
           </button>
 
           <div className="h-6 w-[1px] bg-[#072a1a]/10 hidden md:block" />
 
-          {/* Brand Identity */}
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-full bg-[#072a1a] text-[#86efac] flex items-center justify-center shadow-sm">
-              <Leaf className="w-5 h-5 fill-current" />
+          {/* Brand Identity - Exact Landing Page Pairing */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#072a1a] text-[#86efac] flex items-center justify-center shadow-xs shrink-0">
+              <Leaf className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#072a1a]">
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="font-serif text-sm sm:text-base md:text-xl font-bold tracking-tight text-[#072a1a] leading-none whitespace-nowrap">
                   ALL GREEN
                 </span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-100 text-[#072a1a] border border-emerald-300">
-                  <Sparkles className="w-2.5 h-2.5 text-[#15803d]" />
-                  {isArchitect ? 'Portal Arquiteto' : 'Área do Cliente'}
+                <span className="hidden xs:inline-flex items-center gap-1 px-1.5 py-0.2 sm:px-2.5 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold uppercase bg-emerald-100 text-[#072a1a] border border-emerald-300 shrink-0">
+                  <UserCheck className="w-2.5 h-2.5 text-[#15803d]" />
+                  <span className="hidden sm:inline">{isArchitect ? 'Portal do Arquiteto' : 'Área do Cliente'}</span>
+                  <span className="inline sm:hidden">Portal</span>
                 </span>
               </div>
-              <span className="text-[10px] sm:text-[11px] font-semibold text-[#15803d] uppercase tracking-wider -mt-0.5 truncate max-w-[200px] sm:max-w-xs">
+              <span className="text-[8px] sm:text-[10px] font-semibold text-[#15803d] uppercase tracking-wider sm:tracking-widest mt-0.5 truncate max-w-[80px] xs:max-w-[130px] sm:max-w-xs">
                 {user.company || 'Decor & Biophilia'}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Demo Switcher, Actions, Profile */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        {/* Right Side: Quick Actions, AI Simulator, Notifications, User */}
+        <div className="flex items-center gap-1.5 sm:gap-3">
           
-          {/* Quick Role Toggle (Demo / Test Mode) */}
+          {/* Quick Search Shortcut */}
+          {onOpenSearch && (
+            <button
+              type="button"
+              onClick={onOpenSearch}
+              className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white hover:bg-emerald-50 text-gray-700 hover:text-[#072a1a] text-xs font-semibold border border-gray-300/80 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer min-h-[38px]"
+              title={`Buscar Obras, Arquivos BIM e Espécies (${modKey}+K)`}
+              aria-label="Abrir busca global"
+            >
+              <Search className="w-3.5 h-3.5 text-[#15803d]" />
+              <span className="text-gray-500">Buscar...</span>
+              <kbd className="px-1.5 py-0.2 bg-gray-100 text-gray-600 rounded text-[10px] font-mono font-bold border border-gray-200">
+                {modKey}K
+              </kbd>
+            </button>
+          )}
+
+          {/* Quick Role Toggle (Demo / Prototype) */}
           {onToggleUserRole && (
             <button
               type="button"
               onClick={onToggleUserRole}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100/80 hover:bg-emerald-200 text-[#072a1a] font-bold text-xs border border-emerald-300 transition-all cursor-pointer"
-              title="Alternar entre visão de Arquiteto e Cliente"
+              className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100/80 hover:bg-emerald-200 text-[#072a1a] font-bold text-xs border border-emerald-300 transition-all cursor-pointer min-h-[38px]"
+              title="Alternar entre perfil de Arquiteto e Cliente"
             >
               {isArchitect ? (
                 <>
@@ -105,32 +129,38 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
             </button>
           )}
 
-          {/* New Project CTA */}
+          {/* New Project CTA (Desktop) */}
           <button
+            type="button"
             onClick={onOpenNewProjectModal}
-            className="hidden sm:inline-flex items-center gap-1.5 bg-white hover:bg-emerald-50 text-[#072a1a] px-3.5 py-2 rounded-full text-xs font-bold border border-[#072a1a]/15 shadow-2xs hover:border-[#15803d] transition-all cursor-pointer active:scale-95"
-            title="Cadastrar nova obra ou espaço"
+            className="hidden sm:inline-flex items-center gap-1.5 bg-white hover:bg-emerald-50 text-[#072a1a] px-3.5 py-2 rounded-full text-xs font-bold border border-[#072a1a]/15 shadow-2xs hover:border-[#15803d] transition-all cursor-pointer active:scale-95 min-h-[44px]"
+            title="Cadastrar nova obra ou ambiente"
+            aria-label="Cadastrar Nova Obra"
           >
             <Plus className="w-3.5 h-3.5 text-[#15803d]" />
             <span>Nova Obra</span>
           </button>
 
-          {/* AI Simulator CTA (Matching Landing Page) */}
+          {/* AI Simulator CTA (Matching Landing Page Style) */}
           <button
+            type="button"
             onClick={onOpenSimulator}
-            className="inline-flex items-center gap-1.5 bg-[#072a1a] text-[#86efac] hover:bg-[#15803d] px-4 py-2 rounded-full font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer active:scale-95"
-            title="Simular visualmente um jardim com Inteligência Artificial"
+            className="inline-flex items-center gap-1.5 bg-[#072a1a] text-[#86efac] hover:bg-[#15803d] hover:text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-bold text-xs sm:text-sm shadow-xs transition-all cursor-pointer active:scale-95 min-h-[38px] sm:min-h-[44px]"
+            title={`Simulador IA de Ambientes (${modKey}+M)`}
+            aria-label="Abrir Simulador IA"
           >
-            <Camera className="w-4 h-4 text-[#86efac]" />
+            <Camera className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#86efac]" />
             <span className="hidden sm:inline">Simulador IA</span>
+            <span className="inline sm:hidden">Simulador</span>
           </button>
 
           {/* Notification Bell */}
           <button
+            type="button"
             onClick={onOpenNotifications}
-            className={`relative p-2.5 rounded-full transition-all cursor-pointer border ${
+            className={`relative p-2 sm:p-2.5 rounded-full transition-all cursor-pointer border min-h-[38px] min-w-[38px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center ${
               unreadNotificationsCount > 0
-                ? 'bg-emerald-100 text-[#072a1a] hover:bg-emerald-200 border-emerald-300'
+                ? 'bg-emerald-100 text-[#072a1a] hover:bg-emerald-200 border-emerald-300 shadow-2xs'
                 : 'bg-white text-gray-600 hover:text-gray-950 hover:bg-gray-100 border-gray-200'
             }`}
             title="Notificações e Laudos Técnicos"
@@ -145,20 +175,24 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
           </button>
 
           {/* User Profile & Logout */}
-          <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
-            <img
-              src={user.avatar}
-              alt={user.name}
-              className="w-9 h-9 rounded-full object-cover ring-2 ring-emerald-500/50 shadow-xs"
-            />
+          <div className="flex items-center gap-1.5 sm:gap-2 pl-1.5 sm:pl-2 border-l border-gray-200">
+            <div className="relative group cursor-pointer" title={`${user.name} - ${user.cau_rrt || user.role}`}>
+              <img
+                src={user.avatar}
+                alt={user.name}
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-emerald-500/50 shadow-xs"
+              />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white absolute bottom-0 right-0" />
+            </div>
 
             <button
+              type="button"
               onClick={onLogout}
-              className="p-2 rounded-full bg-white text-gray-500 hover:text-red-600 hover:bg-red-50 border border-gray-200 transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-full bg-white text-gray-500 hover:text-red-600 hover:bg-red-50 border border-gray-200 transition-colors cursor-pointer min-h-[38px] min-w-[38px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
               title="Sair do Portal"
-              aria-label="Sair"
+              aria-label="Sair da conta"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </div>
 

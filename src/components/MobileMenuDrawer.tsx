@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Leaf,
   Search,
@@ -59,7 +60,20 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
 }) => {
   const [searchVal, setSearchVal] = useState('');
 
+  // Close drawer on Escape key press
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
+  if (typeof document === 'undefined') return null;
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,18 +105,18 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
     }, 120);
   };
 
-  return (
+  return createPortal(
     <div
       id="mobile-menu-drawer"
-      className="fixed inset-0 z-50 md:hidden flex flex-col"
+      className="fixed inset-0 z-[100] xl:hidden flex flex-col pointer-events-auto"
       role="dialog"
       aria-modal="true"
-      aria-label="Menu de Navegação Mobile"
+      aria-label="Menu de Navegação Mobile e Tablet"
     >
       {/* Dark Backdrop */}
       <div
         id="mobile-drawer-backdrop"
-        className="fixed inset-0 bg-black/65 backdrop-blur-xs transition-opacity duration-300"
+        className="fixed inset-0 bg-black/70 backdrop-blur-xs transition-opacity duration-300"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -110,7 +124,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
       {/* Drawer Container (Slide-over panel) */}
       <div
         id="mobile-drawer-panel"
-        className="relative ml-auto w-full max-w-[320px] sm:max-w-xs bg-white h-full shadow-2xl flex flex-col justify-between overflow-y-auto z-10 p-4 sm:p-5"
+        className="relative ml-auto w-full max-w-[340px] sm:max-w-sm bg-white h-full shadow-2xl flex flex-col justify-between overflow-y-auto z-10 p-4 sm:p-5 animate-in slide-in-from-right duration-250"
       >
         <div className="space-y-4">
           {/* Drawer Header */}
@@ -250,6 +264,19 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 <span>Catálogo Botânico</span>
               </div>
               <ChevronRight className="w-3 h-3 text-gray-400 group-hover:text-gray-700 transition-colors" />
+            </button>
+
+            <button
+              type="button"
+              id="mobile-nav-quiz"
+              onClick={() => scrollToSection('biophilic-quiz')}
+              className="w-full flex items-center justify-between p-2 rounded-lg bg-emerald-50 text-emerald-900 font-bold text-xs transition-colors text-left cursor-pointer group border border-emerald-200"
+            >
+              <div className="flex items-center gap-2.5">
+                <Leaf className="w-3.5 h-3.5 text-[#15803d]" />
+                <span>Quiz Perfil Biofílico</span>
+              </div>
+              <span className="px-1.5 py-0.2 bg-[#072a1a] text-[#86efac] text-[9px] font-extrabold rounded">5 Perguntas</span>
             </button>
 
             <button
@@ -404,6 +431,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

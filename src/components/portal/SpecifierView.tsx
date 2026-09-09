@@ -8,13 +8,13 @@ import {
   Droplets,
   ShieldCheck,
   Sliders,
-  Sparkles,
   Layers,
   FileText,
   TrendingUp,
   Calculator
 } from 'lucide-react';
 import { BiophilicRoiCalculator } from '../BiophilicRoiCalculator';
+import { PageHeader } from '../PageHeader';
 
 interface SpecifierViewProps {
   onOpenQuote: (context: string) => void;
@@ -27,6 +27,7 @@ interface SpecifierViewProps {
   setLeedAcousticPanel: React.Dispatch<React.SetStateAction<boolean>>;
   wellNatureAccess: boolean;
   setWellNatureAccess: React.Dispatch<React.SetStateAction<boolean>>;
+  onBackToDashboard?: () => void;
 }
 
 export const SpecifierView: React.FC<SpecifierViewProps> = ({
@@ -40,6 +41,7 @@ export const SpecifierView: React.FC<SpecifierViewProps> = ({
   setLeedAcousticPanel,
   wellNatureAccess,
   setWellNatureAccess,
+  onBackToDashboard,
 }) => {
   const [calculatorMode, setCalculatorMode] = useState<'leed' | 'roi'>('leed');
   const [calcArea, setCalcArea] = useState<number>(24);
@@ -63,8 +65,7 @@ export const SpecifierView: React.FC<SpecifierViewProps> = ({
   if (leedAirQuality) currentWellScore += 10;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      
+    <div className="max-w-5xl mx-auto space-y-6">
       {/* Sub-mode switch pills */}
       <div className="flex justify-center">
         <div className="inline-flex p-1.5 rounded-2xl bg-white border border-gray-200 shadow-sm gap-1">
@@ -104,18 +105,13 @@ export const SpecifierView: React.FC<SpecifierViewProps> = ({
       ) : (
         <div className="space-y-8 max-w-4xl mx-auto">
           {/* Header */}
-          <div className="text-center space-y-2.5">
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-[#072a1a] border border-emerald-200 shadow-2xs">
-              <Award className="w-3.5 h-3.5 text-[#15803d]" />
-              <span>Dimensionamento Técnico & Créditos Sustentáveis</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-gray-950 tracking-tight">
-              Especificador de Orçamento & Matriz LEED/WELL
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Simule investimentos instantâneos com tabela de desconto de arquiteto e parametrize a conformidade com as certificações ambientais LEED v4.1 e WELL v2.
-            </p>
-          </div>
+          <PageHeader
+            align="center"
+            badge="Dimensionamento Técnico & Créditos Sustentáveis"
+            badgeIcon={Award}
+            title="Especificador de Orçamento & Matriz LEED/WELL"
+            description="Simule investimentos instantâneos com tabela de desconto de arquiteto e parametrize a conformidade com as certificações ambientais LEED v4.1 e WELL v2."
+          />
 
           {/* Live LEED & WELL Environmental Matrix Box */}
           <div className="bg-[#072a1a] text-white rounded-3xl p-6 sm:p-8 border border-emerald-800 shadow-xl space-y-6 relative overflow-hidden">

@@ -8,7 +8,6 @@ import {
   Sun, 
   Camera, 
   Check, 
-  Sparkles, 
   Wind, 
   ShieldCheck, 
   Tag, 
@@ -640,7 +639,7 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-700/60 pb-3">
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 rounded-lg bg-[#86efac]/20 text-[#86efac] flex items-center justify-center">
-                            <Sparkles className="w-4 h-4" />
+                            <ShieldCheck className="w-4 h-4" />
                           </div>
                           <div>
                             <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">

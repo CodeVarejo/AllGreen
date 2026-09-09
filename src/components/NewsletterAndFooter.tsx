@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useAccessibility } from '../context/AccessibilityContext';
 import { ScrollReveal } from './ScrollReveal';
+import { BiophilicChatWidget } from './BiophilicChatWidget';
 
 interface NewsletterAndFooterProps {
   onOpenSimulator: () => void;
@@ -129,6 +130,16 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
               {newsMessage}
             </p>
           )}
+
+          {/* AI Biophilic Chatbot Widget */}
+          <div className="mt-8">
+            <ScrollReveal animation="fade-up" delay={0.15} distance={20}>
+              <BiophilicChatWidget
+                onOpenSimulator={onOpenSimulator}
+                onOpenQuote={onOpenQuote}
+              />
+            </ScrollReveal>
+          </div>
         </div>
       </div>
 

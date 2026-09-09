@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   Search,
-  Sparkles,
+  Camera,
+  Award,
   Layers,
   FileText,
   Calculator,
@@ -20,7 +21,8 @@ import {
   ExternalLink,
   Contrast,
   Zap,
-  TrendingUp
+  TrendingUp,
+  ArrowLeftRight
 } from 'lucide-react';
 import { isMacUser } from '../hooks/useKeyboardShortcuts';
 import { BOTANICAL_SPECIES, SEARCH_RESULTS } from '../data/mockData';
@@ -94,13 +96,27 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         title: 'Abrir Simulador IA de Ambientes Biofílicos',
         subtitle: 'Calcule espécies, acústica e orçamento com inteligência artificial',
         badge: 'IA Exclusiva',
-        icon: Sparkles,
+        icon: Camera,
         shortcut: `${modKey}M`,
         action: () => {
           onClose();
           onOpenSimulator();
         },
         keywords: ['simulador', 'ia', 'inteligencia', 'ambiente', 'reforma', 'orçamento', 'calculo', 'foto'],
+      },
+      {
+        id: 'cmd-quiz',
+        category: 'Ações Rápidas',
+        title: 'Fazer Quiz de Diagnóstico de Perfil Biofílico (5 Perguntas)',
+        subtitle: 'Descubra a combinação botânica e estilo arquitetônico ideal para seu escritório',
+        badge: '5 Perguntas',
+        icon: Leaf,
+        action: () => {
+          onClose();
+          const elem = document.getElementById('biophilic-quiz');
+          if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+        },
+        keywords: ['quiz', 'perfil', 'diagnostico', 'perguntas', 'ambiente', 'estilo', 'biofilico', 'escritorio', 'especies', 'recomendacao'],
       },
       {
         id: 'cmd-portal',
@@ -180,7 +196,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         title: 'Ver Depoimentos & Resultados de Impacto Biofílico',
         subtitle: 'Casos reais com dados de produtividade, acústica e certificações de clientes',
         badge: '5.0 ★ Avaliações',
-        icon: Sparkles,
+        icon: Award,
         action: () => {
           onClose();
           const elem = document.getElementById('customer-testimonials');
@@ -259,15 +275,16 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       {
         id: 'cmd-matrix-section',
         category: 'Laudos & Ferramentas',
-        title: 'Matriz Comparativa das Tecnologias Verticais',
-        subtitle: 'Compare Preservado vs. Permanente vs. Natural Vivo lado a lado',
-        icon: FileText,
+        title: 'Matriz Comparativa das Tecnologias Verticais (Modo Lado a Lado 1x1)',
+        subtitle: 'Compare Preservado vs. Permanente vs. Natural Vivo com cálculo de Capex, Opex e TCO',
+        badge: 'Lado a Lado',
+        icon: ArrowLeftRight,
         action: () => {
           onClose();
           const elem = document.getElementById('comparison-matrix');
           if (elem) elem.scrollIntoView({ behavior: 'smooth' });
         },
-        keywords: ['matriz', 'comparativo', 'preservado', 'permanente', 'vivo', 'diferença', 'vantagens'],
+        keywords: ['matriz', 'comparativo', 'preservado', 'permanente', 'vivo', 'diferença', 'vantagens', 'lado a lado', 'tco', 'capex', 'opex', 'custo'],
       },
       {
         id: 'cmd-gallery-section',

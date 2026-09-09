@@ -5,18 +5,23 @@ import {
   Truck,
   ShieldCheck,
   Leaf,
-  Sparkles,
   MapPin,
   Clock,
-  PhoneCall
+  PhoneCall,
+  ArrowLeft
 } from 'lucide-react';
 import { UserProfile } from '../../types';
+import { PageHeader } from '../PageHeader';
 
 interface SamplesViewProps {
   user: UserProfile;
+  onBackToDashboard?: () => void;
 }
 
-export const SamplesView: React.FC<SamplesViewProps> = ({ user }) => {
+export const SamplesView: React.FC<SamplesViewProps> = ({ 
+  user,
+  onBackToDashboard,
+}) => {
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
@@ -36,21 +41,15 @@ export const SamplesView: React.FC<SamplesViewProps> = ({ user }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="text-center space-y-2.5">
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-[#072a1a] border border-emerald-200 shadow-2xs">
-          <Sparkles className="w-3.5 h-3.5 text-[#15803d]" />
-          <span>Exclusivo para Escritórios de Arquitetura & Interiores</span>
-        </div>
-        <h2 className="text-3xl sm:text-4xl font-serif font-bold text-gray-950 tracking-tight">
-          Maleta de Amostras Físicas & Mostruário Tátil
-        </h2>
-        <p className="text-xs sm:text-sm text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          Receba em seu escritório uma maleta completa para apresentação ao cliente final com amostras reais de musgo moss escandinavo, folhagens estabilizadas e peças modulares de fixação oculta.
-        </p>
-      </div>
+      <PageHeader
+        align="center"
+        badge="Exclusivo para Escritórios de Arquitetura & Interiores"
+        badgeIcon={Package}
+        title="Maleta de Amostras Físicas & Mostruário Tátil"
+        description="Receba em seu escritório uma maleta completa para apresentação ao cliente final com amostras reais de musgo moss escandinavo, folhagens estabilizadas e peças modulares de fixação oculta."
+      />
 
       {/* Kit Features Showcase */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -111,10 +110,19 @@ export const SamplesView: React.FC<SamplesViewProps> = ({ user }) => {
             <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
               <button
                 onClick={handleReset}
-                className="px-5 py-2.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold rounded-xl text-xs transition-all cursor-pointer shadow-sm active:scale-95"
+                className="px-5 py-2.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold rounded-xl text-xs transition-all cursor-pointer shadow-sm active:scale-95 min-h-[44px]"
               >
                 Solicitar Outro Endereço
               </button>
+
+              {onBackToDashboard && (
+                <button
+                  onClick={onBackToDashboard}
+                  className="px-5 py-2.5 bg-white hover:bg-emerald-50 text-gray-800 font-bold rounded-xl text-xs border border-gray-200 transition-all cursor-pointer min-h-[44px]"
+                >
+                  Voltar à Visão Geral
+                </button>
+              )}
             </div>
           </div>
         ) : (
@@ -185,7 +193,7 @@ export const SamplesView: React.FC<SamplesViewProps> = ({ user }) => {
 
             <button
               type="submit"
-              className="w-full py-3.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+              className="w-full py-3.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer active:scale-98 min-h-[44px]"
             >
               <Package className="w-4 h-4" />
               <span>Confirmar Envio Gratuito da Maleta de Amostras</span>

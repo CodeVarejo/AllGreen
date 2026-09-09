@@ -5,7 +5,6 @@ import {
   CheckCircle2,
   Bug,
   AlertTriangle,
-  Sparkles,
   ShieldCheck,
   Layers,
   Copy,

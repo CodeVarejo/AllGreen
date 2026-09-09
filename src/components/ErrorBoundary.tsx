@@ -6,7 +6,7 @@ import {
   ChevronDown,
   ChevronUp,
   ShieldAlert,
-  Sparkles,
+  ShieldCheck,
   Zap,
   RotateCcw,
   CheckCircle2,
@@ -282,7 +282,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
                 <div className="p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-300/80 text-left space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2 font-bold text-xs text-[#072a1a]">
-                      <Sparkles className="w-4 h-4 text-[#15803d]" />
+                      <ShieldCheck className="w-4 h-4 text-[#15803d]" />
                       <span>Ajude a aprimorar a estabilidade da plataforma</span>
                     </div>
                     <button
@@ -490,7 +490,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="flex items-start gap-2.5">
                   <div className="w-7 h-7 rounded-lg bg-emerald-200/80 text-[#072a1a] flex items-center justify-center shrink-0 mt-0.5">
-                    <Sparkles className="w-4 h-4 text-[#15803d]" />
+                    <ShieldCheck className="w-4 h-4 text-[#15803d]" />
                   </div>
                   <div>
                     <div className="font-bold text-[#072a1a] text-xs flex items-center gap-1.5">

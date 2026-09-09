@@ -1,7 +1,29 @@
-import React, { useState } from 'react';
-import { Camera, Upload, Leaf, X, Check, ArrowRight, RefreshCw, Layers, Award, Volume2, ShieldCheck, PhoneCall, FileDown, Download, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
+import React, { useState, useMemo, useRef } from 'react';
+import {
+  Camera,
+  Upload,
+  Leaf,
+  X,
+  Check,
+  ArrowRight,
+  RefreshCw,
+  Layers,
+  Award,
+  Volume2,
+  ShieldCheck,
+  PhoneCall,
+  FileDown,
+  Download,
+  CheckCircle2,
+  Loader2,
+  SlidersHorizontal,
+  Columns,
+  MoveHorizontal,
+  Ruler
+} from 'lucide-react';
 import { SimulationResult } from '../types';
 import { exportSimulationToPdf } from '../services/simulationPdfExport';
+import { useUnsavedChangesGuard } from '../hooks/useUnsavedChangesGuard';
 
 interface SimulatorModalProps {
   isOpen: boolean;
@@ -23,6 +45,64 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
   const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [pdfSuccess, setPdfSuccess] = useState(false);
 
+  // New interactive controls for result view
+  const [viewMode, setViewMode] = useState<'slider' | 'side-by-side'>('slider');
+  const [sliderPos, setSliderPos] = useState<number>(50);
+  const [wallWidth, setWallWidth] = useState<number>(3.8);
+  const [wallHeight, setWallHeight] = useState<number>(2.7);
+  const sliderContainerRef = useRef<HTMLDivElement>(null);
+
+  // Calculate dynamic area and investment scaling in real-time
+  const activeArea = useMemo(() => {
+    const area = wallWidth * wallHeight;
+    return Math.max(1, Math.round(area * 10) / 10);
+  }, [wallWidth, wallHeight]);
+
+  const activeBudget = useMemo(() => {
+    let rateMin = 850;
+    let rateMax = 1350;
+    if (stylePreference.includes('Preservado')) {
+      rateMin = 980;
+      rateMax = 1480;
+    } else if (stylePreference.includes('Permanente')) {
+      rateMin = 750;
+      rateMax = 1080;
+    }
+    return {
+      min: Math.round(activeArea * rateMin),
+      max: Math.round(activeArea * rateMax),
+    };
+  }, [activeArea, stylePreference]);
+
+  // Check whether user has unsaved simulation state
+  const isDirty = customImage !== null || step === 'result' || simulationResult !== null;
+
+  const { confirmDiscard, guardedAction } = useUnsavedChangesGuard({
+    isDirty,
+    title: 'Descartar simulação em andamento?',
+    description: 'Você possui uma simulação botânica visualizada no ambiente. Se fechar agora, o resultado e os dados gerados não serão salvos.',
+    confirmText: 'Descartar e Fechar',
+    cancelText: 'Continuar no Simulador',
+    variant: 'warning',
+    enabled: isOpen,
+    interceptEscapeKey: true,
+    onDiscard: () => {
+      setCustomImage(null);
+      setSimulationResult(null);
+      setStep('upload');
+      onClose();
+    },
+  });
+
+  const handleAttemptClose = () => {
+    confirmDiscard(() => {
+      setCustomImage(null);
+      setSimulationResult(null);
+      setStep('upload');
+      onClose();
+    });
+  };
+
   if (!isOpen) return null;
 
   const handleExportPdf = async () => {
@@ -30,7 +110,12 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
     try {
       setIsExportingPdf(true);
       await exportSimulationToPdf({
-        simulationResult,
+        simulationResult: {
+          ...simulationResult,
+          estimatedArea: activeArea,
+          estimatedBudgetMin: activeBudget.min,
+          estimatedBudgetMax: activeBudget.max,
+        },
         roomType,
         stylePreference,
         originalImageUrl: activeImageUrl,
@@ -125,7 +210,14 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div 
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          handleAttemptClose();
+        }
+      }}
+    >
       <div className="bg-white rounded-3xl max-w-4xl w-full my-auto overflow-hidden shadow-2xl relative border border-emerald-900/20">
         
         {/* Modal Header */}
@@ -145,8 +237,9 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
           </div>
 
           <button
-            onClick={onClose}
-            className="w-9 h-9 rounded-full bg-emerald-950 text-gray-300 hover:text-white hover:bg-emerald-900 flex items-center justify-center transition-colors"
+            onClick={handleAttemptClose}
+            aria-label="Fechar Simulador"
+            className="w-9 h-9 rounded-full bg-emerald-950 text-gray-300 hover:text-white hover:bg-emerald-900 flex items-center justify-center transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -304,33 +397,222 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
           {step === 'result' && simulationResult && (
             <div className="space-y-6">
               
-              {/* Transformed Visual Box */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                
-                {/* Original */}
-                <div className="relative h-56 rounded-2xl overflow-hidden border border-gray-200">
-                  <img
-                    src={activeImageUrl}
-                    alt="Original"
-                    className="w-full h-full object-cover"
-                  />
-                  <span className="absolute top-2 left-2 bg-black/70 text-white text-[10px] font-bold px-2 py-1 rounded">
-                    FOTO ORIGINAL
+              {/* Mode Switcher & Visual Comparison */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 bg-gray-100 p-1 rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => setViewMode('slider')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                        viewMode === 'slider'
+                          ? 'bg-[#072a1a] text-white shadow-sm'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      <MoveHorizontal className="w-3.5 h-3.5" />
+                      <span>Slider Interativo (Antes / Depois)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode('side-by-side')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                        viewMode === 'side-by-side'
+                          ? 'bg-[#072a1a] text-white shadow-sm'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      <Columns className="w-3.5 h-3.5" />
+                      <span>Lado a Lado</span>
+                    </button>
+                  </div>
+
+                  <span className="text-[11px] text-gray-500 hidden sm:inline-block font-mono">
+                    {viewMode === 'slider' ? `${sliderPos}% revelado` : 'Modo Comparativo'}
                   </span>
                 </div>
 
-                {/* Transformed AI Overlay */}
-                <div className="relative h-56 rounded-2xl overflow-hidden border-2 border-[#072a1a] shadow-lg">
-                  <img
-                    src={simulationResult.transformedImage}
-                    alt="Simulação All Green"
-                    className="w-full h-full object-cover"
-                  />
-                  <span className="absolute top-2 left-2 bg-[#072a1a] text-[#86efac] text-[10px] font-extrabold px-2 py-1 rounded flex items-center gap-1">
-                    <Leaf className="w-3 h-3" /> SIMULAÇÃO ALL GREEN
+                {viewMode === 'slider' ? (
+                  <div className="space-y-2">
+                    <div
+                      ref={sliderContainerRef}
+                      onMouseMove={(e) => {
+                        if (e.buttons === 1) {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const x = e.clientX - rect.left;
+                          const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                          setSliderPos(Math.round(pct));
+                        }
+                      }}
+                      onTouchMove={(e) => {
+                        const touch = e.touches[0];
+                        if (touch && sliderContainerRef.current) {
+                          const rect = sliderContainerRef.current.getBoundingClientRect();
+                          const x = touch.clientX - rect.left;
+                          const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                          setSliderPos(Math.round(pct));
+                        }
+                      }}
+                      className="relative h-64 sm:h-80 md:h-96 w-full rounded-2xl overflow-hidden select-none border-2 border-[#072a1a] shadow-lg cursor-ew-resize bg-black"
+                    >
+                      {/* Transformed Image (Simulação) Base */}
+                      <img
+                        src={simulationResult.transformedImage}
+                        alt="Simulação All Green"
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                      <span className="absolute bottom-3 right-3 bg-[#072a1a]/90 text-[#86efac] text-[10px] font-extrabold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow backdrop-blur-sm pointer-events-none">
+                        <Leaf className="w-3 h-3" /> ALL GREEN BIOFÍLICO
+                      </span>
+
+                      {/* Original Image (Clipped overlay) */}
+                      <div
+                        className="absolute inset-0 overflow-hidden pointer-events-none"
+                        style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
+                      >
+                        <img
+                          src={activeImageUrl}
+                          alt="Original"
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                        <span className="absolute bottom-3 left-3 bg-black/75 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow backdrop-blur-sm">
+                          FOTO ORIGINAL
+                        </span>
+                      </div>
+
+                      {/* Draggable Divider Handle */}
+                      <div
+                        className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_10px_rgba(0,0,0,0.6)] z-10 pointer-events-none"
+                        style={{ left: `${sliderPos}%` }}
+                      >
+                        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full shadow-2xl border-2 border-[#072a1a] flex items-center justify-center pointer-events-auto cursor-grab active:cursor-grabbing">
+                          <MoveHorizontal className="w-4 h-4 text-[#072a1a]" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Scrubber Control for Touch/Precision */}
+                    <div className="flex items-center gap-3 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200">
+                      <span className="text-[11px] font-bold text-gray-600 shrink-0">Foto Original</span>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={sliderPos}
+                        onChange={(e) => setSliderPos(Number(e.target.value))}
+                        className="w-full accent-[#072a1a] cursor-pointer"
+                      />
+                      <span className="text-[11px] font-bold text-[#15803d] shrink-0">Jardim All Green</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                    {/* Original */}
+                    <div className="relative h-60 rounded-2xl overflow-hidden border border-gray-200">
+                      <img
+                        src={activeImageUrl}
+                        alt="Original"
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute top-2 left-2 bg-black/70 text-white text-[10px] font-bold px-2 py-1 rounded">
+                        FOTO ORIGINAL
+                      </span>
+                    </div>
+
+                    {/* Transformed AI Overlay */}
+                    <div className="relative h-60 rounded-2xl overflow-hidden border-2 border-[#072a1a] shadow-lg">
+                      <img
+                        src={simulationResult.transformedImage}
+                        alt="Simulação All Green"
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute top-2 left-2 bg-[#072a1a] text-[#86efac] text-[10px] font-extrabold px-2 py-1 rounded flex items-center gap-1">
+                        <Leaf className="w-3 h-3" /> SIMULAÇÃO ALL GREEN
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Real Wall Dimension Scaler */}
+              <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <Ruler className="w-4 h-4 text-[#15803d]" />
+                    <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
+                      Dimensões da Parede & Escala do Projeto
+                    </h4>
+                  </div>
+                  <span className="text-xs font-bold text-[#072a1a] bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                    Área Total: {activeArea} m²
                   </span>
                 </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                      Largura da Parede (metros):
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0.5"
+                      max="30"
+                      value={wallWidth}
+                      onChange={(e) => setWallWidth(Math.max(0.5, parseFloat(e.target.value) || 0.5))}
+                      className="w-full p-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 font-semibold focus:outline-none focus:border-[#072a1a]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                      Altura / Pé-Direito (metros):
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0.5"
+                      max="15"
+                      value={wallHeight}
+                      onChange={(e) => setWallHeight(Math.max(0.5, parseFloat(e.target.value) || 0.5))}
+                      className="w-full p-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 font-semibold focus:outline-none focus:border-[#072a1a]"
+                    />
+                  </div>
+                </div>
+
+                {/* Presets */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase">Presets rápidos:</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setWallWidth(2.4);
+                      setWallHeight(2.0);
+                    }}
+                    className="text-[10px] px-2.5 py-1 bg-white hover:bg-emerald-50 text-gray-700 font-medium rounded-lg border border-gray-200 transition-colors cursor-pointer"
+                  >
+                    Painel Compacto (2.4m × 2.0m)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setWallWidth(3.8);
+                      setWallHeight(2.7);
+                    }}
+                    className="text-[10px] px-2.5 py-1 bg-white hover:bg-emerald-50 text-gray-700 font-medium rounded-lg border border-gray-200 transition-colors cursor-pointer"
+                  >
+                    Parede Living (3.8m × 2.7m)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setWallWidth(5.5);
+                      setWallHeight(3.0);
+                    }}
+                    className="text-[10px] px-2.5 py-1 bg-white hover:bg-emerald-50 text-gray-700 font-medium rounded-lg border border-gray-200 transition-colors cursor-pointer"
+                  >
+                    Foyer Corporativo (5.5m × 3.0m)
+                  </button>
+                </div>
               </div>
 
               {/* AI Report Summary */}
@@ -346,13 +628,13 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
               {/* Key KPI Metrics Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="bg-white p-3.5 rounded-xl border border-gray-200 text-center">
-                  <span className="text-[10px] font-bold text-gray-500 uppercase block">ÁREA ESTIMADA</span>
-                  <p className="text-lg font-bold text-[#072a1a] mt-0.5">{simulationResult.estimatedArea} m²</p>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase block">ÁREA CALCULADA</span>
+                  <p className="text-lg font-bold text-[#072a1a] mt-0.5">{activeArea} m²</p>
                 </div>
 
                 <div className="bg-white p-3.5 rounded-xl border border-gray-200 text-center">
-                  <span className="text-[10px] font-bold text-gray-500 uppercase block">GANHO ACÚSTICO</span>
-                  <p className="text-xs font-bold text-[#15803d] mt-1">{simulationResult.acousticImprovement}</p>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase block">ABSORÇÃO ACÚSTICA</span>
+                  <p className="text-xs font-bold text-[#15803d] mt-1">{(activeArea * 0.85).toFixed(1)} m² NRC 0.85</p>
                 </div>
 
                 <div className="bg-white p-3.5 rounded-xl border border-gray-200 text-center">
@@ -363,7 +645,7 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
                 <div className="bg-white p-3.5 rounded-xl border border-gray-200 text-center">
                   <span className="text-[10px] font-bold text-gray-500 uppercase block">ORÇAMENTO ESTIMADO</span>
                   <p className="text-xs font-extrabold text-[#072a1a] mt-1">
-                    R$ {simulationResult.estimatedBudgetMin} - R$ {simulationResult.estimatedBudgetMax}
+                    R$ {activeBudget.min.toLocaleString('pt-BR')} - R$ {activeBudget.max.toLocaleString('pt-BR')}
                   </p>
                 </div>
               </div>
@@ -434,7 +716,12 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
                 <button
                   onClick={() => {
                     onClose();
-                    onOpenQuoteWithData(simulationResult);
+                    onOpenQuoteWithData({
+                      ...simulationResult,
+                      estimatedArea: activeArea,
+                      estimatedBudgetMin: activeBudget.min,
+                      estimatedBudgetMax: activeBudget.max,
+                    });
                   }}
                   className="flex-1 py-3.5 bg-[#072a1a] text-white font-bold rounded-xl text-xs sm:text-sm hover:bg-[#15803d] transition-colors flex items-center justify-center gap-2 shadow-lg cursor-pointer"
                 >

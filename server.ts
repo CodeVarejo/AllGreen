@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
-import { analyzeRoomPhoto } from './src/services/gemini';
+import { analyzeRoomPhoto, answerBiophiliaQuestion } from './src/services/gemini';
 import { PROJECT_SAMPLES } from './src/data/mockData';
 
 async function startServer() {
@@ -66,6 +66,26 @@ async function startServer() {
       success: true,
       message: `E-mail ${email} cadastrado com sucesso no Clube de Tendências Biofílicas All Green!`
     });
+  });
+
+  // AI Biophilic Chatbot endpoint (Gemini API)
+  app.post('/api/biophilic-chat', async (req, res) => {
+    try {
+      const { message, history } = req.body;
+      if (!message || typeof message !== 'string' || !message.trim()) {
+        res.status(400).json({ success: false, message: 'Mensagem inválida ou vazia.' });
+        return;
+      }
+
+      const reply = await answerBiophiliaQuestion(message.trim(), Array.isArray(history) ? history : []);
+      res.json({ success: true, reply });
+    } catch (error: any) {
+      console.error('Error in /api/biophilic-chat:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Não foi possível processar a resposta do assistente no momento.',
+      });
+    }
   });
 
   // Vite development middleware vs production static distribution

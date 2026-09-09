@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Calendar,
   Clock,
@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   ExternalLink,
   X,
-  Sparkles,
   ShieldCheck,
   Download,
   Share2,
@@ -21,6 +20,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
+import { useUnsavedChangesGuard } from '../hooks/useUnsavedChangesGuard';
 
 interface ConsultationBookingModalProps {
   isOpen: boolean;
@@ -79,6 +79,34 @@ export const ConsultationBookingModal: React.FC<ConsultationBookingModalProps> =
 
   const [bookingProtocol, setBookingProtocol] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isDirty = useMemo(() => {
+    if (step === 3 || bookingProtocol) return false;
+    return (
+      step === 2 ||
+      name.trim() !== '' ||
+      email.trim() !== '' ||
+      phone.trim() !== '' ||
+      company.trim() !== '' ||
+      notes.trim() !== ''
+    );
+  }, [step, bookingProtocol, name, email, phone, company, notes]);
+
+  const { confirmDiscard } = useUnsavedChangesGuard({
+    isDirty,
+    title: 'Descartar agendamento de consultoria?',
+    description: 'Você selecionou horário ou preencheu dados da reunião técnica. Se fechar agora, o agendamento não será concluído.',
+    confirmText: 'Descartar e Fechar',
+    cancelText: 'Continuar Agendamento',
+    variant: 'warning',
+    enabled: isOpen,
+    interceptEscapeKey: true,
+    onDiscard: onClose,
+  });
+
+  const handleRequestClose = () => {
+    confirmDiscard(onClose);
+  };
 
   const consultationTypes = [
     {
@@ -218,7 +246,7 @@ export const ConsultationBookingModal: React.FC<ConsultationBookingModalProps> =
       id="consultation-booking-modal"
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/75 backdrop-blur-sm animate-in fade-in"
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget) handleRequestClose();
       }}
     >
       <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-gray-200">
@@ -271,7 +299,7 @@ export const ConsultationBookingModal: React.FC<ConsultationBookingModalProps> =
             <button
               type="button"
               id="close-consultation-modal-btn"
-              onClick={onClose}
+              onClick={handleRequestClose}
               className="p-2 rounded-full text-gray-300 hover:text-white hover:bg-emerald-900/60 transition-colors cursor-pointer"
               aria-label="Fechar modal de agendamento"
             >
