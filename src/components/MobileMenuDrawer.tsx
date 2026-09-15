@@ -19,7 +19,8 @@ import {
   Download,
   FileText,
   Clock,
-  Star
+  Star,
+  Sparkles
 } from 'lucide-react';
 import { UserProfile } from '../types';
 
@@ -38,6 +39,7 @@ export interface MobileMenuDrawerProps {
   onOpenShortcutsModal?: () => void;
   onOpenConsultation?: () => void;
   onOpenProjectPdfReport?: () => void;
+  onOpenTour?: () => void;
   modKey: string;
 }
 
@@ -56,6 +58,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
   onOpenShortcutsModal,
   onOpenConsultation,
   onOpenProjectPdfReport,
+  onOpenTour,
   modKey,
 }) => {
   const [searchVal, setSearchVal] = useState('');
@@ -85,10 +88,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
       return;
     }
 
-    if (onSearchQueryChange) {
+    if (onOpenSearch) {
+      onClose();
+      onOpenSearch();
+    } else if (onSearchQueryChange) {
       onSearchQueryChange(searchVal);
       onClose();
-      const elem = document.getElementById('search-hub');
+      const elem = document.getElementById('solutions');
       if (elem) {
         elem.scrollIntoView({ behavior: 'smooth' });
       }
@@ -217,6 +223,27 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               </kbd>
             </button>
 
+            {/* Guided Tour button */}
+            {onOpenTour && (
+              <button
+                type="button"
+                id="mobile-drawer-tour-btn"
+                onClick={() => {
+                  onClose();
+                  onOpenTour();
+                }}
+                className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 text-[#072a1a] font-bold border border-emerald-300 hover:bg-emerald-100 transition-colors text-left cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-[#15803d]" />
+                  <span className="text-xs">Tour Guiado (Onboarding)</span>
+                </div>
+                <span className="px-1.5 py-0.5 rounded-full bg-[#072a1a] text-[#86efac] text-[9px] font-extrabold">
+                  3 Recursos
+                </span>
+              </button>
+            )}
+
             {/* Notifications (if logged in) */}
             {currentUser && (
               <button
@@ -294,30 +321,15 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
 
             <button
               type="button"
-              id="mobile-nav-leed"
-              onClick={() => scrollToSection('leed-calculator')}
-              className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 text-gray-800 font-semibold text-xs transition-colors text-left cursor-pointer group"
-            >
-              <div className="flex items-center gap-2.5">
-                <Calculator className="w-3.5 h-3.5 text-[#15803d]" />
-                <span>Calculadora WELL & LEED</span>
-              </div>
-              <ChevronRight className="w-3 h-3 text-gray-400 group-hover:text-gray-700 transition-colors" />
-            </button>
-
-            <button
-              type="button"
               id="mobile-nav-roi"
               onClick={() => scrollToSection('biophilic-roi-calculator')}
               className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 text-gray-800 font-semibold text-xs transition-colors text-left cursor-pointer group"
             >
               <div className="flex items-center gap-2.5">
                 <TrendingUp className="w-3.5 h-3.5 text-[#15803d]" />
-                <span>Calculadora ROI Biofílico</span>
+                <span>Calculadora & ROI (WELL/LEED)</span>
               </div>
-              <span className="px-1.5 py-0.2 rounded-md bg-emerald-100 text-[#15803d] text-[9px] font-bold">
-                Novo
-              </span>
+              <ChevronRight className="w-3 h-3 text-gray-400 group-hover:text-gray-700 transition-colors" />
             </button>
 
             <button

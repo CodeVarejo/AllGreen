@@ -18,8 +18,16 @@ import {
   Calendar,
   Layers,
   ChevronRight,
-  RotateCcw
+  RotateCcw,
+  Volume2,
+  Sparkles,
+  Building2,
+  Lightbulb
 } from 'lucide-react';
+import { BiophilicMlPredictionHelper } from './BiophilicMlPredictionHelper';
+import { RoiEnergyScatterPlot } from './RoiEnergyScatterPlot';
+import { LongTermRoiArchitectChart, GrowthScenario } from './LongTermRoiArchitectChart';
+import { ContextualOptimizationSidePanel } from './ContextualOptimizationSidePanel';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -205,7 +213,22 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
   const [industry, setIndustry] = useState<IndustryType>('corporate');
   const [level, setLevel] = useState<IntegrationLevel>('core');
   const [timeHorizonYears, setTimeHorizonYears] = useState<1 | 3 | 5>(3);
-  const [activeTab, setActiveTab] = useState<'overview' | 'projection' | 'breakdown'>('overview');
+  const [growthScenario, setGrowthScenario] = useState<GrowthScenario>('conservative');
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'projection' | 'long_term' | 'breakdown' | 'energy_scatter' | 'certifications' | 'ml_allocation'>('overview');
+
+  // Apply optimizations from contextual panel
+  const handleApplyAdjustment = (adjustments: {
+    area?: number;
+    level?: IntegrationLevel;
+    growthScenario?: GrowthScenario;
+    timeHorizonYears?: 1 | 3 | 5;
+  }) => {
+    if (adjustments.area !== undefined) setArea(adjustments.area);
+    if (adjustments.level !== undefined) setLevel(adjustments.level);
+    if (adjustments.growthScenario !== undefined) setGrowthScenario(adjustments.growthScenario);
+    if (adjustments.timeHorizonYears !== undefined) setTimeHorizonYears(adjustments.timeHorizonYears);
+  };
 
   // Multipliers
   const indConfig = INDUSTRY_CONFIG[industry];
@@ -213,6 +236,29 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
 
   // Mathematical & Financial Modeling (Harvard COGfx, Terrapin Bright Green, WGBC)
   const calculation = useMemo(() => {
+    // 0. Sensitivity Scenario (Conservative vs Optimistic)
+    const scenarioParams = growthScenario === 'optimistic'
+      ? {
+          captureRate: 0.60, // 60% capture of cognitive productivity gains
+          prodMultiplier: 1.25,
+          absenteeismMultiplier: 1.25,
+          turnoverMultiplier: 1.30,
+          hvacPerM2: 180, // R$ 180/m²/ano (high thermal mass & peak HVAC tariffs)
+          maintAvoidedPerM2: 240, // R$ 240/m²/ano (includes water & replacement of dead plants)
+          annualInflationRate: 0.05,
+          label: 'Otimista (Alta Performance)',
+        }
+      : {
+          captureRate: 0.35, // 35% conservative monetization capture
+          prodMultiplier: 1.0,
+          absenteeismMultiplier: 1.0,
+          turnoverMultiplier: 1.0,
+          hvacPerM2: 120, // R$ 120/m²/ano
+          maintAvoidedPerM2: 180, // R$ 180/m²/ano
+          annualInflationRate: 0.035,
+          label: 'Conservador (Ponderado)',
+        };
+
     // 1. Total Annual Payroll Base (including CLT charges ~1.68x)
     const cltMultiplier = 1.68;
     const monthlyTotalPayroll = employees * salary * cltMultiplier;
@@ -226,29 +272,27 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
     const estimatedInvestment = area * levelConfig.costPerM2;
 
     // Maintenance cost of Preserved Plants is ZERO irrigation, ZERO hydraulic infrastructure
-    // compared to natural live walls that cost ~R$ 180/m²/ano in maintenance and water!
-    const annualMaintenanceAvoided = area * 180;
+    // compared to natural live walls that cost ~R$ 180-240/m²/ano in maintenance and water!
+    const annualMaintenanceAvoided = area * scenarioParams.maintAvoidedPerM2;
 
     // 3. Productivity Gain Calculations (Harvard COGfx model: +6% to +14% focus elasticity)
-    const effectiveProdPct = (indConfig.productivityBasePct * levelConfig.factor) / 100;
-    const annualProductivityGainValue = annualTotalPayroll * (effectiveProdPct * 0.45); // conservative 45% monetization capture
+    const effectiveProdPct = ((indConfig.productivityBasePct * levelConfig.factor) / 100) * scenarioParams.prodMultiplier;
+    const annualProductivityGainValue = annualTotalPayroll * (effectiveProdPct * scenarioParams.captureRate);
 
     // 4. Reduced Absenteeism Savings (Terrapin Bright Green model: 2 to 3.8 days saved/year)
-    const effectiveDaysSaved = indConfig.absenteeismDaysReduced * levelConfig.factor;
+    const effectiveDaysSaved = indConfig.absenteeismDaysReduced * levelConfig.factor * scenarioParams.absenteeismMultiplier;
     const dailyCostPerEmployee = hourlyCostPerEmployee * 8;
     const annualAbsenteeismSavings = employees * effectiveDaysSaved * dailyCostPerEmployee;
 
-    // 5. Talent Retention & Turnover Cost Savings (Society for Human Resource Management - SHRM)
-    // Average cost to replace an employee = ~30% of annual salary.
-    // Biophilic offices reduce annual turnover by ~18% to 25%.
+    // 5. Talent Retention & Turnover Cost Savings (SHRM model)
     const baselineTurnoverRate = 0.15; // 15% annual baseline
-    const turnoverReductionRate = (indConfig.turnoverReductionPct * levelConfig.factor) / 100;
+    const turnoverReductionRate = ((indConfig.turnoverReductionPct * levelConfig.factor) / 100) * scenarioParams.turnoverMultiplier;
     const employeesRetainedPerYear = employees * baselineTurnoverRate * turnoverReductionRate;
     const replacementCostPerEmployee = salary * cltMultiplier * 12 * 0.30;
     const annualTurnoverSavings = employeesRetainedPerYear * replacementCostPerEmployee;
 
-    // 6. Energy & HVAC Savings from thermal mass of vertical green wall (~R$ 130/m²/year)
-    const annualHvacSavings = area * 140;
+    // 6. Energy & HVAC Savings from thermal mass of vertical green wall
+    const annualHvacSavings = area * scenarioParams.hvacPerM2;
 
     // 7. Aggregate Annual Gross Savings
     const annualTotalGrossSavings =
@@ -258,8 +302,33 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
       annualHvacSavings +
       annualMaintenanceAvoided;
 
+    // Compounded Savings Helper for multi-year cash flow
+    const getCompoundSavings = (yearsCount: number) => {
+      let totalGross = 0;
+      let totalProd = 0;
+      let totalAbs = 0;
+      let totalTurn = 0;
+      let totalHvacMaint = 0;
+      for (let y = 1; y <= yearsCount; y++) {
+        const factor = Math.pow(1 + scenarioParams.annualInflationRate, y - 1);
+        totalGross += annualTotalGrossSavings * factor;
+        totalProd += annualProductivityGainValue * factor;
+        totalAbs += annualAbsenteeismSavings * factor;
+        totalTurn += annualTurnoverSavings * factor;
+        totalHvacMaint += (annualHvacSavings + annualMaintenanceAvoided) * factor;
+      }
+      return {
+        totalGross: Math.round(totalGross),
+        fluxoLiquido: Math.round(totalGross - estimatedInvestment),
+        produtividade: Math.round(totalProd),
+        absenteismo: Math.round(totalAbs),
+        retencao: Math.round(totalTurn),
+        hvac: Math.round(totalHvacMaint),
+      };
+    };
+
     // 8. Cumulative Horizon Savings & Net ROI
-    const cumulativeGrossSavings = annualTotalGrossSavings * timeHorizonYears;
+    const cumulativeGrossSavings = getCompoundSavings(timeHorizonYears).totalGross;
     const cumulativeNetSavings = cumulativeGrossSavings - estimatedInvestment;
     const netRoiPercentage = Math.round((cumulativeNetSavings / estimatedInvestment) * 100);
 
@@ -267,7 +336,13 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
     const monthlyGrossSavings = annualTotalGrossSavings / 12;
     const paybackMonths = Number((estimatedInvestment / monthlyGrossSavings).toFixed(1));
 
-    // 10. Multi-year Cashflow Projection Data
+    // 10. Multi-year Cashflow Projection Data with annual compounding
+    const yr1 = getCompoundSavings(1);
+    const yr2 = getCompoundSavings(2);
+    const yr3 = getCompoundSavings(3);
+    const yr4 = getCompoundSavings(4);
+    const yr5 = getCompoundSavings(5);
+
     const projectionData = [
       {
         yearLabel: 'Mês 0 (Implantação)',
@@ -295,56 +370,56 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
         yearLabel: 'Ano 1',
         mes: 12,
         investimentoAcumulado: estimatedInvestment,
-        economiaAcumulada: Math.round(annualTotalGrossSavings * 1),
-        fluxoLiquido: Math.round(annualTotalGrossSavings * 1 - estimatedInvestment),
-        produtividade: Math.round(annualProductivityGainValue * 1),
-        absenteismo: Math.round(annualAbsenteeismSavings * 1),
-        retencao: Math.round(annualTurnoverSavings * 1),
-        hvac: Math.round(annualHvacSavings * 1),
+        economiaAcumulada: yr1.totalGross,
+        fluxoLiquido: yr1.fluxoLiquido,
+        produtividade: yr1.produtividade,
+        absenteismo: yr1.absenteismo,
+        retencao: yr1.retencao,
+        hvac: yr1.hvac,
       },
       {
         yearLabel: 'Ano 2',
         mes: 24,
         investimentoAcumulado: estimatedInvestment,
-        economiaAcumulada: Math.round(annualTotalGrossSavings * 2),
-        fluxoLiquido: Math.round(annualTotalGrossSavings * 2 - estimatedInvestment),
-        produtividade: Math.round(annualProductivityGainValue * 2),
-        absenteismo: Math.round(annualAbsenteeismSavings * 2),
-        retencao: Math.round(annualTurnoverSavings * 2),
-        hvac: Math.round(annualHvacSavings * 2),
+        economiaAcumulada: yr2.totalGross,
+        fluxoLiquido: yr2.fluxoLiquido,
+        produtividade: yr2.produtividade,
+        absenteismo: yr2.absenteismo,
+        retencao: yr2.retencao,
+        hvac: yr2.hvac,
       },
       {
         yearLabel: 'Ano 3',
         mes: 36,
         investimentoAcumulado: estimatedInvestment,
-        economiaAcumulada: Math.round(annualTotalGrossSavings * 3),
-        fluxoLiquido: Math.round(annualTotalGrossSavings * 3 - estimatedInvestment),
-        produtividade: Math.round(annualProductivityGainValue * 3),
-        absenteismo: Math.round(annualAbsenteeismSavings * 3),
-        retencao: Math.round(annualTurnoverSavings * 3),
-        hvac: Math.round(annualHvacSavings * 3),
+        economiaAcumulada: yr3.totalGross,
+        fluxoLiquido: yr3.fluxoLiquido,
+        produtividade: yr3.produtividade,
+        absenteismo: yr3.absenteismo,
+        retencao: yr3.retencao,
+        hvac: yr3.hvac,
       },
       {
         yearLabel: 'Ano 4',
         mes: 48,
         investimentoAcumulado: estimatedInvestment,
-        economiaAcumulada: Math.round(annualTotalGrossSavings * 4),
-        fluxoLiquido: Math.round(annualTotalGrossSavings * 4 - estimatedInvestment),
-        produtividade: Math.round(annualProductivityGainValue * 4),
-        absenteismo: Math.round(annualAbsenteeismSavings * 4),
-        retencao: Math.round(annualTurnoverSavings * 4),
-        hvac: Math.round(annualHvacSavings * 4),
+        economiaAcumulada: yr4.totalGross,
+        fluxoLiquido: yr4.fluxoLiquido,
+        produtividade: yr4.produtividade,
+        absenteismo: yr4.absenteismo,
+        retencao: yr4.retencao,
+        hvac: yr4.hvac,
       },
       {
         yearLabel: 'Ano 5',
         mes: 60,
         investimentoAcumulado: estimatedInvestment,
-        economiaAcumulada: Math.round(annualTotalGrossSavings * 5),
-        fluxoLiquido: Math.round(annualTotalGrossSavings * 5 - estimatedInvestment),
-        produtividade: Math.round(annualProductivityGainValue * 5),
-        absenteismo: Math.round(annualAbsenteeismSavings * 5),
-        retencao: Math.round(annualTurnoverSavings * 5),
-        hvac: Math.round(annualHvacSavings * 5),
+        economiaAcumulada: yr5.totalGross,
+        fluxoLiquido: yr5.fluxoLiquido,
+        produtividade: yr5.produtividade,
+        absenteismo: yr5.absenteismo,
+        retencao: yr5.retencao,
+        hvac: yr5.hvac,
       },
     ];
 
@@ -380,6 +455,12 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
       },
     ];
 
+    // 11. Sustainable Certifications & Impact (WELL v2, LEED v4.1, Acoustics)
+    const wellPoints = Math.min(18, Math.round(6 + (area / 10) * (industry === 'corporate' || industry === 'finance_law' ? 1.4 : 1.2)));
+    const leedCredits = Math.min(12, Math.round(4 + (area / 12) * (industry === 'corporate' ? 1.3 : 1.1)));
+    const acousticDb = Math.min(18, Math.round(6 + (area / 8) * (level === 'immersive' ? 1.4 : level === 'core' ? 1.1 : 0.9)));
+    const stressReduction = Math.min(38, Math.round(16 + (area / 15) * 2.5 * levelConfig.factor));
+
     return {
       annualTotalPayroll,
       estimatedInvestment,
@@ -395,10 +476,16 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
       paybackMonths,
       projectionData,
       breakdownData,
+      wellPoints,
+      leedCredits,
+      acousticDb,
+      stressReduction,
+      growthScenario,
+      scenarioLabel: scenarioParams.label,
       effectiveProdPct: Number((effectiveProdPct * 100).toFixed(1)),
       effectiveDaysSaved: Number(effectiveDaysSaved.toFixed(1)),
     };
-  }, [employees, salary, area, industry, level, timeHorizonYears, indConfig, levelConfig]);
+  }, [employees, salary, area, industry, level, timeHorizonYears, growthScenario, indConfig, levelConfig]);
 
   // Preset Apply Handler
   const handleApplyPreset = (preset: PresetScenario) => {
@@ -459,15 +546,16 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
       doc.text(`- Setor de Atuação: ${indConfig.name}`, 20, 83);
       doc.text(`- Área Prevista de Jardim Vertical: ${area} m²`, 20, 89);
       doc.text(`- Nível de Integração Biofílica: ${levelConfig.name}`, 20, 95);
+      doc.text(`- Cenário de Sensibilidade: ${growthScenario === 'optimistic' ? 'Otimista (Alta Performance)' : 'Conservador (Ponderado)'}`, 20, 101);
 
       // Section 2: Executive Financial Summary Box
       doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(7, 42, 26);
-      doc.text('2. SUMÁRIO EXECUTIVO FINANCEIRO & PAYBACK', 15, 109);
+      doc.text('2. SUMÁRIO EXECUTIVO FINANCEIRO & PAYBACK', 15, 114);
 
       doc.setFillColor(243, 247, 244);
-      doc.roundedRect(15, 114, 180, 52, 3, 3, 'F');
+      doc.roundedRect(15, 119, 180, 52, 3, 3, 'F');
 
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
@@ -546,8 +634,8 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
             </div>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-gray-950 leading-tight">
-              Calculadora de ROI Biofílico <br className="hidden sm:inline" />
-              <span className="italic font-light text-[#15803d]">Retorno Financeiro & Redução de Absenteísmo</span>
+              Calculadora de Impacto & ROI Biofílico <br className="hidden sm:inline" />
+              <span className="italic font-light text-[#15803d]">Retorno Financeiro & Selos Sustentáveis (WELL/LEED)</span>
             </h2>
 
             <p className="text-gray-600 text-sm sm:text-base max-w-3xl mx-auto leading-relaxed">
@@ -555,7 +643,7 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
               Estimativas baseadas nos estudos científicos da <strong>Harvard T.H. Chan</strong> e <strong>Terrapin Bright Green</strong>.
             </p>
 
-            {/* Quick Preset Selector Chips */}
+            {/* Quick Preset Selector Chips + Contextual Tips Trigger */}
             <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
               <span className="text-xs font-semibold text-gray-500 mr-1 flex items-center gap-1">
                 <Sliders className="w-3.5 h-3.5 text-[#15803d]" /> Cenários Típicos:
@@ -573,6 +661,21 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                   </span>
                 </button>
               ))}
+
+              {/* High-visibility Contextual Tips trigger button */}
+              <button
+                type="button"
+                onClick={() => setIsSidePanelOpen(true)}
+                className="px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer bg-gradient-to-r from-[#062316] via-[#072a1a] to-emerald-900 hover:from-emerald-900 hover:to-[#072a1a] text-white border-emerald-500/50 shadow-md hover:shadow-lg hover:scale-102 flex items-center gap-2"
+                title="Abrir painel lateral de dicas contextuais de otimização"
+              >
+                <div className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                <Lightbulb className="w-3.5 h-3.5 text-amber-300" />
+                <span>Dicas de Otimização</span>
+                <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-500/30 text-[#86efac] border border-emerald-400/40 font-bold uppercase tracking-wider">
+                  Sugestões
+                </span>
+              </button>
             </div>
           </div>
         </ScrollReveal>
@@ -600,6 +703,31 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Restaurar</span>
+                </button>
+              </div>
+
+              {/* Machine Learning Prediction Helper Banner Card */}
+              <div className="p-3.5 bg-gradient-to-br from-emerald-50 via-teal-50/60 to-emerald-100/70 rounded-2xl border border-emerald-300 shadow-2xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#072a1a]">
+                    <Brain className="w-4 h-4 text-[#15803d]" />
+                    <span>Preditor de Verba ML</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-[#072a1a] text-[#86efac]">
+                    IA / ALGORITMO
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-600 leading-snug">
+                  Calcule a alocação de orçamento recomendada baseada nas <strong>dimensões da sala (LxCxA)</strong> e <strong>recursos biofílicos</strong> selecionados.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('ml_allocation')}
+                  className="w-full py-2 px-3 rounded-xl bg-white hover:bg-emerald-50 text-[#072a1a] border border-emerald-300 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs hover:border-emerald-500 hover:scale-101"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#15803d]" />
+                  <span>Dimensionar com Assistente ML</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
                 </button>
               </div>
 
@@ -774,6 +902,76 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                 </div>
               </div>
 
+              {/* 7. Sensitivity Scenario Selector (Conservative vs. Optimistic) */}
+              <div className="space-y-2 pt-2 border-t border-gray-100">
+                <div className="flex items-center justify-between text-xs font-bold text-gray-700">
+                  <span className="flex items-center gap-1.5">
+                    <TrendingUp className="w-3.5 h-3.5 text-[#15803d]" />
+                    <span>Cenário de Sensibilidade:</span>
+                  </span>
+                  <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => setGrowthScenario('conservative')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                        growthScenario === 'conservative'
+                          ? 'bg-[#072a1a] text-white shadow-2xs'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                      title="Premissas ponderadas com 35% de monetização de foco"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5 text-blue-300" />
+                      <span>Conservador</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGrowthScenario('optimistic')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                        growthScenario === 'optimistic'
+                          ? 'bg-emerald-600 text-white shadow-2xs'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                      title="Premissas de alta performance com 60% de monetização de foco"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                      <span>Otimista</span>
+                    </button>
+                  </div>
+                </div>
+                <p className="text-[10px] text-gray-500 italic">
+                  {growthScenario === 'conservative'
+                    ? '• Premissas moderadas: 35% captura cognitiva, R$ 180/m² manutenção evitada.'
+                    : '• Alta performance: 60% captura cognitiva, maior retenção de talentos e sinergia térmica.'}
+                </p>
+              </div>
+
+              {/* Contextual Optimization Banner Card in Left Panel */}
+              <div className="p-3.5 bg-gradient-to-br from-[#062316] via-[#072a1a] to-emerald-950 text-white rounded-2xl border border-emerald-500/40 shadow-md space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-amber-400/20 border border-amber-400/30 flex items-center justify-center text-amber-300">
+                      <Lightbulb className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="font-serif font-bold text-xs text-white">Dicas Contextuais de Otimização</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-[#86efac] border border-emerald-500/40 text-[10px] font-bold">
+                    Painel Lateral
+                  </span>
+                </div>
+                <p className="text-[11px] text-emerald-100/80 leading-relaxed">
+                  Identificamos ajustes em eficiência térmica, iluminação circadiana e nível de integração para acelerar seu ROI.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsSidePanelOpen(true)}
+                  className="w-full py-2 px-3 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-gray-950 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:scale-[1.01] active:scale-99"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-gray-950" />
+                  <span>Ver Dicas & Ajustes Sugeridos</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-gray-950" />
+                </button>
+              </div>
+
               {/* Action Buttons */}
               <div className="pt-3 flex flex-col gap-2.5">
                 <button
@@ -905,6 +1103,22 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
 
                   <button
                     type="button"
+                    onClick={() => setActiveTab('long_term')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      activeTab === 'long_term'
+                        ? 'bg-white text-[#072a1a] shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Building2 className="w-3.5 h-3.5 text-[#15803d]" />
+                    <span>Ciclo 5, 10 e 20 Anos</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-100 text-[#15803d] font-bold">
+                      Arquitetos
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => setActiveTab('breakdown')}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       activeTab === 'breakdown'
@@ -913,6 +1127,48 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                     }`}
                   >
                     Detalhamento (%)
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('energy_scatter')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      activeTab === 'energy_scatter'
+                        ? 'bg-white text-[#072a1a] shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Zap className="w-3.5 h-3.5 text-amber-500" />
+                    <span>ROI x Energia</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('certifications')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                      activeTab === 'certifications'
+                        ? 'bg-white text-[#072a1a] shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Award className="w-3.5 h-3.5 text-[#15803d]" />
+                    <span>WELL & LEED</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('ml_allocation')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      activeTab === 'ml_allocation'
+                        ? 'bg-[#072a1a] text-[#86efac] shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Brain className="w-3.5 h-3.5 text-[#15803d]" />
+                    <span>Preditor ML</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-100 text-[#15803d] font-bold">
+                      IA
+                    </span>
                   </button>
                 </div>
 
@@ -999,6 +1255,14 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                     <p className="text-[11px] text-gray-600 leading-relaxed">
                       Isolamento térmico passivo e eliminação de R$ 180/m² em água e jardineiros.
                     </p>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('energy_scatter')}
+                      className="text-[11px] font-bold text-[#15803d] hover:text-[#072a1a] flex items-center gap-1 transition-colors cursor-pointer pt-1"
+                    >
+                      <span>Ver Gráfico de Dispersão ROI x Energia</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
                   </div>
 
                 </div>
@@ -1007,9 +1271,62 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
               {/* TAB 2: Cumulative Cash Flow Projection Chart */}
               {activeTab === 'projection' && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs text-gray-600">
-                    <span className="font-semibold">Projeção Acumulada de Fluxo Líquido (R$)</span>
-                    <span className="text-emerald-700 font-bold">Ponto de Equilíbrio aos {calculation.paybackMonths} meses</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-gray-600 bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-gray-900">Projeção Acumulada de Fluxo Líquido (R$)</span>
+                      <span className="text-emerald-700 font-bold bg-emerald-100/80 px-2 py-0.5 rounded-md">
+                        Breakeven aos {calculation.paybackMonths} meses
+                      </span>
+                    </div>
+
+                    {/* Sensitivity Toggle right above chart */}
+                    <div className="flex items-center gap-1.5 self-end sm:self-auto">
+                      <span className="text-[11px] text-gray-500 font-medium">Sensibilidade:</span>
+                      <div className="flex items-center p-0.5 bg-white rounded-lg border border-gray-300 shadow-2xs">
+                        <button
+                          type="button"
+                          onClick={() => setGrowthScenario('conservative')}
+                          className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                            growthScenario === 'conservative'
+                              ? 'bg-[#072a1a] text-white shadow-2xs'
+                              : 'text-gray-500 hover:text-gray-800'
+                          }`}
+                        >
+                          <ShieldCheck className="w-3 h-3 text-blue-300" />
+                          <span>Conservador</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setGrowthScenario('optimistic')}
+                          className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                            growthScenario === 'optimistic'
+                              ? 'bg-emerald-600 text-white shadow-2xs'
+                              : 'text-gray-500 hover:text-gray-800'
+                          }`}
+                        >
+                          <Sparkles className="w-3 h-3 text-amber-300" />
+                          <span>Otimista</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Banner linking to Architect long-term view */}
+                  <div className="p-2.5 bg-gradient-to-r from-emerald-50 via-teal-50/50 to-white rounded-xl border border-emerald-200 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2 text-gray-700">
+                      <Building2 className="w-4 h-4 text-[#15803d]" />
+                      <span className="text-[11px]">
+                        Apresentando para clientes ou facilities? Veja o ciclo completo de <strong>5, 10 e 20 anos</strong> versus despesas de jardins vivos.
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('long_term')}
+                      className="text-[11px] font-bold text-[#15803d] hover:text-[#072a1a] flex items-center gap-1 cursor-pointer shrink-0 ml-2"
+                    >
+                      <span>Ver Dossiê Arquitetos</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
                   </div>
 
                   <div className="h-64 sm:h-72 w-full">
@@ -1082,6 +1399,26 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                 </div>
               )}
 
+              {/* TAB: Projeção Histórica 5, 10 e 20 Anos (Dossiê para Arquitetos) */}
+              {activeTab === 'long_term' && (
+                <div className="animate-in fade-in duration-300">
+                  <LongTermRoiArchitectChart
+                    area={area}
+                    employees={employees}
+                    salary={salary}
+                    industry={industry}
+                    level={level}
+                    growthScenario={growthScenario}
+                    onScenarioChange={setGrowthScenario}
+                    estimatedInvestment={calculation.estimatedInvestment}
+                    annualTotalGrossSavings={calculation.annualTotalGrossSavings}
+                    annualMaintenanceAvoided={calculation.annualMaintenanceAvoided}
+                    paybackMonths={calculation.paybackMonths}
+                    onOpenQuote={onOpenQuote}
+                  />
+                </div>
+              )}
+
               {/* TAB 3: Category Breakdown Bar Chart */}
               {activeTab === 'breakdown' && (
                 <div className="space-y-4">
@@ -1137,6 +1474,133 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                 </div>
               )}
 
+              {/* TAB 4: Certificações Sustentáveis (WELL & LEED) & Conforto Acústico */}
+              {activeTab === 'certifications' && (
+                <div className="space-y-4 animate-in fade-in duration-300">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {/* WELL v2 */}
+                    <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-300 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#072a1a] uppercase tracking-wider flex items-center gap-1.5">
+                          <Award className="w-4 h-4 text-[#15803d]" /> Pontuação WELL v2
+                        </span>
+                        <span className="px-2 py-0.5 bg-emerald-200 text-[#072a1a] font-mono text-[10px] font-extrabold rounded">
+                          IWBI Standard
+                        </span>
+                      </div>
+                      <p className="text-2xl font-mono font-extrabold text-[#15803d]">
+                        +{calculation.wellPoints} <span className="text-sm font-sans font-medium text-gray-700">pontos estimados</span>
+                      </p>
+                      <p className="text-[11px] text-gray-600 leading-relaxed">
+                        Impacto direto nos conceitos M02 (Acesso à Natureza), S04 (Conforto Acústico) e W07 (Qualidade do Ar Interno).
+                      </p>
+                    </div>
+
+                    {/* LEED v4.1 */}
+                    <div className="p-4 rounded-2xl bg-teal-50/80 border border-teal-300 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#0f766e] uppercase tracking-wider flex items-center gap-1.5">
+                          <ShieldCheck className="w-4 h-4 text-[#0f766e]" /> Créditos LEED v4.1
+                        </span>
+                        <span className="px-2 py-0.5 bg-teal-200 text-[#0f766e] font-mono text-[10px] font-extrabold rounded">
+                          USGBC Certified
+                        </span>
+                      </div>
+                      <p className="text-2xl font-mono font-extrabold text-[#0f766e]">
+                        +{calculation.leedCredits} <span className="text-sm font-sans font-medium text-gray-700">créditos verdes</span>
+                      </p>
+                      <p className="text-[11px] text-gray-600 leading-relaxed">
+                        Contribui para créditos de Materiais & Recursos (MR) e Qualidade Ambiental Interna (EQ - Conforto Acústico e Biofilia).
+                      </p>
+                    </div>
+
+                    {/* Acoustic NRC */}
+                    <div className="p-4 rounded-2xl bg-sky-50/80 border border-sky-300 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#0369a1] uppercase tracking-wider flex items-center gap-1.5">
+                          <Volume2 className="w-4 h-4 text-[#0284c7]" /> Absorção Acústica
+                        </span>
+                        <span className="px-2 py-0.5 bg-sky-200 text-[#0369a1] font-mono text-[10px] font-extrabold rounded">
+                          NRC até 0.85
+                        </span>
+                      </div>
+                      <p className="text-2xl font-mono font-extrabold text-[#0284c7]">
+                        -{calculation.acousticDb} dB <span className="text-sm font-sans font-medium text-gray-700">na reverberação</span>
+                      </p>
+                      <p className="text-[11px] text-gray-600 leading-relaxed">
+                        Amortecimento acústico comprovado por ensaio IPT. Reduz ecos em salas de reunião, call centers e open spaces.
+                      </p>
+                    </div>
+
+                    {/* Stress & Heart-Rate */}
+                    <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-300 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#b45309] uppercase tracking-wider flex items-center gap-1.5">
+                          <HeartPulse className="w-4 h-4 text-[#d97706]" /> Redução de Estresse
+                        </span>
+                        <span className="px-2 py-0.5 bg-amber-200 text-[#b45309] font-mono text-[10px] font-extrabold rounded">
+                          Terrapin Study
+                        </span>
+                      </div>
+                      <p className="text-2xl font-mono font-extrabold text-[#d97706]">
+                        -{calculation.stressReduction}% <span className="text-sm font-sans font-medium text-gray-700">índice de estresse</span>
+                      </p>
+                      <p className="text-[11px] text-gray-600 leading-relaxed">
+                        Queda comprovada de cortisol salivar e estabilização da frequência cardíaca em ambientes com visual vegetal contínuo.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Certifications CTA bar */}
+                  <div className="p-3.5 bg-gray-50 rounded-2xl border border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    <span className="text-gray-600 text-center sm:text-left">
+                      Necessita de memorial descritivo para submissão ao <strong>GBC Brasil</strong> ou <strong>IWBI</strong>?
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleDownloadPdfBusinessCase}
+                      className="px-3.5 py-2 rounded-xl bg-[#072a1a] text-[#86efac] font-bold flex items-center gap-2 hover:bg-[#15803d] transition-colors cursor-pointer shrink-0"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Baixar Laudo Técnico Completo (PDF)</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB: Gráfico de Dispersão ROI x Eficiência Energética */}
+              {activeTab === 'energy_scatter' && (
+                <div className="animate-in fade-in duration-300">
+                  <RoiEnergyScatterPlot
+                    area={area}
+                    employees={employees}
+                    salary={salary}
+                    industry={industry}
+                    level={level}
+                    timeHorizonYears={timeHorizonYears}
+                    estimatedInvestment={calculation.estimatedInvestment}
+                    annualTotalGrossSavings={calculation.annualTotalGrossSavings}
+                    annualHvacSavings={calculation.annualHvacSavings}
+                    paybackMonths={calculation.paybackMonths}
+                  />
+                </div>
+              )}
+
+              {/* TAB 5: Preditor de Alocação de Verba com Machine Learning */}
+              {activeTab === 'ml_allocation' && (
+                <div className="animate-in fade-in duration-300">
+                  <BiophilicMlPredictionHelper
+                    onApplyToCalculator={(suggestedArea, suggestedEmployees, suggestedLevel) => {
+                      setArea(suggestedArea);
+                      setEmployees(suggestedEmployees);
+                      setLevel(suggestedLevel);
+                      setActiveTab('overview');
+                    }}
+                    onOpenQuote={onOpenQuote}
+                  />
+                </div>
+              )}
+
             </div>
 
           </div>
@@ -1144,6 +1608,36 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
         </div>
 
       </div>
+
+      {/* Floating Side Panel Toggle Tab (Visible on desktop/mobile for quick access) */}
+      <div className="fixed right-3 bottom-6 z-40">
+        <button
+          type="button"
+          onClick={() => setIsSidePanelOpen(true)}
+          className="px-3.5 py-2.5 bg-[#072a1a] hover:bg-[#15803d] text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl border border-emerald-500/50 flex items-center gap-2 cursor-pointer transition-all hover:scale-105 active:scale-95 group text-xs"
+          title="Abrir painel lateral de dicas contextuais de otimização"
+        >
+          <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <Lightbulb className="w-4 h-4 text-amber-300 group-hover:rotate-12 transition-transform" />
+          <span className="hidden sm:inline">Dicas de Otimização</span>
+        </button>
+      </div>
+
+      {/* Contextual Optimization Side Panel Drawer */}
+      <ContextualOptimizationSidePanel
+        isOpen={isSidePanelOpen}
+        onClose={() => setIsSidePanelOpen(false)}
+        employees={employees}
+        salary={salary}
+        area={area}
+        industry={industry}
+        level={level}
+        growthScenario={growthScenario}
+        timeHorizonYears={timeHorizonYears}
+        calculation={calculation}
+        onApplyAdjustment={handleApplyAdjustment}
+        onOpenQuote={onOpenQuote}
+      />
     </section>
   );
 };

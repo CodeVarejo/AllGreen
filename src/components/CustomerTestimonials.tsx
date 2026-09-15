@@ -186,18 +186,18 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
         {/* Section Header with ScrollReveal */}
         <ScrollReveal animation="fade-up" distance={25}>
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="text-xs font-bold text-[#15803d] uppercase tracking-widest bg-emerald-100/90 px-3.5 py-1 rounded-full inline-flex items-center gap-1.5">
-              <Award className="w-3.5 h-3.5 text-[#15803d]" />
-              <span>DEPOIMENTOS & RESULTADOS DE IMPACTO</span>
+            <span className="text-xs font-mono font-bold text-emerald-900 uppercase tracking-widest bg-emerald-100/90 px-4 py-1.5 rounded-full inline-flex items-center gap-2 border border-emerald-300/60">
+              <Award className="w-3.5 h-3.5 text-amber-700" />
+              <span>CRÔNICAS DE TRANSFORMAÇÃO & LAUDOS HOMOLOGADOS</span>
             </span>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-gray-900 leading-tight">
-              A confiança de quem vive a <br className="hidden sm:inline" />
-              <span className="italic font-light text-[#15803d]">biofilia de alto padrão</span> todos os dias.
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-[#072a1a] leading-tight">
+              A palavra de quem especificou a <br className="hidden sm:inline" />
+              <span className="italic font-light text-emerald-800">biofilia de alta precisão.</span>
             </h2>
 
-            <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-              Descubra como arquitetos premiados, diretores corporativos e gestores de patrimônio alcançaram ganhos reais de produtividade, acústica e sustentabilidade com a All Green.
+            <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-sans font-light">
+              Depoimentos reais de arquitetos titulares, diretores de facilities e gestores de patrimônio que transformaram seus espaços com as paredes verdes preservadas All Green.
             </p>
           </div>
         </ScrollReveal>
@@ -210,10 +210,10 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
                 key={sec}
                 type="button"
                 onClick={() => setActiveSector(sec)}
-                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-4 py-2 rounded-full text-xs font-mono font-bold whitespace-nowrap transition-all cursor-pointer ${
                   activeSector === sec
-                    ? 'bg-[#072a1a] text-white shadow-md'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:bg-emerald-50 hover:text-[#072a1a]'
+                    ? 'bg-[#072a1a] text-[#86efac] shadow-md border border-[#86efac]/30'
+                    : 'bg-white text-gray-700 border border-gray-200/90 hover:bg-emerald-50 hover:text-[#072a1a]'
                 }`}
               >
                 {sec}
@@ -225,7 +225,7 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
         {/* Main Testimonial Card Carousel */}
         <div className="mt-8 max-w-5xl mx-auto">
           <ScrollReveal animation="fade-up" delay={0.15} distance={25}>
-            <div className="bg-white rounded-3xl border border-gray-200/90 shadow-xl overflow-hidden relative">
+            <div className="bg-white rounded-3xl border border-emerald-900/10 shadow-xl overflow-hidden relative bg-grain-subtle">
               
               <AnimatePresence mode="wait">
                 <motion.div
@@ -267,7 +267,7 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
 
                     {/* Impact Metric Badge Card */}
                     <div className="w-full bg-[#f3f7f4] p-3.5 rounded-2xl border border-emerald-200/80 text-center shadow-2xs">
-                      <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider block">
+                      <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider block font-mono">
                         {currentItem.metricLabel}
                       </span>
                       <strong className="text-2xl font-serif font-bold text-[#072a1a] block mt-0.5">
@@ -284,7 +284,7 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
                     
                     {/* Top Meta: Stars & Sector Badge */}
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex items-center gap-1 text-amber-400">
+                      <div className="flex items-center gap-1 text-amber-500">
                         {[...Array(currentItem.rating)].map((_, i) => (
                           <Star key={i} className="w-4 h-4 fill-current" />
                         ))}
@@ -294,7 +294,7 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#072a1a] text-[10px] font-bold">
+                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#072a1a] text-[10px] font-bold font-mono">
                           {currentItem.sector}
                         </span>
                         <span className="px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-700 text-[10px] font-mono font-bold">
@@ -305,10 +305,10 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
 
                     {/* Project Title */}
                     <div className="space-y-1">
-                      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
-                        Projeto Executado
+                      <span className="text-[11px] font-mono font-bold text-emerald-800 uppercase tracking-wider block">
+                        Memorial de Especificação
                       </span>
-                      <h3 className="font-serif font-bold text-gray-900 text-base sm:text-lg">
+                      <h3 className="font-serif font-bold text-gray-900 text-base sm:text-xl">
                         {currentItem.projectTitle}
                       </h3>
                     </div>
@@ -316,7 +316,7 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
                     {/* Quote Text */}
                     <div className="relative">
                       <Quote className="w-8 h-8 text-emerald-200 absolute -top-3 -left-3 -z-10 opacity-70" />
-                      <p className="text-gray-700 text-sm sm:text-base leading-relaxed italic">
+                      <p className="font-serif text-gray-800 text-base sm:text-lg leading-relaxed italic">
                         "{currentItem.quote}"
                       </p>
                     </div>

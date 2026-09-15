@@ -22,7 +22,8 @@ import {
   Contrast,
   Zap,
   TrendingUp,
-  ArrowLeftRight
+  ArrowLeftRight,
+  Sparkles
 } from 'lucide-react';
 import { isMacUser } from '../hooks/useKeyboardShortcuts';
 import { BOTANICAL_SPECIES, SEARCH_RESULTS } from '../data/mockData';
@@ -30,7 +31,7 @@ import { useAccessibility } from '../context/AccessibilityContext';
 
 export interface CommandItem {
   id: string;
-  category: 'Ações Rápidas' | 'Espécies Botânicas' | 'Soluções & Produtos' | 'Laudos & Ferramentas' | 'Acessibilidade' | 'Desenvolvedor & QA';
+  category: 'Ações Rápidas' | 'Espécies Botânicas' | 'Soluções & Produtos' | 'Laudos & Ferramentas' | 'Acessibilidade';
   title: string;
   subtitle?: string;
   badge?: string;
@@ -51,7 +52,7 @@ interface GlobalCommandPaletteProps {
   onOpenShortcutsModal: () => void;
   onOpenConsultation?: () => void;
   onOpenProjectPdfReport?: () => void;
-  onTriggerBreakTest?: () => void;
+  onOpenTour?: () => void;
 }
 
 export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
@@ -65,7 +66,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenShortcutsModal,
   onOpenConsultation,
   onOpenProjectPdfReport,
-  onTriggerBreakTest,
+  onOpenTour,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -131,6 +132,19 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
           onTogglePortal();
         },
         keywords: ['portal', 'arquiteto', 'especificador', 'login', 'autenticação', 'projetos', 'bim', 'cad', 'revit'],
+      },
+      {
+        id: 'cmd-tour',
+        category: 'Ações Rápidas',
+        title: 'Iniciar Tour Guiado (Simulador, Quiz e Portal)',
+        subtitle: 'Aprenda a explorar os principais recursos e inovações da plataforma',
+        badge: 'Tour',
+        icon: Sparkles,
+        action: () => {
+          onClose();
+          if (onOpenTour) onOpenTour();
+        },
+        keywords: ['tour', 'guiado', 'onboarding', 'ajuda', 'simulador', 'quiz', 'portal', 'introducao', 'recursos'],
       },
       {
         id: 'cmd-lookup',
@@ -245,32 +259,18 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['heatmap', 'recharts', 'energia', 'acustica', 'nrc', 'hvac', 'grafico', 'dispersão', 'frequencias', 'desempenho'],
       },
       {
-        id: 'cmd-leed-section',
-        category: 'Laudos & Ferramentas',
-        title: 'Calculadora de Créditos Sustentáveis LEED v4.1 & WELL v2',
-        subtitle: 'Simule pontuação ambiental, economia de água e conforto acústico',
-        badge: 'Green Building',
-        icon: Calculator,
-        action: () => {
-          onClose();
-          const elem = document.getElementById('leed-calculator');
-          if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-        },
-        keywords: ['leed', 'well', 'sustentabilidade', 'creditos', 'pontos', 'agua', 'energia', 'green building'],
-      },
-      {
         id: 'cmd-roi-section',
         category: 'Laudos & Ferramentas',
-        title: 'Calculadora de ROI Biofílico & Redução de Absenteísmo',
-        subtitle: 'Projeção financeira Harvard COGfx, ganhos de produtividade e payback',
-        badge: 'Novo ROI',
+        title: 'Calculadora de Impacto & ROI Biofílico (WELL, LEED & Financeiro)',
+        subtitle: 'Projeção financeira Harvard COGfx, pontuação WELL v2, créditos LEED v4 e atenuação acústica',
+        badge: 'Impacto & ROI',
         icon: TrendingUp,
         action: () => {
           onClose();
           const elem = document.getElementById('biophilic-roi-calculator');
           if (elem) elem.scrollIntoView({ behavior: 'smooth' });
         },
-        keywords: ['roi', 'retorno', 'investimento', 'absenteismo', 'produtividade', 'harvard', 'financeiro', 'payback', 'economia', 'colaboradores'],
+        keywords: ['roi', 'retorno', 'investimento', 'absenteismo', 'produtividade', 'harvard', 'financeiro', 'payback', 'leed', 'well', 'sustentabilidade', 'creditos', 'pontos', 'acustica'],
       },
       {
         id: 'cmd-matrix-section',
@@ -324,21 +324,6 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
           onOpenShortcutsModal();
         },
         keywords: ['atalhos', 'teclado', 'shortcuts', 'ajuda', 'comandos', 'hotkeys'],
-      },
-      {
-        id: 'cmd-dev-break',
-        category: 'Desenvolvedor & QA',
-        title: '💥 Break Component (Simular Erro no ErrorBoundary)',
-        subtitle: 'Provoca uma falha proposital no Catálogo para testar a tela Oops! e o botão Reload',
-        badge: 'QA Teste',
-        icon: Zap,
-        action: () => {
-          onClose();
-          if (onTriggerBreakTest) {
-            onTriggerBreakTest();
-          }
-        },
-        keywords: ['break', 'quebrar', 'erro', 'crash', 'errorboundary', 'oops', 'reload', 'qa', 'dev', 'teste'],
       },
     ];
 

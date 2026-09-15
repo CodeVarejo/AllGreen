@@ -19,7 +19,8 @@ import {
   Clock,
   Truck,
   CheckCircle2,
-  Keyboard
+  Keyboard,
+  Sparkles
 } from 'lucide-react';
 import { useAccessibility } from '../context/AccessibilityContext';
 import { ScrollReveal } from './ScrollReveal';
@@ -33,6 +34,7 @@ interface NewsletterAndFooterProps {
   onOpenShortcutsModal?: () => void;
   onOpenConsultation?: () => void;
   onOpenProjectPdfReport?: () => void;
+  onOpenTour?: () => void;
 }
 
 export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
@@ -43,6 +45,7 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
   onOpenShortcutsModal,
   onOpenConsultation,
   onOpenProjectPdfReport,
+  onOpenTour,
 }) => {
   const [email, setEmail] = useState('');
   const [newsMessage, setNewsMessage] = useState('');
@@ -80,20 +83,20 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
   };
 
   return (
-    <footer className="bg-[#051f13] text-white">
+    <footer className="bg-[#051c11] text-white bg-grain-dark border-t border-emerald-900/60">
       
       {/* Top Newsletter & Bio Club Bar */}
-      <div className="border-b border-emerald-900/80 bg-[#072a1a] py-12">
+      <div className="border-b border-emerald-900/80 bg-[#072a1a]/80 py-12 backdrop-blur-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal animation="fade-up" distance={25}>
             <div className="bg-emerald-950/90 rounded-3xl p-6 sm:p-10 border border-emerald-800/80 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8">
               
               <div className="space-y-2 max-w-xl text-center lg:text-left">
-                <span className="text-[10px] font-bold text-emerald-300 uppercase tracking-widest bg-emerald-900 px-3 py-1 rounded-full border border-emerald-700">
-                  CLUBE DE TENDÊNCIAS & ARQUITETURA
+                <span className="text-[10px] font-mono font-bold text-amber-300 uppercase tracking-widest bg-emerald-900/80 px-3 py-1 rounded-full border border-emerald-700">
+                  ATELIÊ BOTÂNICO • CADERNO DE ESPECIFICAÇÃO
                 </span>
-                <h3 className="text-2xl sm:text-3xl font-serif font-bold text-white">
-                  Boletim Biofílico All Green Decor
+                <h3 className="text-2xl sm:text-3xl font-serif font-normal text-white">
+                  Boletim Biofílico All Green Ateliê
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
                   Receba lançamentos de espécies hiper-realistas, atualizações de blocos 3D/BIM para Revit e SketchUp e memoriais para certificações LEED e WELL.
@@ -308,6 +311,7 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
                 <li>
                   <button 
                     type="button"
+                    id="footer-portal-link"
                     onClick={onOpenLogin}
                     className="font-bold text-[#86efac] hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
                   >
@@ -353,20 +357,10 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
                 <li>
                   <button 
                     type="button"
-                    onClick={() => scrollToSection('leed-calculator')}
-                    className="hover:text-white transition-colors cursor-pointer text-left"
-                  >
-                    Calculadora LEED & WELL
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    type="button"
                     onClick={() => scrollToSection('biophilic-roi-calculator')}
                     className="hover:text-white transition-colors cursor-pointer text-left flex items-center gap-1.5 text-emerald-300 font-semibold"
                   >
-                    <span>Calculadora de ROI Biofílico</span>
-                    <span className="px-1.5 py-0.2 bg-emerald-500/30 text-emerald-200 rounded text-[9px] font-bold">Novo</span>
+                    <span>Calculadora de Impacto & ROI (WELL/LEED)</span>
                   </button>
                 </li>
                 <li>
@@ -533,6 +527,19 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
                 >
                   <Keyboard className="w-3.5 h-3.5" />
                   <span>Atalhos (?)</span>
+                </button>
+              )}
+
+              {onOpenTour && (
+                <button
+                  type="button"
+                  id="footer-guided-tour-btn"
+                  onClick={onOpenTour}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-900 text-emerald-200 hover:bg-emerald-800 transition-colors cursor-pointer flex items-center gap-1.5"
+                  title="Rever Tour Guiado da Plataforma"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#86efac]" />
+                  <span>Tour Guiado</span>
                 </button>
               )}
 

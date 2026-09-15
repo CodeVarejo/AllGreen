@@ -1,7 +1,53 @@
 @import "tailwindcss";
 
+@theme {
+  --font-serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --font-display: 'Cinzel', 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
 html {
   scroll-behavior: smooth;
+}
+
+/* Botanical Paper Texture & Atmosphere */
+.bg-grain-subtle {
+  background-image: radial-gradient(rgba(7, 42, 26, 0.04) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.bg-grain-dark {
+  background-image: radial-gradient(rgba(134, 239, 172, 0.05) 1px, transparent 0);
+  background-size: 28px 28px;
+}
+
+/* Botanical seal / archival stamp styling */
+.botanical-stamp {
+  position: relative;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Delicate gold hairline dividers */
+.border-gold-subtle {
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
+.bg-gold-subtle {
+  background-color: rgba(212, 175, 55, 0.08);
+}
+
+/* Editorial Dropcap */
+.dropcap::first-letter {
+  font-family: var(--font-serif);
+  float: left;
+  font-size: 4.2rem;
+  line-height: 0.8;
+  padding-top: 4px;
+  padding-right: 12px;
+  padding-bottom: 2px;
+  color: #072a1a;
+  font-weight: 500;
 }
 
 @media (prefers-reduced-motion: reduce) {

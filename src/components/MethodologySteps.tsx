@@ -1,7 +1,6 @@
-import React from 'react';
-import { Camera, Layers, Wrench, ShieldCheck, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Camera, Layers, Wrench, ShieldCheck, ArrowRight, Sparkles, BookOpen, Compass, CheckCircle2, ChevronRight } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
-import { PageHeader } from './PageHeader';
 
 interface MethodologyStepsProps {
   onOpenSimulator: () => void;
@@ -12,130 +11,208 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
   onOpenSimulator,
   onOpenQuote,
 }) => {
+  const [activeStep, setActiveStep] = useState(0);
+
   const steps = [
     {
       num: '01',
-      icon: Camera,
-      tag: 'SEM CADASTRO OU COMPLICAÇÕES',
-      title: 'Simulação Instantânea por IA',
-      desc: 'Envie a foto do seu ambiente e receba a visualização realista de como a parede verde se integrará com a sua mobília e iluminação.',
-      badge: '✓ Grátis & Instantâneo',
+      stage: 'ETAPA INICIAL • CONCEPT',
+      title: 'Diagnóstico Digital & Simulação IA',
+      subtitle: 'Uma fotografia do seu espaço é o ponto de partida',
+      desc: 'Nossa inteligência artificial analisa a geometria do ambiente, incidência lumínica e mobiliário existente, projetando em segundos uma composição biofílica fotorrealista para você e seus clientes avaliarem antes de qualquer intervenção física.',
+      tools: ['Visão Computacional Gemini IA', 'Renderização Instantânea', 'Estimativa Orçamentária Paramétrica'],
+      materialNote: 'Sem compromisso comercial prévio • Acesso instantâneo via browser',
+      actionLabel: 'Abrir Simulador Agora',
+      isSimulatorAction: true,
     },
     {
       num: '02',
-      icon: Layers,
-      tag: 'DESENHO EXCLUSIVO SOB MEDIDA',
-      title: 'Projeto & Seleção Botânica',
-      desc: 'Nossa curadoria seleciona a densidade, texturas e espécies botânicas (preservadas ou artificiais premium anti-UV) adequadas à arquitetura do seu espaço.',
-      badge: '✓ Amostras Físicas Disponíveis',
+      stage: 'CURADORIA BOTÂNICA • ATELIÊ',
+      title: 'Seleção das Espécies & Amostras Físicas',
+      subtitle: 'Composição sob medida para harmonizar com a paleta do projeto',
+      desc: 'Nossa equipe de biólogos e designers botânicos combina texturas de Musgo Polar escandinavo, Samambaias imperiais e Folhas de Eucalipto preservadas. Enviamos a caixa de amostras físicas de toque real para validação em prancha de materiais com o cliente.',
+      tools: ['Caixa de Amostras Físicas', 'Estudo de Densidade por m²', 'Equilíbrio Cromático Orgânico'],
+      materialNote: 'Plantas 100% naturais preservadas em seiva vegetal ecológica',
+      actionLabel: 'Solicitar Caixa de Amostras',
+      isSimulatorAction: false,
     },
     {
       num: '03',
-      icon: Wrench,
-      tag: 'SEM REFORMAS OU QUEBRA-QUEBRA',
-      title: 'Instalação Rápida e Limpa',
-      desc: 'Módulos produzidos sob medida na fábrica. A fixação é precisa, ultraleve e concluída em poucas horas por instaladores certificados.',
-      badge: '✓ Instalação em poucas horas',
+      stage: 'ENGENHARIA FABRIL • PRECISION',
+      title: 'Usinagem Modular Plug & Play',
+      subtitle: 'Módulos milimétricos com fixação mecânica oculta',
+      desc: 'Toda a montagem é executada em nosso ateliê industrial em São Paulo. As placas recebem suporte em compensado naval certificado FSC com engate macho/fêmea oculto. Zero marcenaria úmida ou barulho prolongado na sua obra.',
+      tools: ['Corte Computadorizado CNC', 'Painéis Ultraleves (14 kg/m²)', 'Travamento Francês Invisível'],
+      materialNote: 'Compatível com qualquer parede (Drywall, Alvenaria ou Concreto)',
+      actionLabel: 'Consultar Memorial Fabril',
+      isSimulatorAction: false,
     },
     {
       num: '04',
-      icon: ShieldCheck,
-      tag: 'VERDE PERFEITO O ANO TODO',
-      title: 'Garantia & Zero Manutenção',
-      desc: 'Entregamos o certificado de garantia estrutural e ignífuga. Desfrute da beleza natural sem preocupações com água, pragas ou podas.',
-      badge: '✓ Garantia de Fábrica',
+      stage: 'INSTALAÇÃO LIMPA • FINAL TOUCH',
+      title: 'Fixação em Poucas Horas & Garantia Decenal',
+      subtitle: 'Sem água, sem tubulações, sem manutenções surpresa',
+      desc: 'Instaladores certificados realizam a fixação limpa em um único período — frequentemente durante o fim de semana para não interromper a rotina corporativa. Entregamos o certificado de garantia de 10 anos e laudos IPT de isolamento acústico e fogo.',
+      tools: ['Instalação Silenciosa', 'Laudo IPT ISO 354', 'Certificado 10 Anos All Green'],
+      materialNote: 'Zero custos recorrentes de irrigação, jardineiro ou troca de mudas',
+      actionLabel: 'Agendar Visita Técnica',
+      isSimulatorAction: false,
     },
   ];
 
   return (
-    <section className="bg-[#072a1a] text-white py-16 md:py-24 relative overflow-hidden">
+    <section id="metodologia-ateliê" className="bg-[#051c11] text-white py-16 md:py-28 relative overflow-hidden bg-grain-dark border-y border-emerald-900/50">
+      
+      {/* Delicate organic glow */}
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-emerald-700/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Header */}
-        <ScrollReveal animation="fade-up" distance={25}>
-          <PageHeader
-            theme="dark"
-            align="center"
-            badge="METODOLOGIA TURNKEY ALL GREEN"
-            badgeIcon={Layers}
-            title={
-              <>
-                Do conceito à transformação em <br className="hidden sm:inline" />
-                <span className="italic font-light text-emerald-300">4 passos simples</span>
-              </>
-            }
-            description="Inspirado nos mais rigorosos processos de arquitetura paisagística corporativa e residencial. Cuidamos de todas as etapas com agilidade e precisão."
-          />
+        {/* Editorial Section Header */}
+        <ScrollReveal animation="fade-up" distance={20}>
+          <div className="max-w-3xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-mono tracking-widest uppercase">
+              <Compass className="w-3.5 h-3.5 text-amber-400" />
+              <span>O CADERNO DO ARQUITETO • PROCESSO TURNKEY</span>
+            </div>
+
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-white tracking-tight leading-[1.12]">
+              Do conceito inicial à floresta preservada em <br />
+              <span className="italic font-light text-[#86efac]">quatro atos de rigor artesanal.</span>
+            </h2>
+
+            <p className="text-emerald-100/70 text-base sm:text-lg font-sans font-light leading-relaxed">
+              Tratamos cada projeto como uma peça única de arte botânica e engenharia de interiores. Sem retrabalho, sem imprevistos de pós-obra e com total previsibilidade orçamentária.
+            </p>
+          </div>
         </ScrollReveal>
 
-        {/* 4 Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-          {steps.map((step, idx) => {
-            const Icon = step.icon;
-            return (
-              <ScrollReveal
-                key={step.num}
-                animation="fade-up"
-                delay={idx * 0.1}
-                distance={28}
-                className="h-full"
-              >
-                <div className="bg-emerald-950/50 p-6 rounded-2xl border border-emerald-800/60 shadow-lg flex flex-col justify-between hover:border-emerald-500 hover:-translate-y-1 transition-all group h-full">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="font-serif text-3xl font-extrabold text-emerald-400/80">
-                        {step.num}
-                      </span>
-                      <div className="w-10 h-10 rounded-xl bg-emerald-900/80 text-emerald-300 flex items-center justify-center">
-                        <Icon className="w-5 h-5" />
-                      </div>
-                    </div>
+        {/* Interactive Editorial Stepper & Journal Navigation */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-12 items-stretch">
+          
+          {/* Left Column: Timeline Selectors */}
+          <div className="lg:col-span-5 flex flex-col justify-between gap-3">
+            {steps.map((s, idx) => {
+              const isSelected = activeStep === idx;
+              return (
+                <button
+                  key={s.num}
+                  type="button"
+                  onClick={() => setActiveStep(idx)}
+                  className={`text-left p-5 sm:p-6 rounded-2xl border transition-all duration-300 cursor-pointer flex items-start gap-4 group ${
+                    isSelected
+                      ? 'bg-emerald-950/90 border-[#86efac]/70 shadow-xl shadow-emerald-950/80 scale-[1.01]'
+                      : 'bg-emerald-950/30 border-emerald-900/50 hover:bg-emerald-950/60 hover:border-emerald-800'
+                  }`}
+                >
+                  <span className={`font-serif text-2xl sm:text-3xl font-bold transition-colors ${
+                    isSelected ? 'text-[#86efac]' : 'text-emerald-500/60 group-hover:text-emerald-400'
+                  }`}>
+                    {s.num}
+                  </span>
 
-                    <div>
-                      <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
-                        {step.tag}
-                      </span>
-                      <h3 className="font-serif font-bold text-white text-lg mt-1 group-hover:text-emerald-300 transition-colors">
-                        {step.title}
-                      </h3>
-                    </div>
-
-                    <p className="text-xs text-gray-300 leading-relaxed">
-                      {step.desc}
-                    </p>
+                  <div className="space-y-1 flex-1">
+                    <span className="font-mono text-[10px] tracking-wider uppercase block text-emerald-400 font-semibold">
+                      {s.stage}
+                    </span>
+                    <h3 className={`font-serif text-lg sm:text-xl font-semibold transition-colors ${
+                      isSelected ? 'text-white' : 'text-gray-300 group-hover:text-white'
+                    }`}>
+                      {s.title}
+                    </h3>
                   </div>
 
-                  <div className="pt-4 mt-4 border-t border-emerald-800/50">
-                    <span className="text-[11px] font-semibold text-emerald-300">
-                      {step.badge}
+                  <ChevronRight className={`w-5 h-5 transition-transform mt-2 ${
+                    isSelected ? 'text-[#86efac] translate-x-1' : 'text-emerald-700/60 group-hover:text-emerald-400'
+                  }`} />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right Column: Expanded Architectural Spec Sheet for Active Step */}
+          <div className="lg:col-span-7 bg-emerald-950/70 p-6 sm:p-10 rounded-3xl border border-emerald-700/60 shadow-2xl backdrop-blur-md flex flex-col justify-between relative overflow-hidden">
+            
+            {/* Top Spec Header */}
+            <div className="space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-emerald-800/60">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#86efac] text-[#051c11] flex items-center justify-center font-bold text-sm">
+                    {steps[activeStep].num}
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono tracking-widest text-emerald-400 uppercase font-semibold block">
+                      {steps[activeStep].stage}
+                    </span>
+                    <span className="font-serif italic text-emerald-200 text-sm">
+                      {steps[activeStep].subtitle}
                     </span>
                   </div>
                 </div>
-              </ScrollReveal>
-            );
-          })}
-        </div>
 
-        {/* Bottom CTA Buttons */}
-        <ScrollReveal animation="fade-up" delay={0.2} distance={20}>
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={onOpenSimulator}
-              className="w-full sm:w-auto px-8 py-3.5 bg-[#86efac] text-[#072a1a] font-bold rounded-full hover:bg-emerald-300 transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer hover:scale-105 active:scale-95"
-            >
-              <Camera className="w-4 h-4 text-[#072a1a]" />
-              <span>Iniciar Passo 1: Enviar Foto do Espaço</span>
-            </button>
+                <span className="font-mono text-[10px] text-amber-300/90 bg-amber-950/60 px-3 py-1 rounded-full border border-amber-800/60 uppercase">
+                  PROTOCOLO HOMOLOGADO
+                </span>
+              </div>
 
-            <button
-              onClick={onOpenQuote}
-              className="w-full sm:w-auto px-8 py-3.5 bg-emerald-950 hover:bg-emerald-900 text-white font-semibold rounded-full border border-emerald-700/80 transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <span>Solicitar Orçamento Executivo</span>
-              <ArrowRight className="w-4 h-4 text-emerald-400" />
-            </button>
+              {/* Title & Description */}
+              <div className="space-y-3">
+                <h3 className="font-serif text-2xl sm:text-3xl font-normal text-white">
+                  {steps[activeStep].title}
+                </h3>
+                <p className="text-gray-300 text-sm sm:text-base leading-relaxed font-sans font-light">
+                  {steps[activeStep].desc}
+                </p>
+              </div>
+
+              {/* Tools & Deliverables Checklist */}
+              <div className="space-y-2 pt-2">
+                <span className="text-xs font-mono tracking-wider text-emerald-400 uppercase block font-semibold">
+                  Entregáveis & Ferramentas Técnicas:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {steps[activeStep].tools.map((t, idx) => (
+                    <div key={idx} className="flex items-center gap-2 text-xs text-gray-200 bg-emerald-900/40 p-2.5 rounded-xl border border-emerald-800/50">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#86efac] shrink-0" />
+                      <span>{t}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Material Note */}
+              <div className="p-3.5 rounded-2xl bg-[#051c11] border border-emerald-800/80 text-xs text-emerald-300/90 flex items-center gap-2.5">
+                <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>{steps[activeStep].materialNote}</span>
+              </div>
+            </div>
+
+            {/* Bottom Action for this step */}
+            <div className="pt-8 mt-8 border-t border-emerald-800/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+              <button
+                type="button"
+                onClick={() => {
+                  if (steps[activeStep].isSimulatorAction) {
+                    onOpenSimulator();
+                  } else {
+                    onOpenQuote();
+                  }
+                }}
+                className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[#86efac] text-[#051c11] font-bold rounded-full hover:bg-emerald-300 transition-all shadow-lg cursor-pointer text-sm"
+              >
+                <span>{steps[activeStep].actionLabel}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <div className="text-right text-[11px] font-mono text-emerald-400/80">
+                <span>Passo {activeStep + 1} de 4 • Garantia Total de Fábrica</span>
+              </div>
+            </div>
+
           </div>
-        </ScrollReveal>
+
+        </div>
 
       </div>
     </section>

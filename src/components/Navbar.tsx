@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Leaf, Search, Menu as MenuIcon, X, Camera, PhoneCall, Layers, BookOpen, Calculator, Image as ImageIcon, UserCheck, Bell, Keyboard, TrendingUp } from 'lucide-react';
+import { Leaf, Search, Menu as MenuIcon, X, Camera, PhoneCall, Layers, BookOpen, Calculator, Image as ImageIcon, UserCheck, Bell, Keyboard, TrendingUp, Sparkles, HelpCircle, Volume2, VolumeX } from 'lucide-react';
 import { UserProfile } from '../types';
 import { isMacUser } from '../hooks/useKeyboardShortcuts';
 import { MobileMenuDrawer } from './MobileMenuDrawer';
+import { botanicalAudio } from '../utils/botanicalAudio';
 
 interface NavbarProps {
   onOpenSimulator: () => void;
@@ -17,6 +18,7 @@ interface NavbarProps {
   onOpenShortcutsModal?: () => void;
   onOpenConsultation?: () => void;
   onOpenProjectPdfReport?: () => void;
+  onOpenTour?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -32,11 +34,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenShortcutsModal,
   onOpenConsultation,
   onOpenProjectPdfReport,
+  onOpenTour,
 }) => {
   const [searchVal, setSearchVal] = useState('');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isAudioActive, setIsAudioActive] = useState(false);
   const isMac = useMemo(() => isMacUser(), []);
   const modKey = isMac ? '⌘' : 'Ctrl';
+
+  const handleToggleAudio = () => {
+    const active = botanicalAudio.toggle();
+    setIsAudioActive(active);
+  };
 
   // Close drawer on window resize to xl (>= 1280px)
   useEffect(() => {
@@ -70,9 +79,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       return;
     }
 
-    if (onSearchQueryChange) {
+    if (onOpenSearch) {
+      onOpenSearch();
+    } else if (onSearchQueryChange) {
       onSearchQueryChange(searchVal);
-      const elem = document.getElementById('search-hub');
+      const elem = document.getElementById('solutions');
       if (elem) {
         elem.scrollIntoView({ behavior: 'smooth' });
       }
@@ -100,17 +111,23 @@ export const Navbar: React.FC<NavbarProps> = ({
         <a
           href="#"
           id="header-brand-logo"
-          className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 shrink-0 group focus:outline-none"
+          className="flex items-center gap-2 sm:gap-2.5 md:gap-3 shrink-0 group focus:outline-none"
         >
-          <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full bg-[#0d3822] text-[#86efac] flex items-center justify-center shadow-xs group-hover:bg-[#15803d] transition-colors shrink-0">
-            <Leaf className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 fill-current" />
+          <div className="relative w-8 h-8 sm:w-9 sm:h-9 md:w-11 md:h-11 rounded-full bg-[#072a1a] border border-[#86efac]/30 text-[#86efac] flex items-center justify-center shadow-sm group-hover:border-[#86efac]/70 transition-all shrink-0">
+            <Leaf className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 fill-[#86efac]/20 stroke-[#86efac]" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-amber-400 border border-[#072a1a]" title="Ateliê Ativo" />
           </div>
           <div className="flex flex-col">
-            <span className="font-serif text-sm sm:text-base md:text-xl lg:text-2xl font-bold tracking-tight text-[#0d3822] leading-tight">
-              ALL GREEN
-            </span>
-            <span className="text-[8px] sm:text-[9px] md:text-[10px] lg:text-[11px] font-semibold tracking-wider sm:tracking-widest text-[#15803d] uppercase mt-0 sm:-mt-0.5 md:-mt-1">
-              Decor & Biophilia
+            <div className="flex items-center gap-1.5">
+              <span className="font-serif text-base sm:text-lg md:text-xl lg:text-2xl font-semibold tracking-tight text-[#072a1a] leading-tight group-hover:text-emerald-900 transition-colors">
+                ALL GREEN
+              </span>
+              <span className="hidden sm:inline-block text-[9px] font-mono tracking-widest text-amber-700/80 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200/60 uppercase">
+                Ateliê
+              </span>
+            </div>
+            <span className="text-[8px] sm:text-[9px] md:text-[10px] font-sans font-medium tracking-widest text-emerald-800/80 uppercase">
+              Biofilia Arquitetônica & Preservada
             </span>
           </div>
         </a>
@@ -155,20 +172,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
           <button 
             type="button"
-            id="nav-link-leed"
-            onClick={() => scrollToSection('leed-calculator')}
-            className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
-          >
-            Calculadora LEED
-          </button>
-          <button 
-            type="button"
             id="nav-link-roi"
             onClick={() => scrollToSection('biophilic-roi-calculator')}
             className="hover:text-[#15803d] transition-colors py-1 cursor-pointer flex items-center gap-1 whitespace-nowrap"
           >
-            <span>ROI Biofílico</span>
-            <span className="px-1.5 py-0.2 bg-emerald-100 text-[#15803d] rounded-md text-[10px] font-bold">Novo</span>
+            <span>Calculadora & ROI</span>
           </button>
           <button 
             type="button"
@@ -206,6 +214,37 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Action Buttons (Desktop & Mobile) */}
         <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0">
           
+          {/* Ambient Soundscape Toggle (Brisa Botânica) */}
+          <button
+            type="button"
+            id="header-ambient-audio-btn"
+            onClick={handleToggleAudio}
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border text-xs font-medium transition-all cursor-pointer ${
+              isAudioActive
+                ? 'bg-emerald-900 text-emerald-200 border-emerald-600 shadow-sm'
+                : 'bg-white hover:bg-emerald-50/80 text-emerald-950 border-gray-300/80'
+            }`}
+            title={isAudioActive ? 'Silenciar som ambiente do ateliê' : 'Ativar atmosfera sonora: Brisa na folhagem'}
+            aria-label={isAudioActive ? 'Desativar som do ateliê' : 'Ativar som ambiente do ateliê'}
+          >
+            {isAudioActive ? (
+              <>
+                <Volume2 className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                <span className="hidden md:inline text-[11px] font-sans font-semibold">Brisa Ativa</span>
+                <span className="flex items-center gap-0.5 ml-0.5">
+                  <span className="w-0.5 h-2 bg-emerald-400 rounded-full animate-bounce" />
+                  <span className="w-0.5 h-3 bg-emerald-300 rounded-full animate-bounce delay-75" />
+                  <span className="w-0.5 h-1.5 bg-emerald-400 rounded-full animate-bounce delay-150" />
+                </span>
+              </>
+            ) : (
+              <>
+                <VolumeX className="w-3.5 h-3.5 text-gray-400" />
+                <span className="hidden md:inline text-[11px] font-sans text-gray-600">Som Ateliê</span>
+              </>
+            )}
+          </button>
+
           {/* Quick Search Button (All screens < 1536px) */}
           <button
             type="button"
@@ -217,20 +256,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#15803d]" />
           </button>
-
-          {/* Keyboard Shortcuts Trigger Button (Desktop only) */}
-          {onOpenShortcutsModal && (
-            <button
-              type="button"
-              id="header-shortcuts-btn"
-              onClick={onOpenShortcutsModal}
-              className="hidden 2xl:flex items-center gap-1 p-2 rounded-full bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer group active:scale-95"
-              title="Guia de Atalhos de Teclado (Pressione ?)"
-              aria-label="Ver atalhos de teclado globais"
-            >
-              <Keyboard className="w-4 h-4 text-gray-600 group-hover:text-[#15803d] transition-colors" />
-            </button>
-          )}
 
           {/* Notification Bell (Only visible when user is logged in) */}
           {currentUser && (
@@ -322,6 +347,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         onOpenShortcutsModal={onOpenShortcutsModal}
         onOpenConsultation={onOpenConsultation}
         onOpenProjectPdfReport={onOpenProjectPdfReport}
+        onOpenTour={onOpenTour}
         modKey={modKey}
       />
     </header>

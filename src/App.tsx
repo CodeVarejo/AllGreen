@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -10,7 +10,6 @@ import { MethodologySteps } from './components/MethodologySteps';
 import { BotanicalCatalog } from './components/BotanicalCatalog';
 import { BiophilicQuiz } from './components/BiophilicQuiz';
 import { ComparisonMatrix } from './components/ComparisonMatrix';
-import { LeedCalculator } from './components/LeedCalculator';
 import { BiophilicRoiCalculator } from './components/BiophilicRoiCalculator';
 import { BeforeAfterGallery } from './components/BeforeAfterGallery';
 import { CustomerTestimonials } from './components/CustomerTestimonials';
@@ -35,27 +34,49 @@ import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { AccessibilityProvider, useAccessibility } from './context/AccessibilityContext';
 import { ConfirmationDialogProvider } from './context/ConfirmationDialogContext';
+import { ModalProvider, useModals } from './context/ModalContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { DevToolsWidget, BreakableSectionKey } from './components/DevToolsWidget';
-import { BuggyTester } from './components/BuggyTester';
+import { GuidedTour } from './components/GuidedTour';
 
 function AppContent() {
   const { isHighContrast, fontSize, isWcagTableMode, toggleHighContrast } = useAccessibility();
-
-  // Developer & QA Error Testing State
-  const [brokenSections, setBrokenSections] = useState<Record<string, boolean>>({});
-
-  const handleBreakSection = (key: BreakableSectionKey) => {
-    setBrokenSections((prev) => ({ ...prev, [key]: true }));
-  };
-
-  const handleResetSection = (key: BreakableSectionKey) => {
-    setBrokenSections((prev) => ({ ...prev, [key]: false }));
-  };
-
-  const handleResetAllSections = () => {
-    setBrokenSections({});
-  };
+  const {
+    isSimulatorOpen,
+    openSimulator,
+    closeSimulator,
+    isProjectLookupOpen,
+    openProjectLookup,
+    closeProjectLookup,
+    selectedProjectForLookup,
+    isQuoteOpen,
+    openQuote,
+    closeQuote,
+    quoteContext,
+    isLoginOpen,
+    openLogin,
+    closeLogin,
+    isConsultationModalOpen,
+    openConsultation,
+    closeConsultation,
+    consultationPrefillType,
+    consultationPrefillProjectCode,
+    isPdfReportModalOpen,
+    openPdfReport,
+    closePdfReport,
+    isNotificationCenterOpen,
+    openNotificationCenter,
+    closeNotificationCenter,
+    isCommandPaletteOpen,
+    openCommandPalette,
+    closeCommandPalette,
+    isShortcutsModalOpen,
+    openShortcutsModal,
+    closeShortcutsModal,
+    isTourOpen,
+    openTour,
+    closeTour,
+    closeAllModals,
+  } = useModals();
 
   // Navigation View State
   const [currentView, setCurrentView] = useState<'landing' | 'portal'>('landing');
@@ -66,6 +87,23 @@ function AppContent() {
     } catch (e) {}
     return DEFAULT_USER;
   });
+
+  // Notifications State
+  const [notifications, setNotifications] = useState<PortalNotification[]>(INITIAL_PORTAL_NOTIFICATIONS);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // Check first visit to trigger guided onboarding tour
+  useEffect(() => {
+    try {
+      const hasSeenTour = localStorage.getItem('allgreen_onboarding_completed_v1');
+      if (!hasSeenTour) {
+        const timer = setTimeout(() => {
+          openTour();
+        }, 1200);
+        return () => clearTimeout(timer);
+      }
+    } catch (e) {}
+  }, [openTour]);
 
   const handleSaveBiophilicProfile = (
     profile: BiophilicProfileResult,
@@ -107,62 +145,13 @@ function AppContent() {
     return updatedUser;
   };
 
-  // Notifications State
-  const [notifications, setNotifications] = useState<PortalNotification[]>(INITIAL_PORTAL_NOTIFICATIONS);
-  const [isNotificationCenterOpen, setIsNotificationCenterOpen] = useState(false);
-
-  // Modal states
-  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
-  const [isProjectLookupOpen, setIsProjectLookupOpen] = useState(false);
-  const [isQuoteOpen, setIsQuoteOpen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
-  const [isConsultationModalOpen, setIsConsultationModalOpen] = useState(false);
-  const [isPdfReportModalOpen, setIsPdfReportModalOpen] = useState(false);
-  const [consultationPrefillType, setConsultationPrefillType] = useState<string | undefined>();
-  const [consultationPrefillProjectCode, setConsultationPrefillProjectCode] = useState<string | undefined>();
-
-  // Prefilled contexts
-  const [selectedProjectForLookup, setSelectedProjectForLookup] = useState<ProjectSample | null>(null);
-  const [quoteContext, setQuoteContext] = useState<string>('');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
-  const unreadNotificationsCount = notifications.filter(n => !n.isRead).length;
-
-  const handleOpenSimulator = () => {
-    setIsSimulatorOpen(true);
-  };
-
-  const handleOpenConsultation = (type?: string, projectCode?: string) => {
-    setConsultationPrefillType(type);
-    setConsultationPrefillProjectCode(projectCode);
-    setIsConsultationModalOpen(true);
-  };
-
-  const handleOpenPdfReport = () => {
-    setIsPdfReportModalOpen(true);
-  };
-
-  const handleOpenProjectLookup = (project?: ProjectSample) => {
-    if (project) {
-      setSelectedProjectForLookup(project);
-    } else {
-      setSelectedProjectForLookup(null);
-    }
-    setIsProjectLookupOpen(true);
-  };
-
-  const handleOpenQuote = (context?: string) => {
-    setQuoteContext(context || '');
-    setIsQuoteOpen(true);
-  };
+  const unreadNotificationsCount = notifications.filter((n) => !n.isRead).length;
 
   const handleOpenLogin = () => {
     if (currentUser) {
       setCurrentView(currentView === 'portal' ? 'landing' : 'portal');
     } else {
-      setIsLoginOpen(true);
+      openLogin();
     }
   };
 
@@ -179,60 +168,61 @@ function AppContent() {
     }
   };
 
-  const handleCloseAllModals = () => {
-    setIsSimulatorOpen(false);
-    setIsProjectLookupOpen(false);
-    setIsQuoteOpen(false);
-    setIsLoginOpen(false);
-    setIsNotificationCenterOpen(false);
-    setIsCommandPaletteOpen(false);
-    setIsShortcutsModalOpen(false);
-    setIsConsultationModalOpen(false);
-    setIsPdfReportModalOpen(false);
+  const handleScrollToQuiz = () => {
+    if (currentView === 'portal') {
+      setCurrentView('landing');
+      setTimeout(() => {
+        const elem = document.getElementById('biophilic-quiz');
+        if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+      }, 150);
+    } else {
+      const elem = document.getElementById('biophilic-quiz');
+      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   // Wire Global Keyboard Shortcuts
   useKeyboardShortcuts({
-    onOpenSearch: () => setIsCommandPaletteOpen(prev => !prev),
-    onOpenSimulator: () => setIsSimulatorOpen(prev => !prev),
+    onOpenSearch: () => openCommandPalette(),
+    onOpenSimulator: () => openSimulator(),
     onTogglePortal: () => handleOpenLogin(),
-    onOpenProjectLookup: () => handleOpenProjectLookup(),
-    onOpenQuote: () => handleOpenQuote('Atalho de Teclado'),
+    onOpenProjectLookup: () => openProjectLookup(),
+    onOpenQuote: () => openQuote('Atalho de Teclado'),
     onOpenBotanical: () => handleScrollToBotanical(),
-    onOpenNotifications: () => setIsNotificationCenterOpen(prev => !prev),
+    onOpenNotifications: () => openNotificationCenter(),
     onToggleHighContrast: () => toggleHighContrast(),
-    onOpenShortcutsModal: () => setIsShortcutsModalOpen(prev => !prev),
-    onCloseAllModals: () => handleCloseAllModals(),
+    onOpenShortcutsModal: () => openShortcutsModal(),
+    onCloseAllModals: () => closeAllModals(),
   });
 
   const handleExecuteShortcut = (shortcutId: string) => {
     switch (shortcutId) {
       case 'search':
-        setIsCommandPaletteOpen(true);
+        openCommandPalette();
         break;
       case 'simulator':
-        setIsSimulatorOpen(true);
+        openSimulator();
         break;
       case 'portal':
         handleOpenLogin();
         break;
       case 'lookup':
-        handleOpenProjectLookup();
+        openProjectLookup();
         break;
       case 'quote':
-        handleOpenQuote('Atalho de Teclado');
+        openQuote('Atalho de Teclado');
         break;
       case 'botanical':
         handleScrollToBotanical();
         break;
       case 'notifications':
-        setIsNotificationCenterOpen(true);
+        openNotificationCenter();
         break;
       case 'contrast':
         toggleHighContrast();
         break;
       case 'shortcuts_help':
-        setIsShortcutsModalOpen(true);
+        openShortcutsModal();
         break;
       default:
         break;
@@ -252,22 +242,22 @@ function AppContent() {
   };
 
   const handleNotificationActionClick = (notification: PortalNotification) => {
-    setIsNotificationCenterOpen(false);
+    closeNotificationCenter();
     handleMarkNotificationAsRead(notification.id);
 
     if (notification.actionType === 'open_simulator') {
-      setIsSimulatorOpen(true);
+      openSimulator();
     } else if (notification.actionType === 'view_project') {
       if (currentUser) {
         setCurrentView('portal');
       } else {
-        setIsProjectLookupOpen(true);
+        openProjectLookup();
       }
     } else if (notification.actionType === 'recalculate_leed') {
       if (currentUser) {
         setCurrentView('portal');
       } else {
-        const elem = document.getElementById('leed-calculator');
+        const elem = document.getElementById('biophilic-roi-calculator');
         if (elem) elem.scrollIntoView({ behavior: 'smooth' });
       }
     } else if (notification.actionType === 'view_botanical') {
@@ -376,7 +366,7 @@ function AppContent() {
 
   const handleOpenQuoteFromSimulation = (simResult: SimulationResult) => {
     const summary = `Simulação IA: ${simResult.roomType} (${simResult.estimatedArea}m²) - ${simResult.recommendedStyle}. Orçamento estimado: R$ ${simResult.estimatedBudgetMin} - R$ ${simResult.estimatedBudgetMax}.`;
-    handleOpenQuote(summary);
+    openQuote(summary);
   };
 
   const handleExploreProjects = () => {
@@ -384,10 +374,6 @@ function AppContent() {
     if (elem) {
       elem.scrollIntoView({ behavior: 'smooth' });
     }
-  };
-
-  const handleSimulateSpecies = (speciesName: string) => {
-    handleOpenSimulator();
   };
 
   const fontSizeClass = 
@@ -436,8 +422,8 @@ function AppContent() {
                 user={currentUser || DEFAULT_USER}
                 onBackToLanding={() => setCurrentView('landing')}
                 onLogout={handleLogout}
-                onOpenSimulator={handleOpenSimulator}
-                onOpenQuote={handleOpenQuote}
+                onOpenSimulator={openSimulator}
+                onOpenQuote={openQuote}
                 onRetakeQuiz={() => {
                   setCurrentView('landing');
                   setTimeout(() => {
@@ -466,29 +452,26 @@ function AppContent() {
           >
             {/* Navigation Header */}
             <Navbar
-              onOpenSimulator={handleOpenSimulator}
-              onOpenProjectLookup={() => handleOpenProjectLookup()}
-              onOpenQuote={() => handleOpenQuote('Atendimento Direto')}
+              onOpenSimulator={openSimulator}
+              onOpenProjectLookup={() => openProjectLookup()}
+              onOpenQuote={() => openQuote('Atendimento Direto')}
               onOpenLogin={handleOpenLogin}
               currentUser={currentUser}
               onSearchQueryChange={(query) => setSearchQuery(query)}
-              onOpenNotifications={() => setIsNotificationCenterOpen(true)}
+              onOpenNotifications={() => openNotificationCenter()}
               unreadNotificationsCount={unreadNotificationsCount}
-              onOpenSearch={() => setIsCommandPaletteOpen(true)}
-              onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
-              onOpenConsultation={() => handleOpenConsultation()}
-              onOpenProjectPdfReport={handleOpenPdfReport}
+              onOpenSearch={() => openCommandPalette()}
+              onOpenShortcutsModal={() => openShortcutsModal()}
+              onOpenConsultation={() => openConsultation()}
+              onOpenProjectPdfReport={openPdfReport}
+              onOpenTour={openTour}
             />
 
             {/* Main Hero Section with interactive before/after slider */}
-            <ErrorBoundary 
-              sectionName="Hero Section"
-              onReset={() => handleResetSection('hero')}
-            >
-              <BuggyTester shouldThrow={!!brokenSections['hero']} name="Hero Section" />
+            <ErrorBoundary sectionName="Hero Section">
               <Hero
-                onOpenSimulator={handleOpenSimulator}
-                onOpenProjectLookup={() => handleOpenProjectLookup()}
+                onOpenSimulator={openSimulator}
+                onOpenProjectLookup={() => openProjectLookup()}
                 onExploreProjects={handleExploreProjects}
               />
             </ErrorBoundary>
@@ -499,19 +482,15 @@ function AppContent() {
             {/* Video Showroom & Interactive Player */}
             <ErrorBoundary sectionName="Video Showroom">
               <VideoShowroom
-                onOpenSimulator={handleOpenSimulator}
+                onOpenSimulator={openSimulator}
               />
             </ErrorBoundary>
 
             {/* Nossas Soluções Grid */}
-            <ErrorBoundary 
-              sectionName="Catálogo de Soluções"
-              onReset={() => handleResetSection('solutions')}
-            >
-              <BuggyTester shouldThrow={!!brokenSections['solutions']} name="Catálogo de Soluções" />
+            <ErrorBoundary sectionName="Catálogo de Soluções">
               <SolutionsGrid
-                onSelectSolution={(title) => handleOpenQuote(`Linha de Solução: ${title}`)}
-                onOpenQuote={() => handleOpenQuote('Solicitação Geral de Soluções')}
+                onSelectSolution={(title) => openQuote(`Linha de Solução: ${title}`)}
+                onOpenQuote={() => openQuote('Solicitação Geral de Soluções')}
               />
             </ErrorBoundary>
 
@@ -519,34 +498,30 @@ function AppContent() {
             <ErrorBoundary sectionName="Busca Inteligente">
               <SmartSearchHub
                 initialSearchQuery={searchQuery}
-                onOpenQuoteForProduct={(productName) => handleOpenQuote(`Produto do Catálogo: ${productName}`)}
+                onOpenQuoteForProduct={(productName) => openQuote(`Produto do Catálogo: ${productName}`)}
               />
             </ErrorBoundary>
 
             {/* Metodologia Turnkey em 4 passos */}
             <MethodologySteps
-              onOpenSimulator={handleOpenSimulator}
-              onOpenQuote={() => handleOpenQuote('Interesse em Metodologia Turnkey')}
+              onOpenSimulator={openSimulator}
+              onOpenQuote={() => openQuote('Interesse em Metodologia Turnkey')}
             />
 
             {/* Curadoria Botânica & Ficha Técnica */}
-            <ErrorBoundary 
-              sectionName="Catálogo Botânico & Ficha Técnica"
-              onReset={() => handleResetSection('botanical')}
-            >
-              <BuggyTester shouldThrow={!!brokenSections['botanical']} name="Catálogo Botânico & Ficha Técnica" />
+            <ErrorBoundary sectionName="Catálogo Botânico & Ficha Técnica">
               <BotanicalCatalog
-                onSimulateSpecies={handleSimulateSpecies}
-                onOpenQuote={() => handleOpenQuote('Solicitação de Amostras Botânicas')}
+                onSimulateSpecies={() => openSimulator()}
+                onOpenQuote={() => openQuote('Solicitação de Amostras Botânicas')}
               />
             </ErrorBoundary>
 
             {/* Diagnóstico Interativo de Perfil Biofílico (Quiz 5 Perguntas) */}
             <ErrorBoundary sectionName="Diagnóstico de Perfil Biofílico">
               <BiophilicQuiz
-                onOpenSimulator={handleOpenSimulator}
-                onOpenQuote={(ctx) => handleOpenQuote(ctx || 'Diagnóstico de Perfil Biofílico')}
-                onOpenPdfReport={handleOpenPdfReport}
+                onOpenSimulator={openSimulator}
+                onOpenQuote={(ctx) => openQuote(ctx || 'Diagnóstico de Perfil Biofílico')}
+                onOpenPdfReport={openPdfReport}
                 onScrollToCatalog={handleScrollToBotanical}
                 currentUser={currentUser}
                 onSaveProfile={handleSaveBiophilicProfile}
@@ -558,61 +533,46 @@ function AppContent() {
             {/* Matriz Comparativa das Tecnologias Verticais (com Modo Lado a Lado 1x1) */}
             <ErrorBoundary sectionName="Matriz Comparativa">
               <ComparisonMatrix
-                onOpenSimulator={handleOpenSimulator}
-                onOpenQuote={(ctx) => handleOpenQuote(ctx || 'Matriz Comparativa das Tecnologias Verticais')}
-                onOpenPdfReport={handleOpenPdfReport}
+                onOpenSimulator={openSimulator}
+                onOpenQuote={(ctx) => openQuote(ctx || 'Matriz Comparativa das Tecnologias Verticais')}
+                onOpenPdfReport={openPdfReport}
               />
             </ErrorBoundary>
 
-            {/* Calculadora de Créditos WELL & LEED */}
-            <ErrorBoundary 
-              sectionName="Calculadora de Créditos WELL/LEED"
-              onReset={() => handleResetSection('leed')}
-            >
-              <BuggyTester shouldThrow={!!brokenSections['leed']} name="Calculadora de Créditos WELL/LEED" />
-              <LeedCalculator />
-            </ErrorBoundary>
-
-            {/* Calculadora de ROI Biofílico & Redução de Absenteísmo */}
-            <ErrorBoundary 
-              sectionName="Calculadora de ROI Biofílico"
-              onReset={() => handleResetSection('roi')}
-            >
-              <BuggyTester shouldThrow={!!brokenSections['roi']} name="Calculadora de ROI Biofílico" />
+            {/* Calculadora de Impacto & ROI Biofílico (Retorno Financeiro, Acústica, WELL & LEED) */}
+            <div id="leed-calculator" className="sr-only" aria-hidden="true" />
+            <ErrorBoundary sectionName="Calculadora de Impacto & ROI Biofílico">
               <BiophilicRoiCalculator
-                onOpenQuote={(ctx) => handleOpenQuote(ctx || 'Estudo de ROI Biofílico')}
+                onOpenQuote={(ctx) => openQuote(ctx || 'Estudo de Impacto & ROI Biofílico')}
               />
             </ErrorBoundary>
 
             {/* Galeria Interativa Antes & Depois */}
-            <ErrorBoundary 
-              sectionName="Galeria Antes & Depois"
-              onReset={() => handleResetSection('gallery')}
-            >
-              <BuggyTester shouldThrow={!!brokenSections['gallery']} name="Galeria Antes & Depois" />
+            <ErrorBoundary sectionName="Galeria Antes & Depois">
               <BeforeAfterGallery
-                onOpenProjectDetail={(project) => handleOpenProjectLookup(project)}
+                onOpenProjectDetail={(project) => openProjectLookup(project)}
               />
             </ErrorBoundary>
 
             {/* Depoimentos de Clientes & Impacto Biofílico (Carrossel) */}
             <ErrorBoundary sectionName="Depoimentos de Clientes">
               <CustomerTestimonials
-                onOpenConsultation={() => handleOpenConsultation()}
-                onOpenSimulator={handleOpenSimulator}
-                onOpenProjectDetail={(projectCode) => handleOpenProjectLookup()}
+                onOpenConsultation={() => openConsultation()}
+                onOpenSimulator={openSimulator}
+                onOpenProjectDetail={(projectCode) => openProjectLookup()}
               />
             </ErrorBoundary>
 
             {/* Newsletter & Footer */}
             <NewsletterAndFooter
-              onOpenSimulator={handleOpenSimulator}
-              onOpenProjectLookup={() => handleOpenProjectLookup()}
-              onOpenQuote={() => handleOpenQuote('Solicitação via Rodapé')}
+              onOpenSimulator={openSimulator}
+              onOpenProjectLookup={() => openProjectLookup()}
+              onOpenQuote={() => openQuote('Solicitação via Rodapé')}
               onOpenLogin={handleOpenLogin}
-              onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
-              onOpenConsultation={() => handleOpenConsultation()}
-              onOpenProjectPdfReport={handleOpenPdfReport}
+              onOpenShortcutsModal={() => openShortcutsModal()}
+              onOpenConsultation={() => openConsultation()}
+              onOpenProjectPdfReport={openPdfReport}
+              onOpenTour={openTour}
             />
           </motion.div>
         )}
@@ -622,7 +582,7 @@ function AppContent() {
       <ErrorBoundary sectionName="Simulador IA Modal">
         <SimulatorModal
           isOpen={isSimulatorOpen}
-          onClose={() => setIsSimulatorOpen(false)}
+          onClose={closeSimulator}
           onOpenQuoteWithData={handleOpenQuoteFromSimulation}
         />
       </ErrorBoundary>
@@ -630,21 +590,21 @@ function AppContent() {
       <ErrorBoundary sectionName="Consulta de Projeto Modal">
         <ProjectLookupModal
           isOpen={isProjectLookupOpen}
-          onClose={() => setIsProjectLookupOpen(false)}
+          onClose={closeProjectLookup}
           initialProject={selectedProjectForLookup}
-          onOpenQuoteForCode={(code) => handleOpenQuote(`Projeto Referência Código: ${code}`)}
+          onOpenQuoteForCode={(code) => openQuote(`Projeto Referência Código: ${code}`)}
         />
       </ErrorBoundary>
 
       <QuoteModal
         isOpen={isQuoteOpen}
-        onClose={() => setIsQuoteOpen(false)}
+        onClose={closeQuote}
         prefilledContext={quoteContext}
       />
 
       <LoginModal
         isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
+        onClose={closeLogin}
         onLoginSuccess={handleLoginSuccess}
       />
 
@@ -652,7 +612,7 @@ function AppContent() {
       <ErrorBoundary sectionName="Agendamento de Consultoria Técnica">
         <ConsultationBookingModal
           isOpen={isConsultationModalOpen}
-          onClose={() => setIsConsultationModalOpen(false)}
+          onClose={closeConsultation}
           prefilledType={consultationPrefillType}
           prefilledProjectCode={consultationPrefillProjectCode}
         />
@@ -662,14 +622,14 @@ function AppContent() {
       <ErrorBoundary sectionName="Gerador de Relatório PDF">
         <ProjectPdfReportModal
           isOpen={isPdfReportModalOpen}
-          onClose={() => setIsPdfReportModalOpen(false)}
+          onClose={closePdfReport}
         />
       </ErrorBoundary>
 
       {/* Real-time Notification Center */}
       <NotificationCenter
         isOpen={isNotificationCenterOpen}
-        onClose={() => setIsNotificationCenterOpen(false)}
+        onClose={closeNotificationCenter}
         notifications={notifications}
         onMarkAsRead={handleMarkNotificationAsRead}
         onMarkAllAsRead={handleMarkAllNotificationsAsRead}
@@ -681,32 +641,35 @@ function AppContent() {
       {/* Global Command Palette (Ctrl+K / Cmd+K) */}
       <GlobalCommandPalette
         isOpen={isCommandPaletteOpen}
-        onClose={() => setIsCommandPaletteOpen(false)}
-        onOpenSimulator={() => setIsSimulatorOpen(true)}
-        onOpenProjectLookup={() => handleOpenProjectLookup()}
-        onOpenQuote={(ctx) => handleOpenQuote(ctx)}
+        onClose={closeCommandPalette}
+        onOpenSimulator={() => openSimulator()}
+        onOpenProjectLookup={() => openProjectLookup()}
+        onOpenQuote={(ctx) => openQuote(ctx)}
         onTogglePortal={() => handleOpenLogin()}
-        onOpenNotifications={() => setIsNotificationCenterOpen(true)}
-        onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
-        onOpenConsultation={() => handleOpenConsultation()}
-        onOpenProjectPdfReport={handleOpenPdfReport}
-        onTriggerBreakTest={() => handleBreakSection('botanical')}
+        onOpenNotifications={() => openNotificationCenter()}
+        onOpenShortcutsModal={() => openShortcutsModal()}
+        onOpenConsultation={() => openConsultation()}
+        onOpenProjectPdfReport={openPdfReport}
+        onOpenTour={openTour}
       />
 
       {/* Global Keyboard Shortcuts Cheatsheet Modal (?) */}
       <KeyboardShortcutsModal
         isOpen={isShortcutsModalOpen}
-        onClose={() => setIsShortcutsModalOpen(false)}
+        onClose={closeShortcutsModal}
         onExecuteShortcut={handleExecuteShortcut}
       />
 
-      {/* Floating Developer Tools & QA Widget with 'Break Component' button */}
-      <DevToolsWidget
-        brokenSections={brokenSections}
-        onBreakSection={handleBreakSection}
-        onResetSection={handleResetSection}
-        onResetAllSections={handleResetAllSections}
-      />
+      {/* Guided Tour (Onboarding) */}
+      <ErrorBoundary sectionName="Tour Guiado de Onboarding">
+        <GuidedTour
+          isOpen={isTourOpen}
+          onClose={closeTour}
+          onOpenSimulator={openSimulator}
+          onScrollToQuiz={handleScrollToQuiz}
+          onOpenPortal={handleOpenLogin}
+        />
+      </ErrorBoundary>
 
       {/* Floating Widgets */}
       <LgpdBanner />
@@ -719,7 +682,9 @@ export function App() {
   return (
     <AccessibilityProvider>
       <ConfirmationDialogProvider>
-        <AppContent />
+        <ModalProvider>
+          <AppContent />
+        </ModalProvider>
       </ConfirmationDialogProvider>
     </AccessibilityProvider>
   );
