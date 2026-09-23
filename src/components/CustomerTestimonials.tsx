@@ -186,18 +186,13 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
         {/* Section Header with ScrollReveal */}
         <ScrollReveal animation="fade-up" distance={25}>
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="text-xs font-mono font-bold text-emerald-900 uppercase tracking-widest bg-emerald-100/90 px-4 py-1.5 rounded-full inline-flex items-center gap-2 border border-emerald-300/60">
-              <Award className="w-3.5 h-3.5 text-amber-700" />
-              <span>CRÔNICAS DE TRANSFORMAÇÃO & LAUDOS HOMOLOGADOS</span>
-            </span>
-
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-[#072a1a] leading-tight">
               A palavra de quem especificou a <br className="hidden sm:inline" />
               <span className="italic font-light text-emerald-800">biofilia de alta precisão.</span>
             </h2>
 
             <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-sans font-light">
-              Depoimentos reais de arquitetos titulares, diretores de facilities e gestores de patrimônio que transformaram seus espaços com as paredes verdes preservadas All Green.
+              Avaliações de arquitetos, diretores de facilities e clientes residenciais sobre a experiência com os jardins verticais All Green.
             </p>
           </div>
         </ScrollReveal>

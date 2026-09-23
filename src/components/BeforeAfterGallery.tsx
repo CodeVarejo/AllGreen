@@ -40,18 +40,13 @@ export const BeforeAfterGallery: React.FC<BeforeAfterGalleryProps> = ({
         {/* Header */}
         <ScrollReveal animation="fade-up" distance={25}>
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="text-xs font-bold text-[#15803d] uppercase tracking-widest bg-emerald-100/80 px-3.5 py-1 rounded-full inline-flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-[#15803d]" />
-              <span>PROJETOS EXECUTADOS & CASE STUDIES</span>
-            </span>
-
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-gray-900 leading-tight">
-              Galeria Interativa de <br className="hidden sm:inline" />
-              <span className="italic font-light text-[#15803d]">Transformação</span>
+              Galeria de Projetos & <br className="hidden sm:inline" />
+              <span className="italic font-light text-[#15803d]">Transformações Reais</span>
             </h2>
 
             <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-              Arraste o divisor central para conferir a metamorfose real de ambientes residenciais, corporativos e comerciais com o toque All Green.
+              Arraste o divisor para comparar ambientes residenciais e corporativos antes e depois da instalação All Green.
             </p>
           </div>
         </ScrollReveal>

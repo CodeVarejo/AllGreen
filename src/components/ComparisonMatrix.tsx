@@ -121,17 +121,13 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({
         {/* Header */}
         <ScrollReveal animation="fade-up" distance={25}>
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="text-xs font-bold text-[#15803d] uppercase tracking-widest bg-emerald-100/80 px-3.5 py-1 rounded-full">
-              PADRÃO TÉCNICO ALL GREEN (BENCHMARK DE ENGENHARIA & ROI)
-            </span>
-
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-gray-900 leading-tight">
               Matriz Comparativa das <br className="hidden sm:inline" />
               <span className="italic font-light text-[#15803d]">Tecnologias Verticais</span>
             </h2>
 
             <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-              Compreenda as diferenças de custo de instalação (Capex), manutenção anual (Opex), laudos acústicos e pontuações LEED/WELL entre sistemas Preservados, Permanentes e Naturais Vivos.
+              Diferenças de investimento inicial (Capex), despesas anuais (Opex), atenuação acústica e créditos LEED/WELL entre os sistemas.
             </p>
           </div>
         </ScrollReveal>

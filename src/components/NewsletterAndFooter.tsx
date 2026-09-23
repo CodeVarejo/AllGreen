@@ -92,14 +92,11 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
             <div className="bg-emerald-950/90 rounded-3xl p-6 sm:p-10 border border-emerald-800/80 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8">
               
               <div className="space-y-2 max-w-xl text-center lg:text-left">
-                <span className="text-[10px] font-mono font-bold text-amber-300 uppercase tracking-widest bg-emerald-900/80 px-3 py-1 rounded-full border border-emerald-700">
-                  ATELIÊ BOTÂNICO • CADERNO DE ESPECIFICAÇÃO
-                </span>
                 <h3 className="text-2xl sm:text-3xl font-serif font-normal text-white">
-                  Boletim Biofílico All Green Ateliê
+                  Boletim Biofílico & Especificação
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                  Receba lançamentos de espécies hiper-realistas, atualizações de blocos 3D/BIM para Revit e SketchUp e memoriais para certificações LEED e WELL.
+                  Lançamentos de espécies, novos blocos BIM paramétricos para Revit e dados técnicos para certificações ambientais.
                 </p>
               </div>
 

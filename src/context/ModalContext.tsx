@@ -13,6 +13,7 @@ interface ModalContextType {
   isCommandPaletteOpen: boolean;
   isShortcutsModalOpen: boolean;
   isTourOpen: boolean;
+  isCloudStorageOpen: boolean;
 
   // Contextual modal data
   selectedProjectForLookup: ProjectSample | null;
@@ -51,6 +52,9 @@ interface ModalContextType {
   openTour: () => void;
   closeTour: () => void;
 
+  openCloudStorage: () => void;
+  closeCloudStorage: () => void;
+
   closeAllModals: () => void;
 }
 
@@ -67,6 +71,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isTourOpen, setIsTourOpen] = useState(false);
+  const [isCloudStorageOpen, setIsCloudStorageOpen] = useState(false);
 
   const [selectedProjectForLookup, setSelectedProjectForLookup] = useState<ProjectSample | null>(null);
   const [quoteContext, setQuoteContext] = useState<string>('');
@@ -123,6 +128,9 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const openTour = useCallback(() => setIsTourOpen(true), []);
   const closeTour = useCallback(() => setIsTourOpen(false), []);
 
+  const openCloudStorage = useCallback(() => setIsCloudStorageOpen(true), []);
+  const closeCloudStorage = useCallback(() => setIsCloudStorageOpen(false), []);
+
   const closeAllModals = useCallback(() => {
     setIsSimulatorOpen(false);
     setIsProjectLookupOpen(false);
@@ -134,6 +142,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setIsCommandPaletteOpen(false);
     setIsShortcutsModalOpen(false);
     setIsTourOpen(false);
+    setIsCloudStorageOpen(false);
   }, []);
 
   return (
@@ -149,6 +158,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         isCommandPaletteOpen,
         isShortcutsModalOpen,
         isTourOpen,
+        isCloudStorageOpen,
         selectedProjectForLookup,
         quoteContext,
         consultationPrefillType,
@@ -173,6 +183,8 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         closeShortcutsModal,
         openTour,
         closeTour,
+        openCloudStorage,
+        closeCloudStorage,
         closeAllModals,
       }}
     >

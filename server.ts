@@ -88,6 +88,9 @@ async function startServer() {
     }
   });
 
+  // Serve static assets from public directory
+  app.use(express.static(path.resolve(process.cwd(), 'public')));
+
   // Vite development middleware vs production static distribution
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({

@@ -139,15 +139,13 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
         <ScrollReveal animation="fade-up" distance={25}>
           <PageHeader
             align="center"
-            badge="PORTFÓLIO & SOLUÇÕES ALL GREEN"
-            badgeIcon={Leaf}
             title={
               <>
                 Verde autoral desenhado para <br className="hidden sm:inline" />
                 <span className="italic font-light text-[#15803d]">cada projeto e ambiente</span>
               </>
             }
-            description="Conheça as linhas completas de jardins verticais preservados, permanentes hiper-realistas, musgo polar moss e módulos prontos para instalar em todo o Brasil."
+            description="Soluções modulares de jardins preservados, musgo polar escandinavo e biofilia arquitetônica com entrega e instalação em todo o Brasil."
           />
         </ScrollReveal>
 

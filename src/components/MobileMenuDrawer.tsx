@@ -20,9 +20,14 @@ import {
   FileText,
   Clock,
   Star,
-  Sparkles
+  Sparkles,
+  Volume2,
+  VolumeX,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { UserProfile } from '../types';
+import { useAccessibility } from '../context/AccessibilityContext';
 
 export interface MobileMenuDrawerProps {
   isOpen: boolean;
@@ -41,6 +46,8 @@ export interface MobileMenuDrawerProps {
   onOpenProjectPdfReport?: () => void;
   onOpenTour?: () => void;
   modKey: string;
+  isAudioActive?: boolean;
+  onToggleAudio?: () => void;
 }
 
 export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
@@ -60,7 +67,10 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
   onOpenProjectPdfReport,
   onOpenTour,
   modKey,
+  isAudioActive = false,
+  onToggleAudio,
 }) => {
+  const { theme, toggleTheme } = useAccessibility();
   const [searchVal, setSearchVal] = useState('');
 
   // Close drawer on Escape key press
@@ -186,6 +196,74 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             >
               <UserCheck className="w-4 h-4 text-[#15803d]" />
               <span>{currentUser ? currentUser.name.split(' ')[0] : 'Portal Arquiteto'}</span>
+            </button>
+          </div>
+
+          {/* Ambient Soundscape Controller (Brisa Botânica do Ateliê) */}
+          {onToggleAudio && (
+            <div className="p-3 rounded-2xl bg-[#072a1a] text-white border border-emerald-800/80 flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-2.5">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                  isAudioActive ? 'bg-emerald-500/20 text-[#86efac]' : 'bg-white/10 text-gray-400'
+                }`}>
+                  {isAudioActive ? (
+                    <Volume2 className="w-4 h-4 animate-pulse text-[#86efac]" />
+                  ) : (
+                    <VolumeX className="w-4 h-4 text-gray-400" />
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-serif font-bold text-white block leading-tight">
+                      Brisa do Ateliê
+                    </span>
+                    {isAudioActive && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#86efac] animate-ping" />
+                    )}
+                  </div>
+                  <span className="text-[10px] text-emerald-300/80 font-sans block">
+                    {isAudioActive ? 'Som ambiente ativo' : 'Toque para ouvir a atmosfera'}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                id="mobile-drawer-audio-toggle-btn"
+                onClick={onToggleAudio}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  isAudioActive
+                    ? 'bg-[#86efac] text-[#072a1a] hover:bg-emerald-300 shadow-xs'
+                    : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                }`}
+              >
+                {isAudioActive ? 'Desativar' : 'Ativar'}
+              </button>
+            </div>
+          )}
+
+          {/* Theme Switcher in Mobile Drawer */}
+          <div className="p-3 rounded-2xl bg-gray-100 dark:bg-emerald-950/60 border border-gray-200 dark:border-emerald-800/80 flex items-center justify-between shadow-2xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-white dark:bg-emerald-900/60 text-[#0d3822] dark:text-[#86efac] flex items-center justify-center shadow-2xs">
+                {theme === 'dark' ? <Moon className="w-4 h-4 text-emerald-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-gray-900 dark:text-white block leading-tight">
+                  Tema Visual
+                </span>
+                <span className="text-[10px] text-gray-500 dark:text-gray-400 block">
+                  {theme === 'dark' ? 'Modo Escuro Botânico' : 'Modo Claro Editorial'}
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              id="mobile-drawer-theme-toggle-btn"
+              onClick={toggleTheme}
+              className="px-3 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-emerald-800 text-gray-900 dark:text-[#86efac] border border-gray-300 dark:border-emerald-700 shadow-2xs transition-all cursor-pointer active:scale-95"
+            >
+              {theme === 'dark' ? 'Claro' : 'Escuro'}
             </button>
           </div>
 

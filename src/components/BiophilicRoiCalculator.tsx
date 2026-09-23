@@ -627,54 +627,43 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
         
         {/* Header Section */}
         <ScrollReveal animation="fade-up" distance={25}>
-          <div className="text-center max-w-4xl mx-auto space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/90 text-[#072a1a] border border-emerald-300 text-xs font-bold shadow-2xs">
-              <TrendingUp className="w-4 h-4 text-[#15803d]" />
-              <span className="uppercase tracking-wider">ESTUDO DE VIABILIDADE & PRODUTIVIDADE CORPORATIVA</span>
-            </div>
-
+          <div className="text-center max-w-4xl mx-auto space-y-3">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-gray-950 leading-tight">
-              Calculadora de Impacto & ROI Biofílico <br className="hidden sm:inline" />
-              <span className="italic font-light text-[#15803d]">Retorno Financeiro & Selos Sustentáveis (WELL/LEED)</span>
+              Calculadora de ROI & <br className="hidden sm:inline" />
+              <span className="italic font-light text-[#15803d]">Impacto Biofílico</span>
             </h2>
 
-            <p className="text-gray-600 text-sm sm:text-base max-w-3xl mx-auto leading-relaxed">
-              Descubra o impacto financeiro mensurável da inserção de vegetação natural preservada All Green. 
-              Estimativas baseadas nos estudos científicos da <strong>Harvard T.H. Chan</strong> e <strong>Terrapin Bright Green</strong>.
+            <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+              Simulação de ganho de produtividade, retenção de talentos e economia energética baseada em pesquisas da Harvard T.H. Chan e Terrapin Bright Green.
             </p>
 
             {/* Quick Preset Selector Chips + Contextual Tips Trigger */}
             <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
-              <span className="text-xs font-semibold text-gray-500 mr-1 flex items-center gap-1">
-                <Sliders className="w-3.5 h-3.5 text-[#15803d]" /> Cenários Típicos:
+              <span className="text-xs font-medium text-gray-500 mr-1 flex items-center gap-1">
+                <Sliders className="w-3.5 h-3.5 text-[#15803d]" /> Cenários:
               </span>
               {PRESET_SCENARIOS.map((preset) => (
                 <button
                   key={preset.id}
                   type="button"
                   onClick={() => handleApplyPreset(preset)}
-                  className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer bg-white hover:bg-emerald-50 text-gray-800 border-gray-300 hover:border-emerald-500 shadow-2xs hover:scale-102 flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer bg-white hover:bg-emerald-50 text-gray-800 border-gray-300 hover:border-emerald-500 shadow-2xs flex items-center gap-1.5"
                 >
                   <span>{preset.name}</span>
-                  <span className="px-1.5 py-0.2 rounded text-[10px] bg-emerald-100 text-[#15803d] font-bold">
-                    {preset.employees} pax
+                  <span className="text-[10px] text-emerald-700 font-bold">
+                    ({preset.employees} pessoas)
                   </span>
                 </button>
               ))}
 
-              {/* High-visibility Contextual Tips trigger button */}
               <button
                 type="button"
                 onClick={() => setIsSidePanelOpen(true)}
-                className="px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer bg-gradient-to-r from-[#062316] via-[#072a1a] to-emerald-900 hover:from-emerald-900 hover:to-[#072a1a] text-white border-emerald-500/50 shadow-md hover:shadow-lg hover:scale-102 flex items-center gap-2"
-                title="Abrir painel lateral de dicas contextuais de otimização"
+                className="px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer bg-[#072a1a] hover:bg-[#15803d] text-white border-emerald-700 shadow-sm flex items-center gap-1.5"
+                title="Abrir painel com recomendações para o seu setor"
               >
-                <div className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
                 <Lightbulb className="w-3.5 h-3.5 text-amber-300" />
-                <span>Dicas de Otimização</span>
-                <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-500/30 text-[#86efac] border border-emerald-400/40 font-bold uppercase tracking-wider">
-                  Sugestões
-                </span>
+                <span>Recomendações Técnicas</span>
               </button>
             </div>
           </div>

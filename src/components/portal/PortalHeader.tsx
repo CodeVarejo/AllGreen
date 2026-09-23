@@ -9,10 +9,14 @@ import {
   UserCheck,
   Building,
   Search,
-  CheckCircle2
+  CheckCircle2,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { isMacUser } from '../../hooks/useKeyboardShortcuts';
+import { CloudSyncButton } from '../CloudSyncButton';
+import { useAccessibility } from '../../context/AccessibilityContext';
 
 interface PortalHeaderProps {
   user: UserProfile;
@@ -25,6 +29,7 @@ interface PortalHeaderProps {
   onToggleUserRole?: () => void;
   onOpenSearch?: () => void;
   onTriggerSimulation?: (type: 'botanical' | 'leed') => void;
+  onOpenCloudStorage?: () => void;
 }
 
 export const PortalHeader: React.FC<PortalHeaderProps> = ({
@@ -38,7 +43,9 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
   onToggleUserRole,
   onOpenSearch,
   onTriggerSimulation,
+  onOpenCloudStorage,
 }) => {
+  const { theme, toggleTheme } = useAccessibility();
   const isArchitect = user.role === 'arquiteto' || user.role === 'especificador';
   const isMac = isMacUser();
   const modKey = isMac ? '⌘' : 'Ctrl';
@@ -129,6 +136,11 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
             </button>
           )}
 
+          {/* Cloud Storage & Sync CTA */}
+          {onOpenCloudStorage && (
+            <CloudSyncButton onClick={onOpenCloudStorage} variant="portal" />
+          )}
+
           {/* New Project CTA (Desktop) */}
           <button
             type="button"
@@ -152,6 +164,22 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
             <Camera className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#86efac]" />
             <span className="hidden sm:inline">Simulador IA</span>
             <span className="inline sm:hidden">Simulador</span>
+          </button>
+
+          {/* Theme Toggle Button */}
+          <button
+            type="button"
+            id="portal-theme-toggle-btn"
+            onClick={toggleTheme}
+            className="p-2 sm:p-2.5 rounded-full bg-white hover:bg-emerald-50 text-[#072a1a] border border-gray-200 hover:border-[#15803d] transition-all cursor-pointer min-h-[38px] min-w-[38px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center shadow-2xs active:scale-95"
+            title={theme === 'dark' ? 'Alternar para tema claro' : 'Alternar para tema escuro'}
+            aria-label="Alternar tema de cor"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-amber-400 rotate-0 transition-transform duration-300 hover:rotate-45" />
+            ) : (
+              <Moon className="w-4 h-4 text-[#15803d] transition-transform duration-300 hover:-rotate-12" />
+            )}
           </button>
 
           {/* Notification Bell */}

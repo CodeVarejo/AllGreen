@@ -48,18 +48,13 @@ export const SmartSearchHub: React.FC<SmartSearchHubProps> = ({
         {/* Header */}
         <ScrollReveal animation="fade-up" distance={25}>
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="text-xs font-bold text-[#15803d] uppercase tracking-widest bg-emerald-100/80 px-3.5 py-1 rounded-full inline-flex items-center gap-1.5">
-              <Search className="w-3.5 h-3.5" />
-              <span>BUSCA INTELIGENTE ALL GREEN</span>
-            </span>
-            
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-gray-900 leading-tight">
-              Encontre a Solução de <br className="hidden sm:inline" />
-              <span className="italic font-light text-[#15803d]">Paisagismo Perfeita</span>
+              Busca de Soluções & <br className="hidden sm:inline" />
+              <span className="italic font-light text-[#15803d]">Especificação Rápida</span>
             </h2>
 
             <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-              Digite o nome do produto, tipo de ambiente ou código do projeto para localizar instantaneamente.
+              Filtre por espécie botânica, linha de painel, isolamento acústico ou aplicação técnica.
             </p>
           </div>
         </ScrollReveal>
@@ -73,8 +68,8 @@ export const SmartSearchHub: React.FC<SmartSearchHubProps> = ({
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Digite o que procura... Ex: 'Jardim Preservado', 'Placas DIY', 'Escritório', 'Varanda'..."
-                className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border-2 border-[#072a1a]/15 text-sm sm:text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#072a1a] focus:ring-4 focus:ring-[#072a1a]/10 shadow-md transition-all"
+                placeholder="Buscar por nome, tipo de espaço ou código técnico..."
+                className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-gray-300 text-sm sm:text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#072a1a] focus:ring-4 focus:ring-[#072a1a]/10 shadow-sm transition-all"
               />
               {searchTerm && (
                 <button

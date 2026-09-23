@@ -20,14 +20,7 @@ export const VideoShowroom: React.FC<VideoShowroomProps> = ({ onOpenSimulator })
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               
               {/* Left Column Description */}
-              <div className="lg:col-span-6 space-y-6">
-                
-                {/* Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-xs font-semibold uppercase tracking-wider">
-                  <Play className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
-                  <span>Showroom em Vídeo & Projetos em Movimento</span>
-                </div>
-
+              <div className="lg:col-span-6 space-y-5">
                 {/* Title */}
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-white leading-tight">
                   Sinta o toque natural e o <br className="hidden sm:inline" />

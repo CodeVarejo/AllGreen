@@ -71,19 +71,14 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
         
         {/* Editorial Section Header */}
         <ScrollReveal animation="fade-up" distance={20}>
-          <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-mono tracking-widest uppercase">
-              <Compass className="w-3.5 h-3.5 text-amber-400" />
-              <span>O CADERNO DO ARQUITETO • PROCESSO TURNKEY</span>
-            </div>
-
+          <div className="max-w-3xl space-y-3">
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-white tracking-tight leading-[1.12]">
-              Do conceito inicial à floresta preservada em <br />
-              <span className="italic font-light text-[#86efac]">quatro atos de rigor artesanal.</span>
+              Do conceito inicial à instalação em <br />
+              <span className="italic font-light text-[#86efac]">quatro etapas estruturadas.</span>
             </h2>
 
             <p className="text-emerald-100/70 text-base sm:text-lg font-sans font-light leading-relaxed">
-              Tratamos cada projeto como uma peça única de arte botânica e engenharia de interiores. Sem retrabalho, sem imprevistos de pós-obra e com total previsibilidade orçamentária.
+              Processo turnkey completo para arquitetura de interiores com previsibilidade orçamentária e sem reformas hidráulicas.
             </p>
           </div>
         </ScrollReveal>
@@ -150,10 +145,6 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
                     </span>
                   </div>
                 </div>
-
-                <span className="font-mono text-[10px] text-amber-300/90 bg-amber-950/60 px-3 py-1 rounded-full border border-amber-800/60 uppercase">
-                  PROTOCOLO HOMOLOGADO
-                </span>
               </div>
 
               {/* Title & Description */}
@@ -169,7 +160,7 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
               {/* Tools & Deliverables Checklist */}
               <div className="space-y-2 pt-2">
                 <span className="text-xs font-mono tracking-wider text-emerald-400 uppercase block font-semibold">
-                  Entregáveis & Ferramentas Técnicas:
+                  Entregáveis & Especificação:
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {steps[activeStep].tools.map((t, idx) => (
@@ -179,12 +170,6 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* Material Note */}
-              <div className="p-3.5 rounded-2xl bg-[#051c11] border border-emerald-800/80 text-xs text-emerald-300/90 flex items-center gap-2.5">
-                <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>{steps[activeStep].materialNote}</span>
               </div>
             </div>
 

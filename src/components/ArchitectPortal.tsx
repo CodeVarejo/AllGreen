@@ -32,6 +32,8 @@ import { EditProjectModal } from './portal/EditProjectModal';
 import { ProjectVersionHistoryModal } from './portal/ProjectVersionHistoryModal';
 import { DownloadToast } from './portal/DownloadToast';
 import { EsgSustainabilityDashboard } from './portal/EsgSustainabilityDashboard';
+import { CloudStorageModal } from './CloudStorageModal';
+import { useCloudStorage } from '../context/CloudStorageContext';
 
 import { ProjectComparison } from './ProjectComparison';
 import { NotificationCenter } from './NotificationCenter';
@@ -64,6 +66,8 @@ export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
   const [projects, setProjects] = useState<PortalProject[]>(INITIAL_PORTAL_PROJECTS);
   
   // Modals & Drawers
+  const { saveProject: saveProjectToCloud } = useCloudStorage();
+  const [isCloudStorageModalOpen, setIsCloudStorageModalOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [selectedProjectForDetail, setSelectedProjectForDetail] = useState<PortalProject | null>(null);
@@ -615,6 +619,7 @@ Portal do Arquiteto: https://allgreendecor.com.br
         onOpenNewProjectModal={() => setIsNewProjectModalOpen(true)}
         onToggleUserRole={handleToggleUserRole}
         onTriggerSimulation={handleTriggerSimulation}
+        onOpenCloudStorage={() => setIsCloudStorageModalOpen(true)}
       />
 
       {/* Floating Real-Time Notification Alert Toast */}
@@ -750,6 +755,8 @@ Portal do Arquiteto: https://allgreendecor.com.br
                 onOpenEditProject={handleOpenEditProject}
                 onBackToDashboard={() => setActiveTab('dashboard')}
                 onRestoreDemoProjects={handleRestoreDemoProjects}
+                onOpenCloudStorage={() => setIsCloudStorageModalOpen(true)}
+                onSaveProjectToCloud={(proj) => saveProjectToCloud(proj)}
               />
             </motion.div>
           )}
@@ -959,6 +966,14 @@ Portal do Arquiteto: https://allgreendecor.com.br
           </div>
         </div>
       )}
+
+      {/* Google Drive Cloud Storage & Sync Modal */}
+      <CloudStorageModal
+        isOpen={isCloudStorageModalOpen}
+        onClose={() => setIsCloudStorageModalOpen(false)}
+        currentProjects={projects}
+        onProjectsUpdated={setProjects}
+      />
 
     </div>
   );

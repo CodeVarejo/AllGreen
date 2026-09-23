@@ -59,6 +59,87 @@ html {
   }
 }
 
+/* ==========================================================================
+   Dedicated Dark Mode (Deep Botanical Obsidian & Jade Luminescence)
+   ========================================================================== */
+.dark:not(.high-contrast) {
+  color-scheme: dark;
+  background-color: #041009;
+  color: #f0fdf4;
+}
+
+.dark:not(.high-contrast) body {
+  background-color: #041009;
+  color: #f0fdf4;
+}
+
+.dark:not(.high-contrast) .bg-white {
+  background-color: #081d13 !important;
+  color: #f0fdf4 !important;
+  border-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+.dark:not(.high-contrast) .bg-[#fbfdfb],
+.dark:not(.high-contrast) .bg-[#f3f7f4],
+.dark:not(.high-contrast) .bg-[#f9fbf9],
+.dark:not(.high-contrast) .bg-[#f8faf8],
+.dark:not(.high-contrast) .bg-gray-50,
+.dark:not(.high-contrast) .bg-gray-100 {
+  background-color: #05150d !important;
+  color: #ecfdf5 !important;
+}
+
+.dark:not(.high-contrast) .text-gray-900,
+.dark:not(.high-contrast) .text-gray-950 {
+  color: #f0fdf4 !important;
+}
+
+.dark:not(.high-contrast) .text-gray-800 {
+  color: #e2e8f0 !important;
+}
+
+.dark:not(.high-contrast) .text-gray-700,
+.dark:not(.high-contrast) .text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+.dark:not(.high-contrast) .text-gray-500,
+.dark:not(.high-contrast) .text-gray-400 {
+  color: #718096 !important;
+}
+
+.dark:not(.high-contrast) .border-gray-200,
+.dark:not(.high-contrast) .border-gray-100,
+.dark:not(.high-contrast) .border-gray-300 {
+  border-color: rgba(34, 197, 94, 0.18) !important;
+}
+
+.dark:not(.high-contrast) .bg-emerald-50,
+.dark:not(.high-contrast) .bg-emerald-50\/70,
+.dark:not(.high-contrast) .bg-emerald-50\/80,
+.dark:not(.high-contrast) .bg-emerald-100 {
+  background-color: rgba(6, 78, 44, 0.32) !important;
+  color: #a7f3d0 !important;
+  border-color: rgba(52, 211, 153, 0.25) !important;
+}
+
+.dark:not(.high-contrast) input,
+.dark:not(.high-contrast) select,
+.dark:not(.high-contrast) textarea {
+  background-color: #071f14 !important;
+  color: #f8fafc !important;
+  border-color: rgba(52, 211, 153, 0.28) !important;
+}
+
+.dark:not(.high-contrast) input::placeholder,
+.dark:not(.high-contrast) textarea::placeholder {
+  color: #64748b !important;
+}
+
+.dark:not(.high-contrast) .bg-grain-subtle {
+  background-image: radial-gradient(rgba(134, 239, 172, 0.07) 1px, transparent 0);
+}
+
 /* High Contrast Mode CSS Overrides */
 .high-contrast {
   background-color: #050a07 !important;

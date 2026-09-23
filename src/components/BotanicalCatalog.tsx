@@ -241,17 +241,12 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
         <ScrollReveal animation="fade-up" distance={25}>
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
             <div className="space-y-2 max-w-2xl">
-              <span className="text-xs font-bold text-[#15803d] uppercase tracking-widest bg-emerald-100/80 px-3.5 py-1 rounded-full inline-flex items-center gap-1.5">
-                <Leaf className="w-3.5 h-3.5" />
-                <span>CATÁLOGO DE ESPÉCIES & TEXTURAS BOTÂNICAS</span>
-              </span>
-
               <h2 className="text-3xl sm:text-4xl font-serif font-normal text-gray-900 leading-tight">
-                Curadoria Botânica <span className="italic font-light text-[#15803d]">All Green</span>
+                Curadoria Botânica & <span className="italic font-light text-[#15803d]">Fichas Técnicas</span>
               </h2>
 
               <p className="text-gray-600 text-sm leading-relaxed">
-                Explore a riqueza tátil, os índices de absorção acústica, propriedades de purificação de ar e proteção UV de cada espécie botânica disponível para composições sob medida.
+                Texturas, absorção acústica e propriedades de durabilidade para especificação em projetos sob medida.
               </p>
             </div>
 

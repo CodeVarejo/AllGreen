@@ -293,19 +293,13 @@ Saiba mais em: allgreendecor.com.br`;
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/90 text-[#072a1a] border border-emerald-300 text-xs font-bold uppercase tracking-wider mb-4 shadow-2xs">
-            <Leaf className="w-3.5 h-3.5 text-[#15803d]" />
-            <span>Diagnóstico Interativo de Biofilia Corporativa</span>
-          </div>
-
-          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#072a1a] tracking-tight">
-            Descubra o Perfil Biofílico Ideal para seu Espaço
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12 space-y-3">
+          <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#072a1a] tracking-tight leading-tight">
+            Diagnóstico de Perfil <span className="italic font-light text-[#15803d]">Biofílico</span>
           </h2>
 
-          <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
-            Responda a 5 perguntas estratégicas sobre iluminação, acústica e metas do seu ambiente. 
-            Nosso algoritmo sugerirá as espécies botânicas preservadas e o estilo arquitetônico perfeito para seu projeto.
+          <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl mx-auto">
+            Mapeie requisitos de iluminação, isolamento acústico e metas LEED/WELL para receber a curadoria de espécies sob medida.
           </p>
         </div>
 

@@ -22,9 +22,14 @@ import {
   History,
   Edit3,
   SearchX,
-  RotateCcw
+  RotateCcw,
+  Cloud,
+  CloudCheck,
+  RefreshCw,
+  Upload
 } from 'lucide-react';
 import { PortalProject, UserProfile } from '../../types';
+import { useCloudStorage } from '../../context/CloudStorageContext';
 
 interface ProjectsViewProps {
   projects: PortalProject[];
@@ -38,6 +43,8 @@ interface ProjectsViewProps {
   onOpenEditProject?: (project: PortalProject) => void;
   onBackToDashboard?: () => void;
   onRestoreDemoProjects?: () => void;
+  onOpenCloudStorage?: () => void;
+  onSaveProjectToCloud?: (project: PortalProject) => void;
 }
 
 export const ProjectsView: React.FC<ProjectsViewProps> = ({
@@ -52,7 +59,10 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
   onOpenEditProject,
   onBackToDashboard,
   onRestoreDemoProjects,
+  onOpenCloudStorage,
+  onSaveProjectToCloud,
 }) => {
+  const { isConnected, isSyncing, cloudFiles, saveProject } = useCloudStorage();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
   const [selectedStatus, setSelectedStatus] = useState<string>('todos');
@@ -136,6 +146,31 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
+          {onOpenCloudStorage && (
+            <button
+              type="button"
+              onClick={onOpenCloudStorage}
+              className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-2xs active:scale-95 min-h-[44px] border ${
+                isConnected
+                  ? 'bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] border-emerald-300'
+                  : 'bg-white hover:bg-emerald-50 text-gray-700 border-gray-300'
+              }`}
+              title="Sincronização em Nuvem com Google Drive"
+            >
+              {isSyncing ? (
+                <RefreshCw className="w-4 h-4 text-emerald-700 animate-spin" />
+              ) : isConnected ? (
+                <CloudCheck className="w-4 h-4 text-[#15803d]" />
+              ) : (
+                <Cloud className="w-4 h-4 text-gray-500" />
+              )}
+              <span>{isSyncing ? 'Sincronizando...' : isConnected ? 'Nuvem Drive' : 'Sincronizar Nuvem'}</span>
+              {isConnected && (
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              )}
+            </button>
+          )}
+
           <button
             type="button"
             onClick={onOpenNewProjectModal}
@@ -377,6 +412,29 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                         <span className="px-2 py-0.5 rounded-md bg-emerald-950/90 text-[#86efac] text-[10px] font-mono font-bold border border-emerald-500/40">
                           v{proj.versionHistory.length}.0
                         </span>
+                      )}
+
+                      {/* Google Drive Cloud Status / Action */}
+                      {cloudFiles.some((f) => f.projectCode === proj.code || f.name.includes(proj.code)) ? (
+                        <span
+                          className="px-2 py-0.5 rounded-md bg-emerald-950/95 text-[#86efac] text-[10px] font-mono font-bold border border-emerald-500/50 flex items-center gap-1 shadow-xs"
+                          title="Sincronizado na pasta do Google Drive"
+                        >
+                          <CloudCheck className="w-3 h-3 text-[#86efac]" /> Drive
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (onSaveProjectToCloud) onSaveProjectToCloud(proj);
+                            else saveProject(proj);
+                          }}
+                          className="px-2 py-0.5 rounded-md bg-white/95 hover:bg-emerald-50 text-[#072a1a] hover:text-[#15803d] text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all shadow-xs active:scale-95 pointer-events-auto border border-emerald-200"
+                          title="Fazer backup deste projeto no Google Drive"
+                        >
+                          <Upload className="w-3 h-3 text-[#15803d]" /> Salvar Nuvem
+                        </button>
                       )}
                     </div>
 

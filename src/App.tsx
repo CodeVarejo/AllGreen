@@ -35,6 +35,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { AccessibilityProvider, useAccessibility } from './context/AccessibilityContext';
 import { ConfirmationDialogProvider } from './context/ConfirmationDialogContext';
 import { ModalProvider, useModals } from './context/ModalContext';
+import { CloudStorageProvider } from './context/CloudStorageContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { GuidedTour } from './components/GuidedTour';
 
@@ -682,9 +683,11 @@ export function App() {
   return (
     <AccessibilityProvider>
       <ConfirmationDialogProvider>
-        <ModalProvider>
-          <AppContent />
-        </ModalProvider>
+        <CloudStorageProvider>
+          <ModalProvider>
+            <AppContent />
+          </ModalProvider>
+        </CloudStorageProvider>
       </ConfirmationDialogProvider>
     </AccessibilityProvider>
   );

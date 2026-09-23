@@ -23,7 +23,9 @@ import {
   Zap,
   TrendingUp,
   ArrowLeftRight,
-  Sparkles
+  Sparkles,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { isMacUser } from '../hooks/useKeyboardShortcuts';
 import { BOTANICAL_SPECIES, SEARCH_RESULTS } from '../data/mockData';
@@ -75,7 +77,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   const isMac = useMemo(() => isMacUser(), []);
   const modKey = isMac ? '⌘' : 'Ctrl+';
 
-  const { isHighContrast, toggleHighContrast } = useAccessibility();
+  const { theme, toggleTheme, isHighContrast, toggleHighContrast } = useAccessibility();
 
   // Reset query and focus input when opened
   useEffect(() => {
@@ -298,6 +300,18 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
           if (elem) elem.scrollIntoView({ behavior: 'smooth' });
         },
         keywords: ['galeria', 'fotos', 'antes e depois', 'cases', 'projetos reais', 'slider'],
+      },
+      {
+        id: 'cmd-theme',
+        category: 'Acessibilidade',
+        title: theme === 'dark' ? 'Mudar para Tema Claro (Editorial)' : 'Mudar para Tema Escuro (Botânico Noturno)',
+        subtitle: 'Alterna a paleta de cores global entre claro e escuro preservando acessibilidade',
+        icon: theme === 'dark' ? Sun : Moon,
+        badge: theme === 'dark' ? 'Escuro Ativo' : 'Claro Ativo',
+        action: () => {
+          toggleTheme();
+        },
+        keywords: ['tema', 'escuro', 'claro', 'dark', 'light', 'cores', 'noite', 'visual', 'modo'],
       },
       {
         id: 'cmd-contrast',
