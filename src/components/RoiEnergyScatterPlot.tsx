@@ -17,7 +17,6 @@ import {
   Leaf,
   Activity,
   Sliders,
-  Sparkles,
   Info,
   Layers,
   ArrowUpRight,
@@ -508,7 +507,6 @@ export const RoiEnergyScatterPlot: React.FC<RoiEnergyScatterPlotProps> = ({
       <div className="p-4 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50/40 rounded-3xl border border-emerald-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="space-y-1 max-w-2xl">
           <div className="flex items-center gap-1.5 text-xs font-bold text-[#072a1a]">
-            <Sparkles className="w-4 h-4 text-[#15803d]" />
             <span>Física Térmica Aplicada às Paredes Verdes Preservadas</span>
           </div>
           <p className="text-xs text-gray-700 leading-relaxed">

@@ -261,3 +261,31 @@ export interface BiophilicChatMessage {
   timestamp: string;
 }
 
+// Habit Tracking Types
+export type HabitCategory = 'biofilia' | 'ergonomia' | 'cuidado' | 'sustentabilidade' | 'bem-estar';
+
+export interface Habit {
+  id: string;
+  title: string;
+  description: string;
+  category: HabitCategory;
+  icon: string;
+  color: string; // e.g. 'emerald' | 'teal' | 'sky' | 'amber' | 'indigo' | 'rose'
+  targetDaysPerWeek: number; // 1 to 7
+  timeOfDay?: 'manha' | 'tarde' | 'noite' | 'qualquer';
+  createdAt: string;
+}
+
+export type HabitLogsMap = Record<string, Record<string, boolean>>; // dateKey (YYYY-MM-DD) -> { [habitId]: boolean }
+
+export interface HabitStats {
+  currentStreak: number;
+  bestStreak: number;
+  totalCompletions: number;
+  weeklyRate: number; // 0-100
+  monthlyRate: number; // 0-100
+  todayRate: number; // 0-100
+  todayCompletedCount: number;
+  totalHabitsCount: number;
+}
+

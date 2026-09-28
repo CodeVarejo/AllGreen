@@ -36,8 +36,10 @@ import { AccessibilityProvider, useAccessibility } from './context/Accessibility
 import { ConfirmationDialogProvider } from './context/ConfirmationDialogContext';
 import { ModalProvider, useModals } from './context/ModalContext';
 import { CloudStorageProvider } from './context/CloudStorageContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { GuidedTour } from './components/GuidedTour';
+import { HabitTrackerModal } from './components/habits/HabitTrackerModal';
 
 function AppContent() {
   const { isHighContrast, fontSize, isWcagTableMode, toggleHighContrast } = useAccessibility();
@@ -76,6 +78,9 @@ function AppContent() {
     isTourOpen,
     openTour,
     closeTour,
+    isHabitTrackerOpen,
+    openHabitTracker,
+    closeHabitTracker,
     closeAllModals,
   } = useModals();
 
@@ -194,6 +199,7 @@ function AppContent() {
     onToggleHighContrast: () => toggleHighContrast(),
     onOpenShortcutsModal: () => openShortcutsModal(),
     onCloseAllModals: () => closeAllModals(),
+    onOpenHabitTracker: () => openHabitTracker(),
   });
 
   const handleExecuteShortcut = (shortcutId: string) => {
@@ -218,6 +224,9 @@ function AppContent() {
         break;
       case 'notifications':
         openNotificationCenter();
+        break;
+      case 'habits':
+        openHabitTracker();
         break;
       case 'contrast':
         toggleHighContrast();
@@ -438,6 +447,7 @@ function AppContent() {
                     downloadImmediately: true,
                   });
                 }}
+                onOpenHabitTracker={openHabitTracker}
               />
             </ErrorBoundary>
           </motion.div>
@@ -466,6 +476,7 @@ function AppContent() {
               onOpenConsultation={() => openConsultation()}
               onOpenProjectPdfReport={openPdfReport}
               onOpenTour={openTour}
+              onOpenHabitTracker={openHabitTracker}
             />
 
             {/* Main Hero Section with interactive before/after slider */}
@@ -652,6 +663,7 @@ function AppContent() {
         onOpenConsultation={() => openConsultation()}
         onOpenProjectPdfReport={openPdfReport}
         onOpenTour={openTour}
+        onOpenHabitTracker={openHabitTracker}
       />
 
       {/* Global Keyboard Shortcuts Cheatsheet Modal (?) */}
@@ -672,6 +684,14 @@ function AppContent() {
         />
       </ErrorBoundary>
 
+      {/* Rastreador de Hábitos & Rotina Biofílica Modal */}
+      <ErrorBoundary sectionName="Rastreador de Hábitos">
+        <HabitTrackerModal
+          isOpen={isHabitTrackerOpen}
+          onClose={closeHabitTracker}
+        />
+      </ErrorBoundary>
+
       {/* Floating Widgets */}
       <LgpdBanner />
 
@@ -682,13 +702,15 @@ function AppContent() {
 export function App() {
   return (
     <AccessibilityProvider>
-      <ConfirmationDialogProvider>
-        <CloudStorageProvider>
-          <ModalProvider>
-            <AppContent />
-          </ModalProvider>
-        </CloudStorageProvider>
-      </ConfirmationDialogProvider>
+      <LanguageProvider>
+        <ConfirmationDialogProvider>
+          <CloudStorageProvider>
+            <ModalProvider>
+              <AppContent />
+            </ModalProvider>
+          </CloudStorageProvider>
+        </ConfirmationDialogProvider>
+      </LanguageProvider>
     </AccessibilityProvider>
   );
 }

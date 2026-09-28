@@ -11,6 +11,7 @@ interface KeyboardShortcutHandlers {
   onToggleHighContrast?: () => void;
   onOpenShortcutsModal?: () => void;
   onCloseAllModals?: () => void;
+  onOpenHabitTracker?: () => void;
 }
 
 export function isMacUser(): boolean {
@@ -113,6 +114,13 @@ export function useKeyboardShortcuts(handlers: KeyboardShortcutHandlers) {
         if (event.key === '?') {
           event.preventDefault();
           handlers.onOpenShortcutsModal?.();
+          return;
+        }
+
+        // 'h' opens Habit Tracker
+        if (key === 'h') {
+          event.preventDefault();
+          handlers.onOpenHabitTracker?.();
           return;
         }
       }

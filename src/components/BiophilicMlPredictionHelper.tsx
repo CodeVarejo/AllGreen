@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import {
   Brain,
-  Sparkles,
   Maximize2,
   Sliders,
   Layers,
@@ -298,7 +297,6 @@ export const BiophilicMlPredictionHelper: React.FC<BiophilicMlPredictionHelperPr
               onClick={handleApply}
               className="px-4 py-2.5 rounded-xl bg-[#86efac] hover:bg-[#4ade80] text-[#072a1a] text-xs font-extrabold transition-all flex items-center gap-2 shadow-md hover:shadow-lg cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-[#072a1a]" />
               <span>Aplicar à Calculadora de ROI</span>
             </button>
           </div>
@@ -600,7 +598,7 @@ export const BiophilicMlPredictionHelper: React.FC<BiophilicMlPredictionHelperPr
 
             {/* AI Optimization Rationale Quote */}
             <div className="p-3.5 bg-emerald-50/70 rounded-2xl border border-emerald-200/80 text-xs text-emerald-950 flex items-start gap-2.5 leading-relaxed">
-              <Sparkles className="w-4 h-4 text-[#15803d] shrink-0 mt-0.5" />
+              <Info className="w-4 h-4 text-[#15803d] shrink-0 mt-0.5" />
               <div>
                 <strong className="text-emerald-900 block mb-0.5">Racional de Otimização Algorítmica:</strong>
                 {prediction.optimizationRationale}

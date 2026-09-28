@@ -20,14 +20,16 @@ import {
   FileText,
   Clock,
   Star,
-  Sparkles,
   Volume2,
   VolumeX,
   Sun,
-  Moon
+  Moon,
+  Activity
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { useAccessibility } from '../context/AccessibilityContext';
+import { useLanguage } from '../context/LanguageContext';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 export interface MobileMenuDrawerProps {
   isOpen: boolean;
@@ -45,6 +47,7 @@ export interface MobileMenuDrawerProps {
   onOpenConsultation?: () => void;
   onOpenProjectPdfReport?: () => void;
   onOpenTour?: () => void;
+  onOpenHabitTracker?: () => void;
   modKey: string;
   isAudioActive?: boolean;
   onToggleAudio?: () => void;
@@ -66,11 +69,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
   onOpenConsultation,
   onOpenProjectPdfReport,
   onOpenTour,
+  onOpenHabitTracker,
   modKey,
   isAudioActive = false,
   onToggleAudio,
 }) => {
   const { theme, toggleTheme } = useAccessibility();
+  const { t, language } = useLanguage();
   const [searchVal, setSearchVal] = useState('');
 
   // Close drawer on Escape key press
@@ -242,6 +247,9 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             </div>
           )}
 
+          {/* Language Switcher in Mobile Drawer */}
+          <LanguageSwitcher variant="drawer" />
+
           {/* Theme Switcher in Mobile Drawer */}
           <div className="p-3 rounded-2xl bg-gray-100 dark:bg-emerald-950/60 border border-gray-200 dark:border-emerald-800/80 flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-2.5">
@@ -250,10 +258,12 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               </div>
               <div>
                 <span className="text-xs font-semibold text-gray-900 dark:text-white block leading-tight">
-                  Tema Visual
+                  {language === 'pt' ? 'Tema Visual' : 'Theme Mode'}
                 </span>
                 <span className="text-[10px] text-gray-500 dark:text-gray-400 block">
-                  {theme === 'dark' ? 'Modo Escuro Botânico' : 'Modo Claro Editorial'}
+                  {theme === 'dark' 
+                    ? (language === 'pt' ? 'Modo Escuro Botânico' : 'Dark Botanical') 
+                    : (language === 'pt' ? 'Modo Claro Editorial' : 'Light Editorial')}
                 </span>
               </div>
             </div>
@@ -263,7 +273,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               onClick={toggleTheme}
               className="px-3 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-emerald-800 text-gray-900 dark:text-[#86efac] border border-gray-300 dark:border-emerald-700 shadow-2xs transition-all cursor-pointer active:scale-95"
             >
-              {theme === 'dark' ? 'Claro' : 'Escuro'}
+              {theme === 'dark' ? (language === 'pt' ? 'Claro' : 'Light') : (language === 'pt' ? 'Escuro' : 'Dark')}
             </button>
           </div>
 
@@ -275,7 +285,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               id="mobile-drawer-search-input"
               value={searchVal}
               onChange={(e) => setSearchVal(e.target.value)}
-              placeholder="Buscar espécies, laudos ou AG..."
+              placeholder={t('nav.searchPlaceholder', 'Buscar espécies, laudos ou AG...')}
               className="w-full pl-8 pr-3 py-2 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0d3822] focus:bg-white transition-all"
             />
           </form>
@@ -294,7 +304,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             >
               <div className="flex items-center gap-2">
                 <Search className="w-3.5 h-3.5 text-[#15803d]" />
-                <span className="text-xs">Busca Global & Comandos</span>
+                <span className="text-xs">{language === 'pt' ? 'Busca Global & Comandos' : 'Global Search & Commands'}</span>
               </div>
               <kbd className="px-1.5 py-0.5 rounded bg-white border border-gray-300 text-[9px] font-mono font-bold text-gray-700 shadow-2xs">
                 {modKey}+K
@@ -313,11 +323,31 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 text-[#072a1a] font-bold border border-emerald-300 hover:bg-emerald-100 transition-colors text-left cursor-pointer"
               >
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-[#15803d]" />
-                  <span className="text-xs">Tour Guiado (Onboarding)</span>
+                  <span className="text-xs">{language === 'pt' ? 'Tour Guiado (Onboarding)' : 'Guided Tour (Onboarding)'}</span>
                 </div>
                 <span className="px-1.5 py-0.5 rounded-full bg-[#072a1a] text-[#86efac] text-[9px] font-extrabold">
-                  3 Recursos
+                  {language === 'pt' ? '3 Recursos' : '3 Features'}
+                </span>
+              </button>
+            )}
+
+            {/* Habit Tracker button */}
+            {onOpenHabitTracker && (
+              <button
+                type="button"
+                id="mobile-drawer-habit-tracker-btn"
+                onClick={() => {
+                  onClose();
+                  onOpenHabitTracker();
+                }}
+                className="w-full flex items-center justify-between p-2.5 rounded-xl bg-white text-[#072a1a] font-bold border border-emerald-300 hover:bg-emerald-50 transition-colors text-left cursor-pointer shadow-2xs"
+              >
+                <div className="flex items-center gap-2">
+                  <Activity className="w-3.5 h-3.5 text-[#15803d]" />
+                  <span className="text-xs">{language === 'pt' ? 'Rastreador de Hábitos' : 'Habit Tracker'}</span>
+                </div>
+                <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-bold">
+                  {language === 'pt' ? 'Rotina' : 'Routine'}
                 </span>
               </button>
             )}
@@ -335,7 +365,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Bell className="w-3.5 h-3.5 text-[#15803d]" />
-                  <span className="text-xs">Notificações</span>
+                  <span className="text-xs">{language === 'pt' ? 'Notificações' : 'Notifications'}</span>
                 </div>
                 {unreadNotificationsCount > 0 && (
                   <span className="px-1.5 py-0.2 bg-red-600 text-white text-[10px] font-extrabold rounded-full animate-pulse">
@@ -353,7 +383,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <Layers className="w-3.5 h-3.5 text-[#15803d]" />
-                <span>Nossas Soluções Biofílicas</span>
+                <span>{t('nav.solutions', 'Soluções')}</span>
               </div>
               <ChevronRight className="w-3 h-3 text-gray-400 group-hover:text-gray-700 transition-colors" />
             </button>
@@ -366,7 +396,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <BookOpen className="w-3.5 h-3.5 text-[#15803d]" />
-                <span>Catálogo Botânico</span>
+                <span>{t('nav.catalog', 'Catálogo')}</span>
               </div>
               <ChevronRight className="w-3 h-3 text-gray-400 group-hover:text-gray-700 transition-colors" />
             </button>
@@ -379,9 +409,11 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <Leaf className="w-3.5 h-3.5 text-[#15803d]" />
-                <span>Quiz Perfil Biofílico</span>
+                <span>{t('nav.quiz', 'Quiz Biofílico')}</span>
               </div>
-              <span className="px-1.5 py-0.2 bg-[#072a1a] text-[#86efac] text-[9px] font-extrabold rounded">5 Perguntas</span>
+              <span className="px-1.5 py-0.2 bg-[#072a1a] text-[#86efac] text-[9px] font-extrabold rounded">
+                {language === 'pt' ? '5 Perguntas' : '5 Questions'}
+              </span>
             </button>
 
             <button
@@ -392,7 +424,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <Layers className="w-3.5 h-3.5 text-[#15803d]" />
-                <span>Comparativo Técnico</span>
+                <span>{t('nav.comparison', 'Comparativo')}</span>
               </div>
               <ChevronRight className="w-3 h-3 text-gray-400 group-hover:text-gray-700 transition-colors" />
             </button>
@@ -405,7 +437,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <TrendingUp className="w-3.5 h-3.5 text-[#15803d]" />
-                <span>Calculadora & ROI (WELL/LEED)</span>
+                <span>{t('nav.roi', 'Calculadora & ROI')}</span>
               </div>
               <ChevronRight className="w-3 h-3 text-gray-400 group-hover:text-gray-700 transition-colors" />
             </button>
@@ -418,7 +450,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <ImageIcon className="w-3.5 h-3.5 text-[#15803d]" />
-                <span>Galeria Antes & Depois</span>
+                <span>{t('nav.projects', 'Projetos')}</span>
               </div>
               <ChevronRight className="w-3 h-3 text-gray-400 group-hover:text-gray-700 transition-colors" />
             </button>

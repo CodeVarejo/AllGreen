@@ -60,7 +60,7 @@ export const VideoShowroom: React.FC<VideoShowroomProps> = ({ onOpenSimulator })
                     onClick={onOpenSimulator}
                     className="px-6 py-3 bg-[#86efac] text-[#072a1a] font-bold rounded-full hover:bg-emerald-300 transition-all shadow-md text-sm sm:text-base cursor-pointer hover:scale-105 active:scale-95"
                   >
-                    ✨ Simular na Minha Parede
+                    Simular na Minha Parede
                   </button>
                 </div>
               </div>
@@ -86,9 +86,6 @@ export const VideoShowroom: React.FC<VideoShowroomProps> = ({ onOpenSimulator })
                     <div className="w-20 h-20 rounded-full bg-[#86efac] text-[#072a1a] flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
                       <Play className="w-9 h-9 fill-current ml-1" />
                     </div>
-                    <span className="mt-4 px-4 py-1.5 rounded-full bg-black/70 text-white font-bold text-xs uppercase tracking-wider backdrop-blur-xs border border-white/20">
-                      CLIQUE PARA ASSISTIR
-                    </span>
                   </div>
 
                   {/* Bottom Video Label Bar */}

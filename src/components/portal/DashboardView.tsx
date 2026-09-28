@@ -31,6 +31,7 @@ interface DashboardViewProps {
   onRetakeQuiz?: () => void;
   onDownloadBiophilicGuide?: (profile: any) => void;
   onRestoreDemoProjects?: () => void;
+  onOpenHabitTracker?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -45,6 +46,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onRetakeQuiz,
   onDownloadBiophilicGuide,
   onRestoreDemoProjects,
+  onOpenHabitTracker,
 }) => {
   const isArchitect = user.role === 'arquiteto' || user.role === 'especificador';
 
@@ -235,6 +237,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             }
           }}
         />
+      )}
+
+      {/* Habit Tracker & Wellness Card */}
+      {onOpenHabitTracker && (
+        <div className="bg-gradient-to-r from-emerald-950 via-[#072a1a] to-teal-950 text-white p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm border border-emerald-800/40">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded bg-[#86efac]/20 text-[#86efac] text-[10px] font-mono font-bold uppercase tracking-wider">
+                WELL Mind & Comfort
+              </span>
+              <span className="text-xs text-emerald-300">Rotina & Hábitos do Espaço</span>
+            </div>
+            <h3 className="font-serif font-bold text-base sm:text-lg text-white">
+              Rastreie pausas regenerativas e ergonomia no seu ambiente
+            </h3>
+            <p className="text-xs text-emerald-200/80 max-w-xl">
+              Defina hábitos diários de biofilia, marque sua conclusão e acompanhe gráficos de consistência temporal.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onOpenHabitTracker}
+            className="px-4 py-2.5 bg-[#86efac] hover:bg-emerald-300 text-[#072a1a] font-bold text-xs rounded-xl transition-all cursor-pointer shrink-0 shadow-sm hover:scale-102 active:scale-98"
+          >
+            Abrir Rastreador de Hábitos
+          </button>
+        </div>
       )}
 
       {/* Projects Grid Overview */}

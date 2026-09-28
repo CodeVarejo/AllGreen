@@ -50,6 +50,7 @@ interface ArchitectPortalProps {
   onOpenQuote: (context: string) => void;
   onRetakeQuiz?: () => void;
   onDownloadBiophilicGuide?: (profile: any) => void;
+  onOpenHabitTracker?: () => void;
 }
 
 export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
@@ -60,6 +61,7 @@ export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
   onOpenQuote,
   onRetakeQuiz,
   onDownloadBiophilicGuide,
+  onOpenHabitTracker,
 }) => {
   const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile>(user);
   const [activeTab, setActiveTab] = useState<PortalTabKey>('dashboard');
@@ -730,6 +732,7 @@ Portal do Arquiteto: https://allgreendecor.com.br
                 onRetakeQuiz={onRetakeQuiz}
                 onDownloadBiophilicGuide={onDownloadBiophilicGuide}
                 onRestoreDemoProjects={handleRestoreDemoProjects}
+                onOpenHabitTracker={onOpenHabitTracker}
               />
             </motion.div>
           )}

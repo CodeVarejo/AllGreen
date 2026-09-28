@@ -12,7 +12,8 @@ import {
   Contrast,
   HelpCircle,
   CornerDownLeft,
-  CheckCircle2
+  CheckCircle2,
+  Activity
 } from 'lucide-react';
 import { isMacUser } from '../hooks/useKeyboardShortcuts';
 
@@ -101,6 +102,13 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
           description: 'Alterna tema de alto contraste para máxima legibilidade',
           keys: [isMac ? '⌘' : 'Ctrl', 'H'],
           icon: Contrast,
+        },
+        {
+          id: 'habits',
+          title: 'Rastreador de Hábitos Biofílicos',
+          description: 'Abre o painel de hábitos diários e estatísticas de progresso',
+          keys: ['H'],
+          icon: Activity,
         },
         {
           id: 'shortcuts_help',

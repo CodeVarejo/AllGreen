@@ -19,8 +19,7 @@ import {
   Clock,
   Truck,
   CheckCircle2,
-  Keyboard,
-  Sparkles
+  Keyboard
 } from 'lucide-react';
 import { useAccessibility } from '../context/AccessibilityContext';
 import { ScrollReveal } from './ScrollReveal';
@@ -535,7 +534,6 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
                   className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-900 text-emerald-200 hover:bg-emerald-800 transition-colors cursor-pointer flex items-center gap-1.5"
                   title="Rever Tour Guiado da Plataforma"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-[#86efac]" />
                   <span>Tour Guiado</span>
                 </button>
               )}

@@ -37,6 +37,7 @@ import { BiophilicProfileResult, QuizQuestion, UserProfile } from '../types';
 import { BiophilicRadarChart } from './BiophilicRadarChart';
 import { generateBiophilicGuidePdf } from '../utils/generateBiophilicGuidePdf';
 import confetti from 'canvas-confetti';
+import { useLanguage } from '../context/LanguageContext';
 
 interface BiophilicQuizProps {
   onOpenSimulator?: () => void;
@@ -59,6 +60,8 @@ export const BiophilicQuiz: React.FC<BiophilicQuizProps> = ({
   onOpenLogin,
   onNavigateToPortal,
 }) => {
+  const { language } = useLanguage();
+  const isPt = language === 'pt';
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
@@ -241,14 +244,13 @@ export const BiophilicQuiz: React.FC<BiophilicQuizProps> = ({
 
   const handleCopySummary = () => {
     if (!result) return;
-    const text = `🌿 MEU PERFIL BIOFÍLICO ALL GREEN:
-🏆 Arquétipo: ${result.archetypeTitle} (${result.badge})
-📐 Estilo: ${result.designStyle.title}
-✨ Pontuação WELL: ${result.scoreWell} pts | LEED: ${result.scoreLeed} créditos
-🔇 Acústica: NRC ${result.acousticNRC} | Produtividade: +${result.productivityBoost}%
-🌿 Espécies Recomendadas: ${result.recommendedSpecies.map((s) => s.name).join(', ')}
-💡 Código da Solução: ${result.recommendedSolutionCode}
-Saiba mais em: allgreendecor.com.br`;
+    const text = `Perfil Biofílico All Green:
+Arquétipo: ${result.archetypeTitle} (${result.badge})
+Estilo: ${result.designStyle.title}
+Pontuação WELL: ${result.scoreWell} pts | LEED: ${result.scoreLeed} créditos
+Acústica: NRC ${result.acousticNRC} | Produtividade: +${result.productivityBoost}%
+Espécies: ${result.recommendedSpecies.map((s) => s.name).join(', ')}
+Código: ${result.recommendedSolutionCode}`;
 
     navigator.clipboard.writeText(text);
     setCopiedSuccess(true);
@@ -295,11 +297,21 @@ Saiba mais em: allgreendecor.com.br`;
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12 space-y-3">
           <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#072a1a] tracking-tight leading-tight">
-            Diagnóstico de Perfil <span className="italic font-light text-[#15803d]">Biofílico</span>
+            {isPt ? (
+              <>
+                Diagnóstico de Perfil <span className="italic font-light text-[#15803d]">Biofílico</span>
+              </>
+            ) : (
+              <>
+                Biophilic Profile <span className="italic font-light text-[#15803d]">Assessment</span>
+              </>
+            )}
           </h2>
 
           <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl mx-auto">
-            Mapeie requisitos de iluminação, isolamento acústico e metas LEED/WELL para receber a curadoria de espécies sob medida.
+            {isPt
+              ? 'Mapeie requisitos de iluminação, isolamento acústico e metas LEED/WELL para receber a curadoria de espécies sob medida.'
+              : 'Map lighting conditions, acoustic targets, and LEED/WELL objectives to generate a personalized botanical species curation.'}
           </p>
         </div>
 
@@ -975,24 +987,25 @@ Saiba mais em: allgreendecor.com.br`;
                 <div className="p-6 bg-gradient-to-r from-[#072a1a] to-[#0d4a2d] rounded-2xl text-white flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
                   <div className="space-y-1 text-center md:text-left">
                     <h4 className="text-sm sm:text-base font-bold text-white">
-                      Pronto para ver este perfil aplicado no seu espaço?
+                      Pronto para aplicar este perfil no seu projeto?
                     </h4>
                     <p className="text-xs text-emerald-200">
-                      Simule agora via IA, solicite uma proposta orçamentária ou emita um laudo técnico executivo.
+                      Receba uma proposta orçamentária detalhada ou visualize seu espaço pelo simulador.
                     </p>
                   </div>
 
                   <div className="flex items-center gap-2.5 flex-wrap justify-center">
-                    <button
-                      type="button"
-                      id="quiz-cta-download-guide"
-                      onClick={handleDownloadGuidePdf}
-                      className="px-4 py-2.5 bg-[#86efac] hover:bg-emerald-300 text-[#072a1a] font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
-                      title="Baixar Guia Técnico Personalizado (PDF)"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>Baixar Guia Personalizado</span>
-                    </button>
+                    {onOpenQuote && (
+                      <button
+                        type="button"
+                        id="quiz-cta-quote"
+                        onClick={handleRequestQuoteWithProfile}
+                        className="px-5 py-2.5 bg-[#86efac] hover:bg-emerald-300 text-[#072a1a] font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Send className="w-3.5 h-3.5 text-[#072a1a]" />
+                        <span>Solicitar Orçamento</span>
+                      </button>
+                    )}
 
                     {onOpenSimulator && (
                       <button
@@ -1003,30 +1016,6 @@ Saiba mais em: allgreendecor.com.br`;
                       >
                         <Camera className="w-3.5 h-3.5 text-[#86efac]" />
                         <span>Simular com IA</span>
-                      </button>
-                    )}
-
-                    {onOpenPdfReport && (
-                      <button
-                        type="button"
-                        id="quiz-cta-pdf"
-                        onClick={onOpenPdfReport}
-                        className="px-4 py-2.5 bg-emerald-900 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl border border-emerald-700/80 transition-all flex items-center gap-1.5 cursor-pointer"
-                      >
-                        <FileText className="w-3.5 h-3.5 text-[#86efac]" />
-                        <span>Gerar Laudo Geral</span>
-                      </button>
-                    )}
-
-                    {onOpenQuote && (
-                      <button
-                        type="button"
-                        id="quiz-cta-quote"
-                        onClick={handleRequestQuoteWithProfile}
-                        className="px-4 py-2.5 bg-white hover:bg-gray-100 text-[#072a1a] font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
-                      >
-                        <Send className="w-3.5 h-3.5 text-[#15803d]" />
-                        <span>Solicitar Orçamento</span>
                       </button>
                     )}
                   </div>

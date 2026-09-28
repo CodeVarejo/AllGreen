@@ -3,6 +3,7 @@ import { ArrowRight, Leaf, X, Check } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
 import { PageHeader } from './PageHeader';
+import { useLanguage } from '../context/LanguageContext';
 
 interface SolutionsGridProps {
   onSelectSolution: (solutionTitle: string) => void;
@@ -42,15 +43,15 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
   onSelectSolution,
   onOpenQuote,
 }) => {
+  const { t, language } = useLanguage();
   const [selectedModal, setSelectedModal] = useState<any | null>(null);
+  const isPt = language === 'pt';
 
   const solutions = [
     {
       id: 'preservado',
-      tag: '100% NATURAL',
-      tagBg: 'bg-[#86efac] text-[#072a1a]',
       title: 'Jardins Verticais Preservados',
-      desc: 'Plantas 100% naturais que passam por um processo ecológico de preservação com glicerina vegetal. Mantêm textura macia e viva por anos sem precisar de sol, rega ou poda.',
+      desc: 'Plantas 100% naturais que passam por processo ecológico de preservação com glicerina vegetal. Mantêm textura macia e viva por anos sem precisar de sol, rega ou poda.',
       image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80',
       highlights: [
         'Plantas naturais estabilizadas com glicerina vegetal',
@@ -61,13 +62,11 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
     },
     {
       id: 'permanente',
-      tag: 'HIPER-REALISTA ANTI-UV',
-      tagBg: 'bg-emerald-100 text-[#072a1a]',
       title: 'Jardins Verticais Permanentes',
-      desc: 'Folhagens artificiais importadas de última geração, com toque real (silicone, seda e látex) e tratamento anti-UV resistente ao sol, intempéries e áreas gourmet.',
+      desc: 'Folhagens artificiais importadas com toque real (silicone, seda e látex) e tratamento anti-UV resistente ao sol, intempéries e áreas gourmet.',
       image: 'https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=800&q=80',
       highlights: [
-        'Mais de 30 espécies botânicas com fidelidade hiper-realista',
+        'Mais de 30 espécies botânicas com fidelidade botânica',
         'Tratamento Anti-UV que impede desbotamento e ressecamento',
         'Leveza estrutural (~4kg/m²) instalável em drywall e alvenaria',
         'Ideal para varandas gourmet, fachadas e áreas com luz solar',
@@ -75,27 +74,23 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
     },
     {
       id: 'moss',
-      tag: 'ARTE BOTÂNICA & MOSS',
-      tagBg: 'bg-emerald-200 text-[#072a1a]',
       title: 'Musgo Polar Moss & Quadros Biofílicos',
-      desc: 'Musgo escandinavo preservado de alta densidade (Cladonia rangiferina). Disponível em várias cores para composições artísticas, logotipos 3D e painéis acústicos de estúdio.',
+      desc: 'Musgo escandinavo preservado de alta densidade (Cladonia rangiferina). Disponível em várias cores para composições artísticas, logotipos e painéis acústicos.',
       image: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=800&q=80',
       highlights: [
         'Musgo escandinavo autêntico de toque aveludado tridimensional',
         'Excelente atenuação de eco e reverberação em escritórios',
-        'Customizável com cortes geométricos, logos e retroiluminação LED',
+        'Customizável com cortes geométricos, logos e iluminação LED',
         'Imune a pragas, ácaros e livre de fungos',
       ],
     },
     {
       id: 'modulos_diy',
-      tag: 'ENVIO BRASIL',
-      tagBg: 'bg-teal-100 text-teal-900',
-      title: 'Módulos Plug & Play (100x50 cm e Sob Medida)',
-      desc: 'Painéis verdes pré-montados de fácil fixação enviados para qualquer cidade do Brasil. Sistema inteligente que permite instalação rápida e sem sujeira.',
+      title: 'Módulos Plug & Play Sob Medida',
+      desc: 'Painéis verdes pré-montados com engate oculto enviados para qualquer cidade do Brasil. Sistema que permite instalação rápida e sem sujeira.',
       image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80',
       highlights: [
-        'Módulos padronizados de 100x50 cm ou confeccionados sob medida',
+        'Módulos padronizados de 100x50 cm ou sob medida',
         'Gabarito e kit de ancoragem rápida inclusos',
         'Envio express por transportadora com seguro total',
         'Manual passo a passo ilustrado para instalação em minutos',
@@ -103,28 +98,24 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
     },
     {
       id: 'vasos',
-      tag: 'ÁRVORES & VASOS',
-      tagBg: 'bg-emerald-100 text-[#072a1a]',
       title: 'Paisagismo em Vasos & Árvores Semi-Naturais',
-      desc: 'Árvores montadas com troncos naturais tratados e folhagens importadas de alta escala (Ficus Lyrata, Costela de Adão, Palmeiras e Oliveiras) com vasos em fibra de vidro e polietileno.',
+      desc: 'Árvores montadas com troncos naturais tratados e folhagens de alta escala (Ficus Lyrata, Costela de Adão, Palmeiras e Oliveiras) com vasos em fibra de vidro.',
       image: 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80',
       highlights: [
         'Troncos naturais desidratados e tratados contra cupim',
         'Folhagens com caimento natural e visual imponente',
-        'Vasos e jardineiras sob medida para halls e divisórias de ambiente',
+        'Vasos sob medida para halls e divisórias de ambiente',
         'Flexibilidade total para reformas e reposicionamento',
       ],
     },
     {
       id: 'eventos',
-      tag: 'CENOGRAFIA & EVENTOS',
-      tagBg: 'bg-emerald-200 text-[#072a1a]',
       title: 'Cenografia Verde & Locação para Eventos',
-      desc: 'Backdrops biofílicos instagramáveis, painéis para stands em feiras de negócios, cenografia corporativa, casamentos e congressos com montagem e desmontagem ágeis.',
+      desc: 'Backdrops biofílicos, painéis para estandes em feiras de negócios, cenografia corporativa, casamentos e congressos com montagem ágil.',
       image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80',
       highlights: [
         'Estruturas autoportantes ou modulares para estandes',
-        'Integração com letreiros neon, testeiras e iluminação cênica',
+        'Integração com letreiros neon e iluminação cênica',
         'Opções flexíveis de compra ou locação temporária',
         'Equipe de montagem ágil em feiras e pavilhões',
       ],
@@ -140,12 +131,23 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
           <PageHeader
             align="center"
             title={
-              <>
-                Verde autoral desenhado para <br className="hidden sm:inline" />
-                <span className="italic font-light text-[#15803d]">cada projeto e ambiente</span>
-              </>
+              isPt ? (
+                <>
+                  Verde autoral desenhado para <br className="hidden sm:inline" />
+                  <span className="italic font-light text-[#15803d]">cada projeto e ambiente</span>
+                </>
+              ) : (
+                <>
+                  Signature greenery designed for <br className="hidden sm:inline" />
+                  <span className="italic font-light text-[#15803d]">every space and architectural vision</span>
+                </>
+              )
             }
-            description="Soluções modulares de jardins preservados, musgo polar escandinavo e biofilia arquitetônica com entrega e instalação em todo o Brasil."
+            description={
+              isPt
+                ? "Soluções modulares de jardins preservados, musgo polar escandinavo e biofilia arquitetônica com entrega e instalação em todo o Brasil."
+                : "Modular preserved vertical walls, Scandinavian reindeer moss, and architectural biophilia delivered and installed nationwide."
+            }
           />
         </ScrollReveal>
 
@@ -178,11 +180,6 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute top-3 left-3">
-                    <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md shadow-xs ${item.tagBg}`}>
-                      {item.tag}
-                    </span>
-                  </div>
                 </div>
 
                 {/* Content */}
@@ -194,22 +191,6 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
                     {item.desc}
                   </p>
                 </div>
-              </div>
-
-              {/* Action Button */}
-              <div className="p-5 pt-0">
-                <button
-                  type="button"
-                  id={`btn-solution-details-${item.id}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedModal(item);
-                  }}
-                  className="w-full flex items-center justify-between text-xs font-semibold text-[#072a1a] hover:text-[#15803d] pt-3 border-t border-gray-100 transition-colors group/btn cursor-pointer"
-                >
-                  <span>Saiba mais sobre esta solução</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
-                </button>
               </div>
             </motion.div>
           ))}
@@ -247,10 +228,6 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
                 <X className="w-5 h-5" />
               </button>
 
-              <span className={`text-[10px] font-extrabold uppercase px-3 py-1 rounded-md ${selectedModal.tagBg}`}>
-                {selectedModal.tag}
-              </span>
-
               <h3 className="text-2xl font-serif font-bold text-gray-900">
                 {selectedModal.title}
               </h3>
@@ -261,7 +238,7 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
 
               <div className="bg-emerald-50 p-4 rounded-2xl space-y-2 border border-emerald-100">
                 <p className="text-xs font-bold text-[#072a1a] uppercase tracking-wider">
-                  Destaques & Especificações:
+                  {isPt ? 'Destaques & Especificações:' : 'Highlights & Specifications:'}
                 </p>
                 <ul className="space-y-1.5 text-xs text-gray-700">
                   {selectedModal.highlights.map((h: string, idx: number) => (
@@ -284,7 +261,7 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
                   }}
                   className="flex-1 py-3 bg-[#072a1a] text-white font-bold rounded-xl text-xs hover:bg-[#15803d] transition-colors cursor-pointer shadow-md"
                 >
-                  Solicitar Orçamento para esta Linha
+                  {isPt ? 'Solicitar Orçamento para esta Linha' : 'Request Quote for this Line'}
                 </button>
               </div>
             </motion.div>

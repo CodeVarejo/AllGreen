@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Leaf, Search, Menu as MenuIcon, X, Camera, PhoneCall, Layers, BookOpen, Calculator, Image as ImageIcon, UserCheck, Bell, Keyboard, TrendingUp, Sparkles, HelpCircle, Volume2, VolumeX, Sun, Moon } from 'lucide-react';
+import { Leaf, Search, Menu as MenuIcon, X, Camera, UserCheck, Bell, Keyboard, Volume2, VolumeX, Sun, Moon, Activity } from 'lucide-react';
 import { UserProfile } from '../types';
 import { isMacUser } from '../hooks/useKeyboardShortcuts';
 import { MobileMenuDrawer } from './MobileMenuDrawer';
 import { botanicalAudio } from '../utils/botanicalAudio';
 import { useAccessibility } from '../context/AccessibilityContext';
+import { useLanguage } from '../context/LanguageContext';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface NavbarProps {
   onOpenSimulator: () => void;
@@ -20,6 +22,7 @@ interface NavbarProps {
   onOpenConsultation?: () => void;
   onOpenProjectPdfReport?: () => void;
   onOpenTour?: () => void;
+  onOpenHabitTracker?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -36,8 +39,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenConsultation,
   onOpenProjectPdfReport,
   onOpenTour,
+  onOpenHabitTracker,
 }) => {
   const { theme, toggleTheme } = useAccessibility();
+  const { t, language } = useLanguage();
   const [searchVal, setSearchVal] = useState('');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAudioActive, setIsAudioActive] = useState(false);
@@ -123,7 +128,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               ALL GREEN
             </span>
             <span className="hidden sm:block text-[9px] sm:text-[10px] font-sans font-medium tracking-wider text-emerald-800/80 uppercase truncate">
-              Biofilia Arquitetônica
+              {t('common.tagline', 'Biofilia Arquitetônica')}
             </span>
           </div>
         </a>
@@ -139,7 +144,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => scrollToSection('solutions')}
             className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
-            Soluções
+            {t('nav.solutions', 'Soluções')}
           </button>
           <button 
             type="button"
@@ -147,7 +152,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => scrollToSection('botanical-catalog')}
             className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
-            Catálogo
+            {t('nav.catalog', 'Catálogo')}
           </button>
           <button 
             type="button"
@@ -155,7 +160,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => scrollToSection('biophilic-quiz')}
             className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
-            Quiz Biofílico
+            {t('nav.quiz', 'Quiz Biofílico')}
           </button>
           <button 
             type="button"
@@ -163,7 +168,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => scrollToSection('comparison-matrix')}
             className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
-            Comparativo
+            {t('nav.comparison', 'Comparativo')}
           </button>
           <button 
             type="button"
@@ -171,7 +176,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => scrollToSection('biophilic-roi-calculator')}
             className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
-            Calculadora & ROI
+            {t('nav.roi', 'Calculadora & ROI')}
           </button>
           <button 
             type="button"
@@ -179,7 +184,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => scrollToSection('before-after-gallery')}
             className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
-            Projetos
+            {t('nav.projects', 'Projetos')}
           </button>
         </nav>
 
@@ -192,7 +197,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               value={searchVal}
               onClick={() => onOpenSearch?.()}
               onChange={(e) => setSearchVal(e.target.value)}
-              placeholder="Buscar produtos, laudos..."
+              placeholder={t('nav.searchPlaceholder', 'Buscar produtos, laudos...')}
               className="w-full pl-9 pr-14 py-1.5 bg-white rounded-full border border-gray-300 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0d3822] cursor-pointer"
             />
             <button
@@ -219,8 +224,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 ? 'bg-emerald-900 text-emerald-200 border-emerald-600 shadow-sm'
                 : 'bg-white hover:bg-emerald-50 text-emerald-950 border-gray-300/80 shadow-2xs'
             }`}
-            title={isAudioActive ? 'Silenciar som ambiente' : 'Ativar som ambiente: brisa e folhagem'}
-            aria-label={isAudioActive ? 'Desativar som do ateliê' : 'Ativar som ambiente do ateliê'}
+            title={isAudioActive ? t('nav.audioActive') : t('nav.audioInactive')}
+            aria-label={isAudioActive ? t('nav.audioActive') : t('nav.audioInactive')}
           >
             {isAudioActive ? (
               <Volume2 className="w-4 h-4 text-emerald-400" />
@@ -235,8 +240,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             id="header-theme-toggle-btn"
             onClick={toggleTheme}
             className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300/80 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer active:scale-95 flex items-center justify-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822]"
-            title={theme === 'dark' ? 'Alternar para tema claro' : 'Alternar para tema escuro botânico'}
-            aria-label={theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro botânico'}
+            title={theme === 'dark' ? t('nav.themeLight') : t('nav.themeDark')}
+            aria-label={theme === 'dark' ? t('nav.themeLight') : t('nav.themeDark')}
           >
             {theme === 'dark' ? (
               <Sun className="w-4 h-4 text-amber-400 transition-transform duration-300 hover:rotate-45" />
@@ -245,12 +250,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </button>
 
-          {/* Quick Search Button (All screens < 1536px) */}
+          {/* Language Switcher (PT / EN Toggle) */}
+          <LanguageSwitcher variant="navbar" />
+
+          {/* Quick Search Button (Hidden on xs mobile to prevent header overflow, available in drawer & on screens >= 640px) */}
           <button
             type="button"
             id="header-quick-search-btn"
             onClick={onOpenSearch}
-            className="flex 2xl:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300/80 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer active:scale-95 items-center justify-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822]"
+            className="hidden sm:flex 2xl:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300/80 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer active:scale-95 items-center justify-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822]"
             title={`Buscar (${modKey}+K)`}
             aria-label="Abrir busca e comandos"
           >
@@ -276,6 +284,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
+          {/* Habit Tracker CTA */}
+          <button
+            type="button"
+            id="header-habit-tracker-btn"
+            onClick={onOpenHabitTracker}
+            className="hidden lg:flex items-center gap-1.5 bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300/80 hover:border-emerald-400 px-3 h-9 sm:h-10 rounded-full font-semibold text-xs shadow-2xs transition-all cursor-pointer whitespace-nowrap shrink-0"
+            title="Rastreador de Hábitos & Rotina Biofílica (H)"
+          >
+            <Activity className="w-3.5 h-3.5 text-[#15803d]" />
+            <span>Hábitos</span>
+          </button>
+
           {/* Portal do Arquiteto CTA (Screens >= 640px) */}
           <button
             type="button"
@@ -285,39 +305,40 @@ export const Navbar: React.FC<NavbarProps> = ({
             title={`Área do Arquiteto (${modKey}+P)`}
           >
             <UserCheck className="w-3.5 h-3.5 text-[#15803d]" />
-            <span>{currentUser ? currentUser.name.split(' ')[0] : 'Área do Arquiteto'}</span>
+            <span>{currentUser ? currentUser.name.split(' ')[0] : t('nav.architectArea', 'Área do Arquiteto')}</span>
           </button>
 
-          {/* IA Simulator CTA (Clear Primary Action) */}
+          {/* IA Simulator CTA (Compact icon on mobile, full pill on sm+) */}
           <button
             type="button"
             id="header-simulator-cta-btn"
             onClick={onOpenSimulator}
-            className="flex items-center gap-2 bg-[#0d3822] text-[#86efac] hover:bg-[#15803d] h-9 sm:h-10 px-3.5 sm:px-4 rounded-full font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
+            className="flex items-center justify-center gap-2 bg-[#0d3822] text-[#86efac] hover:bg-[#15803d] h-9 sm:h-10 w-9 sm:w-auto px-0 sm:px-4 rounded-full font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
             title={`Simulador IA (${modKey}+M)`}
+            aria-label="Abrir Simulador IA"
           >
-            <Camera className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#86efac] shrink-0" />
-            <span>Simulador IA</span>
+            <Camera className="w-4 h-4 text-[#86efac] shrink-0" />
+            <span className="hidden sm:inline">{t('nav.simulator', 'Simulador IA')}</span>
           </button>
 
-          {/* Hamburger Menu Toggle - Always pinned, accessible 44px touch target, perfectly aligned */}
+          {/* Hamburger Menu Toggle - Always pinned, accessible, never pushed off-screen */}
           <button
             type="button"
             id="header-mobile-hamburger-btn"
             onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-            aria-label={isDrawerOpen ? "Fechar Menu de Navegação" : "Abrir Menu de Navegação"}
+            aria-label={isDrawerOpen ? t('nav.closeNavigation') : t('nav.openNavigation')}
             aria-expanded={isDrawerOpen}
             aria-controls="mobile-menu-drawer"
-            className={`flex xl:hidden w-10 h-10 sm:w-11 sm:h-11 rounded-full items-center justify-center transition-all cursor-pointer shrink-0 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822] ${
+            className={`flex xl:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full items-center justify-center transition-all cursor-pointer shrink-0 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822] ${
               isDrawerOpen
                 ? 'bg-[#0d3822] text-[#86efac] border border-[#0d3822] shadow-sm'
                 : 'bg-white text-[#0d3822] border border-gray-300/80 hover:bg-emerald-50 hover:border-emerald-400 shadow-2xs'
             }`}
           >
             {isDrawerOpen ? (
-              <X className="w-5 h-5 text-[#86efac] transition-transform rotate-90 duration-200" />
+              <X className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#86efac] transition-transform rotate-90 duration-200" />
             ) : (
-              <MenuIcon className="w-5 h-5 text-[#0d3822] transition-transform duration-200" />
+              <MenuIcon className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#0d3822] transition-transform duration-200" />
             )}
           </button>
         </div>
@@ -341,6 +362,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         onOpenConsultation={onOpenConsultation}
         onOpenProjectPdfReport={onOpenProjectPdfReport}
         onOpenTour={onOpenTour}
+        onOpenHabitTracker={onOpenHabitTracker}
         modKey={modKey}
         isAudioActive={isAudioActive}
         onToggleAudio={handleToggleAudio}

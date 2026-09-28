@@ -58,28 +58,28 @@ export const PortalTabs: React.FC<PortalTabsProps> = ({
       label: 'Impacto ESG',
       sublabel: 'Água, Energia & Clima',
       icon: Leaf,
-      badge: 'Novo',
+      badge: null,
     },
     {
       key: 'bim_cad' as PortalTabKey,
       label: 'Biblioteca BIM/CAD',
       sublabel: 'Revit, DWG, SKP',
       icon: Download,
-      badge: assetsCount,
+      badge: assetsCount > 0 ? assetsCount : null,
     },
     {
       key: 'samples' as PortalTabKey,
       label: isArchitect ? 'Maleta de Amostras' : 'Amostras & Vistoria',
       sublabel: isArchitect ? 'Mostruário Físico' : 'Vistoria Presencial',
       icon: Package,
-      badge: isArchitect ? 'Grátis' : null,
+      badge: null,
     },
     {
       key: 'calculator' as PortalTabKey,
       label: isArchitect ? 'LEED & ROI Biofílico' : 'Laudos & ROI Corporativo',
       sublabel: isArchitect ? 'Pontos & Payback' : 'Certificados & Payback',
       icon: Calculator,
-      badge: 'Novo',
+      badge: null,
     },
   ];
 

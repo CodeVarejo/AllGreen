@@ -359,18 +359,14 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
           {/* Left Species List with Staggered Entrance Animation */}
           <div className="lg:col-span-5">
             {filteredList.length === 0 ? (
-              <div className="bg-white rounded-2xl p-8 border border-gray-200 text-center space-y-3">
-                <Tag className="w-10 h-10 text-gray-300 mx-auto" />
-                <h4 className="text-base font-bold text-gray-800">Nenhuma espécie encontrada</h4>
-                <p className="text-xs text-gray-500 max-w-xs mx-auto">
-                  Não encontramos folhagens com os filtros combinados de categoria e propriedade.
-                </p>
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 text-center space-y-3">
+                <p className="text-sm font-semibold text-gray-700">Nenhuma espécie encontrada com estes filtros.</p>
                 <button
                   type="button"
                   onClick={handleResetFilters}
                   className="px-4 py-2 bg-[#072a1a] text-[#86efac] text-xs font-bold rounded-xl hover:bg-[#15803d] transition-colors cursor-pointer"
                 >
-                  Restaurar Todos os Filtros
+                  Limpar filtros
                 </button>
               </div>
             ) : (
@@ -417,11 +413,11 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                            <span className="text-[10px] font-extrabold text-[#15803d] uppercase tracking-wider">
-                              {item.category === 'preservado' ? 'PRESERVADO 100% NATURAL' : 'PERMANENTE UV PREMIUM'}
+                            <span className="text-[10px] font-bold text-[#15803d] uppercase tracking-wider">
+                              {item.category === 'preservado' ? 'Preservado' : 'Permanente'}
                             </span>
                             {item.uvProtection && (
-                              <span className="text-[9px] bg-amber-100 text-amber-900 font-extrabold px-1.5 py-0.2 rounded border border-amber-300">
+                              <span className="text-[9px] bg-amber-100 text-amber-900 font-semibold px-1.5 py-0.2 rounded border border-amber-300">
                                 Anti-UV
                               </span>
                             )}
@@ -637,12 +633,11 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
                             <ShieldCheck className="w-4 h-4" />
                           </div>
                           <div>
-                            <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
-                              Cartão de Cuidado Inteligente & Longevidade
-                              <span className="px-1.5 py-0.2 bg-[#86efac] text-[#072a1a] font-mono text-[9px] font-extrabold rounded">IA Smart Care</span>
+                            <h4 className="text-xs sm:text-sm font-bold text-white">
+                              Cuidado & Longevidade Botânica
                             </h4>
                             <p className="text-[11px] text-emerald-200/80">
-                              Previsão de manutenção calculada para {selectedSpecies.name}
+                              Estimativa de manutenção para {selectedSpecies.name}
                             </p>
                           </div>
                         </div>

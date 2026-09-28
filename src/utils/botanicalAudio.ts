@@ -114,6 +114,30 @@ class BotanicalAudioEngine {
       this.isPlaying = false;
     }
   }
+
+  public playChime() {
+    if (!this.ctx && typeof window !== 'undefined') this.init();
+    if (!this.ctx) return;
+    try {
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(528, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(792, this.ctx.currentTime + 0.12);
+
+      gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.55);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.55);
+    } catch (e) {}
+  }
 }
 
 export const botanicalAudio = new BotanicalAudioEngine();

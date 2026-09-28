@@ -27,6 +27,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
+import { useLanguage } from '../context/LanguageContext';
 
 interface ComparisonMatrixProps {
   onOpenSimulator?: () => void;
@@ -39,6 +40,8 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({
   onOpenQuote,
   onOpenPdfReport,
 }) => {
+  const { t, language } = useLanguage();
+  const isPt = language === 'pt';
   // Mode: 'side-by-side' (default interactive comparison) or 'full-table' (all-in-one matrix)
   const [viewMode, setViewMode] = useState<'side-by-side' | 'full-table'>('side-by-side');
   
@@ -122,34 +125,37 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({
         <ScrollReveal animation="fade-up" distance={25}>
           <div className="text-center max-w-3xl mx-auto space-y-3">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-gray-900 leading-tight">
-              Matriz Comparativa das <br className="hidden sm:inline" />
-              <span className="italic font-light text-[#15803d]">Tecnologias Verticais</span>
+              {t('comparison.title', 'Matriz Comparativa das')}{' '}
+              <br className="hidden sm:inline" />
+              <span className="italic font-light text-[#15803d]">
+                {t('comparison.titleHighlight', 'Tecnologias Verticais')}
+              </span>
             </h2>
 
             <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-              Diferenças de investimento inicial (Capex), despesas anuais (Opex), atenuação acústica e créditos LEED/WELL entre os sistemas.
+              {t('comparison.subtitle', 'Diferenças de investimento inicial (Capex), despesas anuais (Opex), atenuação acústica e créditos LEED/WELL entre os sistemas.')}
             </p>
           </div>
         </ScrollReveal>
 
         {/* Mode Switcher Buttons */}
         <ScrollReveal animation="fade-up" delay={0.08} distance={15}>
-          <div className="flex justify-center mt-6">
-            <div className="bg-white p-1.5 rounded-full border border-gray-200 shadow-sm flex items-center gap-1">
+          <div className="flex justify-center mt-6 px-2">
+            <div className="bg-white p-1 sm:p-1.5 rounded-2xl sm:rounded-full border border-gray-200 shadow-sm flex flex-col xs:flex-row items-stretch sm:items-center gap-1 w-full xs:w-auto max-w-md">
               <button
                 type="button"
                 id="btn-view-side-by-side"
                 onClick={() => setViewMode('side-by-side')}
-                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-3 sm:px-5 py-2 rounded-xl sm:rounded-full text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
                   viewMode === 'side-by-side'
                     ? 'bg-[#072a1a] text-[#86efac] shadow-md'
                     : 'text-gray-700 hover:text-gray-950 hover:bg-emerald-50'
                 }`}
               >
-                <ArrowLeftRight className="w-4 h-4 text-[#15803d]" />
-                <span>Comparador Lado a Lado (1x1)</span>
-                <span className="px-1.5 py-0.5 bg-emerald-700/60 text-emerald-200 rounded text-[10px] font-extrabold">
-                  Interativo
+                <ArrowLeftRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#15803d]" />
+                <span>{t('comparison.sideBySide', 'Lado a Lado (1x1)')}</span>
+                <span className="hidden sm:inline px-1.5 py-0.5 bg-emerald-700/60 text-emerald-200 rounded text-[10px] font-extrabold">
+                  {isPt ? 'Interativo' : 'Interactive'}
                 </span>
               </button>
 
@@ -157,14 +163,14 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({
                 type="button"
                 id="btn-view-full-table"
                 onClick={() => setViewMode('full-table')}
-                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-3 sm:px-5 py-2 rounded-xl sm:rounded-full text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
                   viewMode === 'full-table'
                     ? 'bg-[#072a1a] text-[#86efac] shadow-md'
                     : 'text-gray-700 hover:text-gray-950 hover:bg-emerald-50'
                 }`}
               >
-                <Layers className="w-4 h-4 text-[#15803d]" />
-                <span>Tabela Geral Completa</span>
+                <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#15803d]" />
+                <span>{t('comparison.fullTable', 'Tabela Completa')}</span>
               </button>
             </div>
           </div>

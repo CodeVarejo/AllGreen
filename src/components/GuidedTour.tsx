@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Sparkles,
+  Leaf,
   Camera,
   BrainCircuit,
   UserCheck,
@@ -58,7 +58,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
         tagline: 'Biofilia Digital & Paisagismo Turnkey',
         description:
           'Transforme seu ambiente corporativo ou residencial com jardins verticais preservados e permanentes de alta fidelidade. Preparamos um breve tour para apresentar as ferramentas mais inovadoras da plataforma.',
-        icon: Sparkles,
+        icon: Leaf,
         primaryActionLabel: 'Começar Tour Guiado',
         actionHint: 'Apenas 3 passos rápidos',
       },
@@ -280,7 +280,6 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
             {/* Action Hint / Shortcut */}
             {currentStep.actionHint && (
               <div className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-50 text-[11px] font-semibold text-[#072a1a] border border-emerald-200/60">
-                <Sparkles className="w-3.5 h-3.5 text-[#15803d]" />
                 <span>{currentStep.actionHint}</span>
               </div>
             )}

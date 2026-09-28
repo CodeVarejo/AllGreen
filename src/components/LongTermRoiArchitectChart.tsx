@@ -17,7 +17,6 @@ import {
   TrendingUp,
   AlertTriangle,
   CheckCircle2,
-  Sparkles,
   Layers,
   Clock,
   DollarSign,
@@ -302,7 +301,6 @@ export const LongTermRoiArchitectChart: React.FC<LongTermRoiArchitectChartProps>
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
               <span>Otimista</span>
             </button>
           </div>
@@ -604,7 +602,6 @@ export const LongTermRoiArchitectChart: React.FC<LongTermRoiArchitectChartProps>
       <div className="p-5 rounded-3xl bg-gradient-to-br from-emerald-50 via-teal-50/50 to-white border border-emerald-200 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#15803d]" />
             <h5 className="text-xs font-bold text-[#072a1a] uppercase tracking-wider">
               Argumentação Técnica para Apresentação a Clientes & Diretoria (CAPEX vs. OPEX)
             </h5>

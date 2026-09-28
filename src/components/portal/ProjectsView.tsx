@@ -270,79 +270,45 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
       {/* Projects List/Grid with Interactive Before & After Control */}
       {projects.length === 0 ? (
-        <div className="bg-white rounded-3xl p-10 sm:p-14 text-center border border-gray-200 shadow-sm space-y-5">
-          <div className="w-16 h-16 rounded-3xl bg-emerald-50 text-[#15803d] flex items-center justify-center mx-auto border border-emerald-100 shadow-sm">
-            <Layers className="w-8 h-8 text-[#15803d]" />
-          </div>
-          <div className="space-y-1.5 max-w-lg mx-auto">
-            <h3 className="font-serif font-bold text-2xl text-gray-950">
-              Nenhuma obra cadastrada ainda
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-              Cadastre sua primeira obra ou ambiente biofílico para gerar memoriais descritivos em PDF, laudos de absorção acústica e acompanhamento técnico plug & play.
-            </p>
-          </div>
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+        <div className="bg-white rounded-2xl p-8 text-center border border-gray-200/80 shadow-2xs space-y-3 max-w-lg mx-auto">
+          <h3 className="font-serif font-bold text-lg text-gray-950">
+            Nenhuma obra cadastrada
+          </h3>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            Cadastre seu primeiro projeto para acompanhar memoriais descritivos e laudos técnicos.
+          </p>
+          <div className="pt-1 flex items-center justify-center gap-2">
             <button
               type="button"
               onClick={onOpenNewProjectModal}
-              className="px-6 py-3 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold text-xs sm:text-sm rounded-xl transition-all cursor-pointer shadow-md active:scale-95 flex items-center gap-2 min-h-[44px]"
+              className="px-5 py-2.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] font-bold text-xs rounded-xl transition-all cursor-pointer shadow-sm active:scale-95 flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
-              <span>Cadastrar Primeira Obra</span>
-            </button>
-            <button
-              type="button"
-              onClick={onOpenSimulator}
-              className="px-5 py-3 bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] font-bold text-xs sm:text-sm rounded-xl border border-emerald-200 transition-all cursor-pointer active:scale-95 flex items-center gap-2 min-h-[44px]"
-            >
-              <Camera className="w-4 h-4 text-[#15803d]" />
-              <span>Simular com IA</span>
+              <span>Nova Obra</span>
             </button>
             {onRestoreDemoProjects && (
               <button
                 type="button"
                 onClick={onRestoreDemoProjects}
-                className="px-5 py-3 bg-white hover:bg-gray-100 text-gray-700 font-bold text-xs sm:text-sm rounded-xl border border-gray-300 transition-all cursor-pointer active:scale-95 flex items-center gap-2 min-h-[44px]"
-                title="Carregar obras de demonstração para testes"
+                className="px-4 py-2.5 bg-white text-gray-700 font-semibold text-xs rounded-xl border border-gray-300 hover:bg-gray-50 transition-all cursor-pointer"
               >
-                <RotateCcw className="w-4 h-4 text-gray-500" />
-                <span>Carregar Projetos de Demonstração</span>
+                Carregar Exemplos
               </button>
             )}
           </div>
         </div>
       ) : filteredProjects.length === 0 ? (
-        <div className="bg-white rounded-3xl p-10 sm:p-12 text-center border border-gray-200 shadow-sm space-y-4">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[#15803d] flex items-center justify-center mx-auto border border-emerald-100 shadow-2xs">
-            <SearchX className="w-7 h-7 text-[#15803d]" />
-          </div>
-          <div className="space-y-1">
-            <h3 className="font-serif font-bold text-xl text-gray-950">
-              Nenhuma obra encontrada para esta busca
-            </h3>
-            <p className="text-xs text-gray-500 max-w-md mx-auto leading-relaxed">
-              Não encontramos projetos com os filtros de tipologia, status ou termo de busca atuais.
-            </p>
-          </div>
-
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="px-5 py-2.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold text-xs rounded-xl transition-all cursor-pointer shadow-sm active:scale-95 min-h-[44px]"
-            >
-              Limpar Todos os Filtros
-            </button>
-
-            <button
-              type="button"
-              onClick={onOpenNewProjectModal}
-              className="px-5 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] font-bold text-xs rounded-xl border border-emerald-200 transition-all cursor-pointer active:scale-95 min-h-[44px]"
-            >
-              Cadastrar Nova Obra
-            </button>
-          </div>
+        <div className="bg-white rounded-2xl p-8 text-center border border-gray-200/80 shadow-2xs space-y-3 max-w-md mx-auto">
+          <p className="text-sm font-semibold text-gray-800">
+            Nenhuma obra encontrada para estes filtros.
+          </p>
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="px-4 py-2 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] font-bold text-xs rounded-xl transition-all cursor-pointer shadow-sm"
+          >
+            Limpar filtros
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -1,22 +1,20 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   Camera,
-  ArrowRight,
-  Search,
   Leaf,
   SlidersHorizontal,
   Volume2,
   VolumeX,
-  Info,
   CheckCircle2,
   X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface HeroProps {
   onOpenSimulator: () => void;
-  onOpenProjectLookup: () => void;
-  onExploreProjects: () => void;
+  onOpenProjectLookup?: () => void;
+  onExploreProjects?: () => void;
 }
 
 interface Hotspot {
@@ -24,8 +22,7 @@ interface Hotspot {
   x: number;
   y: number;
   title: string;
-  tag: string;
-  metrics: string;
+  spec: string;
   description: string;
   botanicalSpecs?: string[];
 }
@@ -36,14 +33,13 @@ const HERO_HOTSPOTS: Hotspot[] = [
     x: 63,
     y: 28,
     title: 'Parede Viva Preservada • 14.8m',
-    tag: 'NRC 0.89 IPT',
-    metrics: '0L água/ano • Livre de podas • Sem irrigação',
-    description: 'Substituição celular com glicerina vegetal pura. Folhagem natural com toque vivo e perene sem tubulação de água.',
+    spec: 'NRC 0.89 IPT • 0L água/ano',
+    description: 'Substituição celular com glicerina vegetal pura. Folhagem natural de toque real sem necessidade de rega ou tubulação hidráulica.',
     botanicalSpecs: [
       '60% Samambaia Americana (Nephrolepis)',
       '25% Ficus Pumila Preservado',
       '15% Musgo Polar Escandinavo',
-      'Fixação modular com encaixe oculto'
+      'Fixação modular oculta'
     ]
   },
   {
@@ -51,12 +47,11 @@ const HERO_HOTSPOTS: Hotspot[] = [
     x: 52,
     y: 84,
     title: 'Luminotécnica Rasante 2700K',
-    tag: 'IP68 • IRC 96',
-    metrics: '2700K quente • Zero emissão térmica foliar',
-    description: 'Fitas LED embutidas nos degraus de microcimento, destacando o relevo botânico à noite.',
+    spec: 'IP68 • IRC 96 • 2700K',
+    description: 'Fitas LED embutidas nos degraus de microcimento, valorizando o relevo tridimensional da vegetação sem emissão térmica.',
     botanicalSpecs: [
-      'Temperatura de cor: 2700K',
-      'Índice de reprodução de cor (IRC): 96',
+      'Temperatura de cor quente: 2700K',
+      'Índice de reprodução de cor: IRC 96',
       'Vida útil: 50.000 horas'
     ]
   },
@@ -65,12 +60,11 @@ const HERO_HOTSPOTS: Hotspot[] = [
     x: 23,
     y: 72,
     title: 'Espelho d\'Água Infinity',
-    tag: '-3.4°C Térmica',
-    metrics: 'Reflexo Especular • Atenuação Bioclimática',
-    description: 'Lâmina d\'água que reduz o calor radiante da fachadaenvidraçada.',
+    spec: 'Atenuação Térmica -3.4°C',
+    description: 'Lâmina d\'água reflexiva que reduz o calor radiante na fachada e compõe a integração visual biofílica céu-água-mata.',
     botanicalSpecs: [
-      'Atenuação da temperatura radiante: -3.4°C',
-      'Integração visual biofílica céu-água-mata'
+      'Atenuação da radiação direta: -3.4°C',
+      'Conexão biofílica de horizonte visual'
     ]
   },
   {
@@ -78,25 +72,23 @@ const HERO_HOTSPOTS: Hotspot[] = [
     x: 88,
     y: 38,
     title: 'Oliva Centenária Aclimatada',
-    tag: 'Uplight 3000K',
-    metrics: 'Elemento Escultural de Transição',
-    description: 'Ponto focal botânico no terraço superior contrastando com as linhas da arquitetura.',
+    spec: 'Spot Uplight 15W • Olea europaea',
+    description: 'Elemento escultural botânico no terraço superior, criando contraste orgânico com os planos retos da arquitetura.',
     botanicalSpecs: [
       'Espécie: Olea europaea centenária',
-      'Spot submerso uplight 15W'
+      'Iluminação direcional de realce'
     ]
   },
   {
     id: 'living-room',
     x: 44,
     y: 56,
-    title: 'Living Indoor-Outdoor Integrado',
-    tag: 'Neuroarquitetura WELL',
-    metrics: 'Caixilharia Embutida • Redução de Cortisol',
-    description: 'Vãos envidraçados que conectam o ambiente social à parede viva sem barreiras visuais.',
+    title: 'Living Integrado Indoor-Outdoor',
+    spec: 'Neuroarquitetura WELL • Low-E',
+    description: 'Grandes vãos envidraçados que conectam o espaço de convivência à parede viva, promovendo redução de cortisol e foco.',
     botanicalSpecs: [
-      'Vidros Low-E com controle solar',
-      'Atenuação sonora acústica certificada'
+      'Vidros Low-E com conforto solar',
+      'Isolamento acústico integrado'
     ]
   }
 ];
@@ -106,6 +98,7 @@ export const Hero: React.FC<HeroProps> = ({
   onOpenProjectLookup,
   onExploreProjects,
 }) => {
+  const { t, language } = useLanguage();
   const [sliderPos, setSliderPos] = useState(100);
   const [isComparing, setIsComparing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -254,7 +247,7 @@ export const Hero: React.FC<HeroProps> = ({
   };
 
   return (
-    <section id="hero-section" className="bg-[#051c11] text-white py-12 md:py-18 relative overflow-hidden border-b border-emerald-900/40">
+    <section id="hero-section" className="hero-component bg-[#051c11] text-white py-12 md:py-18 relative overflow-hidden border-b border-emerald-900/40">
       
       {/* Ambient background glow */}
       <div className={`absolute -top-32 -right-32 w-[520px] h-[520px] rounded-full blur-[130px] pointer-events-none transition-all duration-1000 ${
@@ -277,34 +270,29 @@ export const Hero: React.FC<HeroProps> = ({
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-5 space-y-6"
           >
-            {/* Main Headline */}
+            {/* Main Headline - Clear Value Proposition in 5s */}
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-5.5xl font-normal tracking-tight text-white leading-[1.08]">
-              A natureza não espera. <br />
-              Mas pode ser <span className="italic font-light text-[#86efac]">eterna.</span>
+              {t('hero.headlinePart1', 'Jardins Verticais Preservados.')} <br />
+              <span className="font-light text-[#86efac]">
+                {t('hero.headlinePart2', 'Folhagem natural com')}{' '}
+                <span className="italic">{t('hero.headlineEterno', 'zero irrigação.')}</span>
+              </span>
             </h1>
 
-            {/* Concise Subtitle */}
+            {/* Concise Subtitle without semantic redundancies */}
             <p className="text-emerald-100/80 text-base sm:text-lg font-sans leading-relaxed font-light max-w-xl">
-              Paredes vivas preservadas por substituição celular. Folhagem natural de toque real, sem irrigação e com isolamento acústico certificado IPT para interiores corporativos e residenciais.
+              {t('hero.subtitle', 'Substituição celular com glicerina vegetal pura: conforto acústico homologado e vegetação de toque vivo para interiores corporativos e residenciais.')}
             </p>
 
-            {/* Primary & Secondary Actions */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+            {/* Single Clear Primary Action CTA */}
+            <div className="pt-1">
               <button
                 id="hero-simulator-cta-btn"
                 onClick={onOpenSimulator}
-                className="flex items-center justify-center gap-2.5 px-6 py-3.5 bg-[#86efac] text-[#051c11] font-bold rounded-full hover:bg-emerald-300 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer text-sm sm:text-base shadow-lg shadow-emerald-950/40"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#86efac] text-[#051c11] font-bold rounded-full hover:bg-emerald-300 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer text-sm sm:text-base shadow-xl shadow-emerald-950/50"
               >
-                <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-[#051c11]" />
-                <span>Simular ambiente com IA</span>
-              </button>
-
-              <button
-                onClick={onExploreProjects}
-                className="flex items-center justify-center gap-2 px-5 py-3.5 bg-emerald-950/50 hover:bg-emerald-900/60 text-emerald-100 font-medium rounded-full border border-emerald-700/50 transition-all text-sm sm:text-base cursor-pointer hover:border-emerald-400"
-              >
-                <span>Ver projetos</span>
-                <ArrowRight className="w-4 h-4 text-emerald-400" />
+                <Camera className="w-5 h-5 text-[#051c11]" />
+                <span>{t('hero.simulateCta', 'Simular ambiente com IA')}</span>
               </button>
             </div>
 
@@ -312,27 +300,16 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="grid grid-cols-3 gap-4 pt-4 border-t border-emerald-900/50">
               <div>
                 <span className="font-serif text-2xl font-bold text-white block">0 L</span>
-                <span className="text-xs text-emerald-300/80">Água por ano</span>
+                <span className="text-xs text-emerald-300/80">{t('hero.waterLabel', 'Água por ano')}</span>
               </div>
               <div>
                 <span className="font-serif text-2xl font-bold text-[#86efac] block">0.89</span>
-                <span className="text-xs text-emerald-300/80">NRC acústico IPT</span>
+                <span className="text-xs text-emerald-300/80">{t('hero.acousticLabel', 'NRC acústico IPT')}</span>
               </div>
               <div>
-                <span className="font-serif text-2xl font-bold text-amber-300 block">10 Anos</span>
-                <span className="text-xs text-emerald-300/80">Durabilidade atestada</span>
+                <span className="font-serif text-2xl font-bold text-amber-300 block">{language === 'pt' ? '10 Anos' : '10 Years'}</span>
+                <span className="text-xs text-emerald-300/80">{t('hero.durabilityLabel', 'Durabilidade')}</span>
               </div>
-            </div>
-
-            {/* Project code query */}
-            <div>
-              <button
-                onClick={onOpenProjectLookup}
-                className="inline-flex items-center gap-1.5 text-xs text-emerald-300/80 hover:text-white transition-colors cursor-pointer"
-              >
-                <Search className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Consultar memorial por código de projeto</span>
-              </button>
             </div>
           </motion.div>
 
@@ -346,7 +323,7 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="relative bg-[#062013]/90 p-2.5 sm:p-3 rounded-3xl border border-emerald-700/50 shadow-2xl backdrop-blur-xl">
               
               {/* Compact Unified Control Bar */}
-              <div className="flex items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-emerald-800/50 px-1 text-xs">
+              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-emerald-800/50 px-1 text-xs">
                 
                 {/* View Mode Toggle */}
                 <div className="flex items-center gap-1 bg-black/40 rounded-full p-0.5 border border-emerald-800/40">
@@ -362,7 +339,7 @@ export const Hero: React.FC<HeroProps> = ({
                         : 'text-gray-300 hover:text-white'
                     }`}
                   >
-                    Villa Viva 3D
+                    {t('hero.villaViva', 'Villa Viva 3D')}
                   </button>
                   <button
                     type="button"
@@ -377,7 +354,7 @@ export const Hero: React.FC<HeroProps> = ({
                     }`}
                   >
                     <SlidersHorizontal className="w-3 h-3" />
-                    <span>Antes / Depois</span>
+                    <span>{t('hero.beforeAfter', 'Antes / Depois')}</span>
                   </button>
                 </div>
 
@@ -391,10 +368,10 @@ export const Hero: React.FC<HeroProps> = ({
                         ? 'bg-amber-400 text-[#072a1a] border-amber-300'
                         : 'bg-emerald-950/70 text-emerald-300 border-emerald-800/60 hover:bg-emerald-900/80'
                     }`}
-                    title={isSoundActive ? 'Desativar som do ambiente' : 'Ouvir brisa e água'}
+                    title={isSoundActive ? (language === 'pt' ? 'Desativar som do ambiente' : 'Mute ambience') : (language === 'pt' ? 'Ouvir brisa e água' : 'Play breeze & foliage sound')}
                   >
                     {isSoundActive ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5 opacity-60" />}
-                    <span className="hidden sm:inline">{isSoundActive ? 'Brisa Ativa' : 'Som Natural'}</span>
+                    <span className="hidden sm:inline">{isSoundActive ? t('hero.soundOn', 'Brisa Ativa') : t('hero.soundOff', 'Som Natural')}</span>
                   </button>
 
                   <div className="flex items-center bg-black/40 rounded-full p-0.5 border border-emerald-800/40 text-[11px]">
@@ -405,7 +382,7 @@ export const Hero: React.FC<HeroProps> = ({
                         lightingMode === 'sunset' ? 'bg-amber-500 text-black font-bold' : 'text-gray-400 hover:text-white'
                       }`}
                     >
-                      Pôr do Sol
+                      {t('hero.sunset', 'Pôr do Sol')}
                     </button>
                     <button
                       type="button"
@@ -414,7 +391,7 @@ export const Hero: React.FC<HeroProps> = ({
                         lightingMode === 'twilight' ? 'bg-indigo-700 text-white font-bold' : 'text-gray-400 hover:text-white'
                       }`}
                     >
-                      Noite LED
+                      {t('hero.twilight', 'Noite LED')}
                     </button>
                     <button
                       type="button"
@@ -423,7 +400,7 @@ export const Hero: React.FC<HeroProps> = ({
                         lightingMode === 'tropical' ? 'bg-emerald-600 text-white font-bold' : 'text-gray-400 hover:text-white'
                       }`}
                     >
-                      Dia
+                      {t('hero.tropical', 'Dia')}
                     </button>
                   </div>
                 </div>
@@ -526,7 +503,6 @@ export const Hero: React.FC<HeroProps> = ({
                           setActiveHotspot(isActive ? null : spot);
                         }}
                       >
-                        <span className="absolute -inset-1.5 rounded-full bg-[#86efac]/40 animate-ping pointer-events-none" />
                         <div className={`relative flex items-center justify-center w-7 h-7 rounded-full border-2 transition-all shadow-md ${
                           isActive
                             ? 'bg-[#86efac] text-[#072a1a] border-white scale-110'
@@ -542,27 +518,22 @@ export const Hero: React.FC<HeroProps> = ({
                   <AnimatePresence>
                     {activeHotspot && !isComparing && (
                       <motion.div
-                        initial={{ opacity: 0, scale: 0.94, y: 8 }}
+                        initial={{ opacity: 0, scale: 0.96, y: 6 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.94, y: 8 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute bottom-3 left-3 right-3 z-30 bg-[#051c11]/95 text-white p-4 rounded-xl border border-emerald-500/70 shadow-2xl backdrop-blur-xl"
+                        exit={{ opacity: 0, scale: 0.96, y: 6 }}
+                        transition={{ duration: 0.18 }}
+                        className="absolute bottom-3 left-3 right-3 z-30 bg-[#051c11]/95 text-white p-3.5 sm:p-4 rounded-xl border border-emerald-500/50 shadow-2xl backdrop-blur-xl"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-[10px] font-mono font-bold text-amber-300">
-                                {activeHotspot.tag}
-                              </span>
-                              <span className="text-[10px] font-mono text-emerald-400">
-                                • {activeHotspot.metrics}
-                              </span>
-                            </div>
-                            <h3 className="font-serif text-base font-bold text-white">
+                            <span className="text-[10px] font-mono font-medium text-emerald-400">
+                              {activeHotspot.spec}
+                            </span>
+                            <h3 className="font-serif text-sm sm:text-base font-bold text-white">
                               {activeHotspot.title}
                             </h3>
-                            <p className="text-xs text-emerald-100/90 leading-relaxed max-w-xl">
+                            <p className="text-xs text-emerald-100/85 leading-relaxed max-w-xl">
                               {activeHotspot.description}
                             </p>
                           </div>
@@ -570,36 +541,23 @@ export const Hero: React.FC<HeroProps> = ({
                           <button
                             type="button"
                             onClick={() => setActiveHotspot(null)}
-                            className="p-1 rounded-full text-gray-400 hover:text-white cursor-pointer"
+                            className="p-1 rounded-full text-gray-400 hover:text-white cursor-pointer shrink-0"
+                            aria-label="Fechar detalhes"
                           >
                             <X className="w-4 h-4" />
                           </button>
                         </div>
 
                         {activeHotspot.botanicalSpecs && (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-2 mt-2 border-t border-emerald-800/60">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-2 mt-2 border-t border-emerald-800/50">
                             {activeHotspot.botanicalSpecs.map((spec, i) => (
-                              <div key={i} className="flex items-center gap-1.5 text-[11px] text-emerald-200">
+                              <div key={i} className="flex items-center gap-1.5 text-[11px] text-emerald-200/90">
                                 <CheckCircle2 className="w-3 h-3 text-[#86efac] shrink-0" />
                                 <span>{spec}</span>
                               </div>
                             ))}
                           </div>
                         )}
-
-                        <div className="pt-2.5 mt-2 border-t border-emerald-800/60 flex items-center justify-end">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveHotspot(null);
-                              onOpenSimulator();
-                            }}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#86efac] text-[#051c11] text-xs font-bold hover:bg-emerald-300 transition-all cursor-pointer"
-                          >
-                            <Camera className="w-3.5 h-3.5" />
-                            <span>Simular estilo no meu projeto</span>
-                          </button>
-                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>

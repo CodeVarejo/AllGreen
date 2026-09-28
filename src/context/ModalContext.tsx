@@ -14,6 +14,7 @@ interface ModalContextType {
   isShortcutsModalOpen: boolean;
   isTourOpen: boolean;
   isCloudStorageOpen: boolean;
+  isHabitTrackerOpen: boolean;
 
   // Contextual modal data
   selectedProjectForLookup: ProjectSample | null;
@@ -55,6 +56,9 @@ interface ModalContextType {
   openCloudStorage: () => void;
   closeCloudStorage: () => void;
 
+  openHabitTracker: () => void;
+  closeHabitTracker: () => void;
+
   closeAllModals: () => void;
 }
 
@@ -72,6 +76,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isTourOpen, setIsTourOpen] = useState(false);
   const [isCloudStorageOpen, setIsCloudStorageOpen] = useState(false);
+  const [isHabitTrackerOpen, setIsHabitTrackerOpen] = useState(false);
 
   const [selectedProjectForLookup, setSelectedProjectForLookup] = useState<ProjectSample | null>(null);
   const [quoteContext, setQuoteContext] = useState<string>('');
@@ -131,6 +136,9 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const openCloudStorage = useCallback(() => setIsCloudStorageOpen(true), []);
   const closeCloudStorage = useCallback(() => setIsCloudStorageOpen(false), []);
 
+  const openHabitTracker = useCallback(() => setIsHabitTrackerOpen(true), []);
+  const closeHabitTracker = useCallback(() => setIsHabitTrackerOpen(false), []);
+
   const closeAllModals = useCallback(() => {
     setIsSimulatorOpen(false);
     setIsProjectLookupOpen(false);
@@ -143,6 +151,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setIsShortcutsModalOpen(false);
     setIsTourOpen(false);
     setIsCloudStorageOpen(false);
+    setIsHabitTrackerOpen(false);
   }, []);
 
   return (
@@ -159,6 +168,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         isShortcutsModalOpen,
         isTourOpen,
         isCloudStorageOpen,
+        isHabitTrackerOpen,
         selectedProjectForLookup,
         quoteContext,
         consultationPrefillType,
@@ -185,6 +195,8 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         closeTour,
         openCloudStorage,
         closeCloudStorage,
+        openHabitTracker,
+        closeHabitTracker,
         closeAllModals,
       }}
     >

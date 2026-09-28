@@ -4,7 +4,6 @@ import {
   Lightbulb,
   Zap,
   TrendingUp,
-  Sparkles,
   CheckCircle2,
   ArrowRight,
   X,
@@ -368,7 +367,6 @@ export const ContextualOptimizationSidePanel: React.FC<ContextualOptimizationSid
                 onClick={handleApplyAllOptimizations}
                 className="w-full py-2.5 px-3.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-gray-950 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg cursor-pointer hover:scale-[1.01] active:scale-99"
               >
-                <Sparkles className="w-4 h-4 text-gray-950" />
                 <span>Aplicar Configuração Recomendada de Alto ROI</span>
               </button>
             </div>

@@ -20,7 +20,6 @@ import {
   ChevronRight,
   RotateCcw,
   Volume2,
-  Sparkles,
   Building2,
   Lightbulb
 } from 'lucide-react';
@@ -45,6 +44,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { jsPDF } from 'jspdf';
 import { ScrollReveal } from './ScrollReveal';
+import { useLanguage } from '../context/LanguageContext';
 
 export interface BiophilicRoiCalculatorProps {
   onOpenQuote?: (context?: string) => void;
@@ -206,6 +206,8 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
   className = '',
   isCompact = false,
 }) => {
+  const { t, language } = useLanguage();
+  const isPt = language === 'pt';
   // Input States
   const [employees, setEmployees] = useState<number>(45);
   const [salary, setSalary] = useState<number>(8500); // R$/mês
@@ -629,12 +631,23 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
         <ScrollReveal animation="fade-up" distance={25}>
           <div className="text-center max-w-4xl mx-auto space-y-3">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-gray-950 leading-tight">
-              Calculadora de ROI & <br className="hidden sm:inline" />
-              <span className="italic font-light text-[#15803d]">Impacto Biofílico</span>
+              {isPt ? (
+                <>
+                  Calculadora de ROI & <br className="hidden sm:inline" />
+                  <span className="italic font-light text-[#15803d]">Impacto Biofílico</span>
+                </>
+              ) : (
+                <>
+                  Biophilic ROI & <br className="hidden sm:inline" />
+                  <span className="italic font-light text-[#15803d]">Workplace Impact Calculator</span>
+                </>
+              )}
             </h2>
 
             <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-              Simulação de ganho de produtividade, retenção de talentos e economia energética baseada em pesquisas da Harvard T.H. Chan e Terrapin Bright Green.
+              {isPt
+                ? 'Simulação de ganho de produtividade, retenção de talentos e economia energética baseada em pesquisas da Harvard T.H. Chan e Terrapin Bright Green.'
+                : 'Simulate cognitive productivity gains, talent retention, and HVAC energy savings backed by Harvard T.H. Chan and Terrapin Bright Green research.'}
             </p>
 
             {/* Quick Preset Selector Chips + Contextual Tips Trigger */}
@@ -714,7 +727,6 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                   onClick={() => setActiveTab('ml_allocation')}
                   className="w-full py-2 px-3 rounded-xl bg-white hover:bg-emerald-50 text-[#072a1a] border border-emerald-300 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs hover:border-emerald-500 hover:scale-101"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-[#15803d]" />
                   <span>Dimensionar com Assistente ML</span>
                   <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
                 </button>
@@ -922,7 +934,6 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                       }`}
                       title="Premissas de alta performance com 60% de monetização de foco"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                       <span>Otimista</span>
                     </button>
                   </div>
@@ -955,7 +966,6 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                   onClick={() => setIsSidePanelOpen(true)}
                   className="w-full py-2 px-3 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-gray-950 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:scale-[1.01] active:scale-99"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-gray-950" />
                   <span>Ver Dicas & Ajustes Sugeridos</span>
                   <ArrowRight className="w-3.5 h-3.5 text-gray-950" />
                 </button>
@@ -1293,7 +1303,6 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                               : 'text-gray-500 hover:text-gray-800'
                           }`}
                         >
-                          <Sparkles className="w-3 h-3 text-amber-300" />
                           <span>Otimista</span>
                         </button>
                       </div>

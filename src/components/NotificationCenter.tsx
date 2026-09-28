@@ -261,15 +261,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         {/* Notifications Scrollable List */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {filteredNotifications.length === 0 ? (
-            <div className="py-16 text-center space-y-2">
-              <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto">
-                <Bell className="w-6 h-6" />
-              </div>
-              <h4 className="font-serif font-bold text-gray-800 text-sm">
-                Nenhuma notificação encontrada
-              </h4>
-              <p className="text-xs text-gray-500 max-w-xs mx-auto">
-                Você será alertado quando o Assistente IA gerar novas simulações, o status de uma obra avançar ou laudos técnicos forem emitidos.
+            <div className="py-12 text-center space-y-1 text-gray-500">
+              <p className="font-semibold text-sm text-gray-700">
+                Nenhuma notificação
+              </p>
+              <p className="text-xs">
+                Atualizações de obras e laudos aparecerão aqui.
               </p>
             </div>
           ) : (

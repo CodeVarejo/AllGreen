@@ -17,6 +17,8 @@ import { UserProfile } from '../../types';
 import { isMacUser } from '../../hooks/useKeyboardShortcuts';
 import { CloudSyncButton } from '../CloudSyncButton';
 import { useAccessibility } from '../../context/AccessibilityContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { LanguageSwitcher } from '../LanguageSwitcher';
 
 interface PortalHeaderProps {
   user: UserProfile;
@@ -46,6 +48,7 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
   onOpenCloudStorage,
 }) => {
   const { theme, toggleTheme } = useAccessibility();
+  const { t, language } = useLanguage();
   const isArchitect = user.role === 'arquiteto' || user.role === 'especificador';
   const isMac = isMacUser();
   const modKey = isMac ? '⌘' : 'Ctrl';
@@ -60,11 +63,11 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
             type="button"
             onClick={onBackToLanding}
             className="flex items-center gap-1.5 sm:gap-2 bg-white hover:bg-emerald-50 text-[#072a1a] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-bold border border-[#072a1a]/15 shadow-2xs hover:border-[#15803d] transition-all cursor-pointer group active:scale-95 min-h-[38px] sm:min-h-[44px]"
-            title="Retornar à Landing Page Principal"
-            aria-label="Voltar à página inicial do site"
+            title={language === 'pt' ? 'Retornar à Landing Page Principal' : 'Back to Main Landing Page'}
+            aria-label={t('portal.backToSite', 'Voltar ao Site')}
           >
             <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#15803d] group-hover:-translate-x-0.5 transition-transform" />
-            <span className="hidden sm:inline">Voltar ao Site</span>
+            <span className="hidden sm:inline">{t('portal.backToSite', 'Voltar ao Site')}</span>
             <span className="inline sm:hidden">Site</span>
           </button>
 
@@ -82,7 +85,11 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
                 </span>
                 <span className="hidden xs:inline-flex items-center gap-1 px-1.5 py-0.2 sm:px-2.5 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold uppercase bg-emerald-100 text-[#072a1a] border border-emerald-300 shrink-0">
                   <UserCheck className="w-2.5 h-2.5 text-[#15803d]" />
-                  <span className="hidden sm:inline">{isArchitect ? 'Portal do Arquiteto' : 'Área do Cliente'}</span>
+                  <span className="hidden sm:inline">
+                    {isArchitect 
+                      ? (language === 'pt' ? 'Portal do Arquiteto' : 'Architect Portal') 
+                      : (language === 'pt' ? 'Área do Cliente' : 'Client Portal')}
+                  </span>
                   <span className="inline sm:hidden">Portal</span>
                 </span>
               </div>
@@ -106,7 +113,7 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
               aria-label="Abrir busca global"
             >
               <Search className="w-3.5 h-3.5 text-[#15803d]" />
-              <span className="text-gray-500">Buscar...</span>
+              <span className="text-gray-500">{t('common.search', 'Buscar')}...</span>
               <kbd className="px-1.5 py-0.2 bg-gray-100 text-gray-600 rounded text-[10px] font-mono font-bold border border-gray-200">
                 {modKey}K
               </kbd>
@@ -124,15 +131,17 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
               {isArchitect ? (
                 <>
                   <UserCheck className="w-3.5 h-3.5 text-[#15803d]" />
-                  <span>Modo: Arquiteto</span>
+                  <span>{language === 'pt' ? 'Modo: Arquiteto' : 'Mode: Architect'}</span>
                 </>
               ) : (
                 <>
                   <Building className="w-3.5 h-3.5 text-teal-700" />
-                  <span>Modo: Cliente</span>
+                  <span>{language === 'pt' ? 'Modo: Cliente' : 'Mode: Client'}</span>
                 </>
               )}
-              <span className="text-[10px] text-gray-500 font-normal ml-0.5">(Trocar)</span>
+              <span className="text-[10px] text-gray-500 font-normal ml-0.5">
+                ({language === 'pt' ? 'Trocar' : 'Switch'})
+              </span>
             </button>
           )}
 
@@ -141,29 +150,31 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
             <CloudSyncButton onClick={onOpenCloudStorage} variant="portal" />
           )}
 
+          {/* Language Switcher in Portal */}
+          <LanguageSwitcher variant="navbar" />
+
           {/* New Project CTA (Desktop) */}
           <button
             type="button"
             onClick={onOpenNewProjectModal}
             className="hidden sm:inline-flex items-center gap-1.5 bg-white hover:bg-emerald-50 text-[#072a1a] px-3.5 py-2 rounded-full text-xs font-bold border border-[#072a1a]/15 shadow-2xs hover:border-[#15803d] transition-all cursor-pointer active:scale-95 min-h-[44px]"
-            title="Cadastrar nova obra ou ambiente"
-            aria-label="Cadastrar Nova Obra"
+            title={language === 'pt' ? 'Cadastrar nova obra ou ambiente' : 'Register new project or room'}
+            aria-label={t('portal.newProject', 'Nova Obra')}
           >
             <Plus className="w-3.5 h-3.5 text-[#15803d]" />
-            <span>Nova Obra</span>
+            <span>{t('portal.newProject', 'Nova Obra')}</span>
           </button>
 
           {/* AI Simulator CTA (Matching Landing Page Style) */}
           <button
             type="button"
             onClick={onOpenSimulator}
-            className="inline-flex items-center gap-1.5 bg-[#072a1a] text-[#86efac] hover:bg-[#15803d] hover:text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-bold text-xs sm:text-sm shadow-xs transition-all cursor-pointer active:scale-95 min-h-[38px] sm:min-h-[44px]"
+            className="inline-flex items-center justify-center gap-1.5 bg-[#072a1a] text-[#86efac] hover:bg-[#15803d] hover:text-white h-9 sm:h-10 w-9 sm:w-auto px-0 sm:px-4 rounded-full font-bold text-xs sm:text-sm shadow-xs transition-all cursor-pointer active:scale-95 shrink-0"
             title={`Simulador IA de Ambientes (${modKey}+M)`}
             aria-label="Abrir Simulador IA"
           >
             <Camera className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#86efac]" />
-            <span className="hidden sm:inline">Simulador IA</span>
-            <span className="inline sm:hidden">Simulador</span>
+            <span className="hidden sm:inline">{t('nav.simulator', 'Simulador IA')}</span>
           </button>
 
           {/* Theme Toggle Button */}
@@ -172,7 +183,7 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
             id="portal-theme-toggle-btn"
             onClick={toggleTheme}
             className="p-2 sm:p-2.5 rounded-full bg-white hover:bg-emerald-50 text-[#072a1a] border border-gray-200 hover:border-[#15803d] transition-all cursor-pointer min-h-[38px] min-w-[38px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center shadow-2xs active:scale-95"
-            title={theme === 'dark' ? 'Alternar para tema claro' : 'Alternar para tema escuro'}
+            title={theme === 'dark' ? t('nav.themeLight') : t('nav.themeDark')}
             aria-label="Alternar tema de cor"
           >
             {theme === 'dark' ? (
@@ -217,8 +228,8 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
               type="button"
               onClick={onLogout}
               className="p-1.5 sm:p-2 rounded-full bg-white text-gray-500 hover:text-red-600 hover:bg-red-50 border border-gray-200 transition-colors cursor-pointer min-h-[38px] min-w-[38px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center"
-              title="Sair do Portal"
-              aria-label="Sair da conta"
+              title={t('portal.logout', 'Sair da Conta')}
+              aria-label={t('portal.logout', 'Sair da Conta')}
             >
               <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>

@@ -23,9 +23,10 @@ import {
   Zap,
   TrendingUp,
   ArrowLeftRight,
-  Sparkles,
   Sun,
-  Moon
+  Moon,
+  HelpCircle,
+  Activity
 } from 'lucide-react';
 import { isMacUser } from '../hooks/useKeyboardShortcuts';
 import { BOTANICAL_SPECIES, SEARCH_RESULTS } from '../data/mockData';
@@ -55,6 +56,7 @@ interface GlobalCommandPaletteProps {
   onOpenConsultation?: () => void;
   onOpenProjectPdfReport?: () => void;
   onOpenTour?: () => void;
+  onOpenHabitTracker?: () => void;
 }
 
 export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
@@ -69,6 +71,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenConsultation,
   onOpenProjectPdfReport,
   onOpenTour,
+  onOpenHabitTracker,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -139,14 +142,28 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         id: 'cmd-tour',
         category: 'Ações Rápidas',
         title: 'Iniciar Tour Guiado (Simulador, Quiz e Portal)',
-        subtitle: 'Aprenda a explorar os principais recursos e inovações da plataforma',
+        subtitle: 'Aprenda a explorar os principais recursos da plataforma',
         badge: 'Tour',
-        icon: Sparkles,
+        icon: HelpCircle,
         action: () => {
           onClose();
           if (onOpenTour) onOpenTour();
         },
         keywords: ['tour', 'guiado', 'onboarding', 'ajuda', 'simulador', 'quiz', 'portal', 'introducao', 'recursos'],
+      },
+      {
+        id: 'cmd-habits',
+        category: 'Ações Rápidas',
+        title: 'Rastreador de Hábitos & Rotina Biofílica',
+        subtitle: 'Defina hábitos, registre a conclusão diária e veja gráficos de progresso',
+        badge: 'Hábitos',
+        icon: Activity,
+        shortcut: 'H',
+        action: () => {
+          onClose();
+          if (onOpenHabitTracker) onOpenHabitTracker();
+        },
+        keywords: ['habito', 'habitos', 'rotina', 'wellness', 'saude', 'progresso', 'estatisticas', 'checklist', 'foco', 'pausa'],
       },
       {
         id: 'cmd-lookup',
@@ -347,7 +364,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       category: 'Espécies Botânicas',
       title: specie.name,
       subtitle: `${specie.line} • ${specie.acousticAbsorption}`,
-      badge: specie.category === 'preservado' ? '100% Natural' : 'Anti-UV',
+      badge: specie.category === 'preservado' ? 'Preservado' : 'Permanente',
       icon: Leaf,
       action: () => {
         onClose();

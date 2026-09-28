@@ -17,7 +17,6 @@ import {
   Smartphone,
   Laptop,
   ShieldCheck,
-  Sparkles,
   FileCode,
   FolderOpen
 } from 'lucide-react';
@@ -255,13 +254,13 @@ export const CloudStorageModal: React.FC<CloudStorageModalProps> = ({
                 </div>
                 <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-200/70 flex flex-col items-center text-center">
                   <ShieldCheck className="w-5 h-5 text-emerald-700 mb-1.5" />
-                  <span className="text-xs font-bold text-gray-900">100% Seguro</span>
-                  <span className="text-[11px] text-gray-500 mt-0.5">Salvo na sua própria pasta do Google Drive</span>
+                  <span className="text-xs font-bold text-gray-900">Privacidade Garantida</span>
+                  <span className="text-[11px] text-gray-500 mt-0.5">Armazenado diretamente no seu Google Drive</span>
                 </div>
                 <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-200/70 flex flex-col items-center text-center">
-                  <Sparkles className="w-5 h-5 text-emerald-700 mb-1.5" />
+                  <FileCode className="w-5 h-5 text-emerald-700 mb-1.5" />
                   <span className="text-xs font-bold text-gray-900">Dossiês Completos</span>
-                  <span className="text-[11px] text-gray-500 mt-0.5">Inclui laudos LEED/WELL e histórico de versões</span>
+                  <span className="text-[11px] text-gray-500 mt-0.5">Laudos técnicos e histórico de alterações</span>
                 </div>
               </div>
             </div>

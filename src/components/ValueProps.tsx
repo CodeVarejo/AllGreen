@@ -1,34 +1,47 @@
 import React from 'react';
 import { Volume2, Droplets, Award, Leaf } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export const ValueProps: React.FC = () => {
+  const { language } = useLanguage();
+
+  const isPt = language === 'pt';
+
   const pillars = [
     {
-      title: 'Preservação por Seiva Vegetal',
-      desc: 'Substituição gradual da água celular por composto ecológico de glicerina e sais minerais. A folhagem mantém toque macio e cor viva sem terra, sol ou rega.',
+      title: isPt ? 'Preservação por Seiva Vegetal' : 'Cellular Sap Preservation',
+      desc: isPt
+        ? 'Substituição gradual da água celular por composto ecológico de glicerina e sais minerais. A folhagem mantém toque macio e cor viva sem terra, sol ou rega.'
+        : 'Gradual replacement of cellular water with an eco-friendly compound of vegetable glycerin and minerals. Foliage retains soft touch and color with zero soil, sunlight, or watering.',
       metric: '0 L / ano',
-      metricLabel: 'Sem ponto hidráulico',
+      metricLabel: isPt ? 'Sem ponto hidráulico' : 'Zero plumbing connection',
       icon: Leaf,
     },
     {
-      title: 'Atenuação Acústica NRC 0.89',
-      desc: 'A macroestrutura alveolar do musgo polar e das folhagens atua como difusor acústico tridimensional, atenuando a reverberação de voz em escritórios.',
+      title: isPt ? 'Atenuação Acústica NRC 0.89' : 'Acoustic Attenuation NRC 0.89',
+      desc: isPt
+        ? 'A macroestrutura alveolar do musgo polar e das folhagens atua como difusor acústico tridimensional, atenuando a reverberação de voz em escritórios.'
+        : 'The cellular honeycomb structure of reindeer moss and foliage functions as a 3D acoustic diffuser, effectively cutting voice reverberation in workspaces.',
       metric: 'NRC 0.89',
-      metricLabel: 'Laudo IPT ISO 354',
+      metricLabel: isPt ? 'Laudo IPT ISO 354' : 'IPT ISO 354 Certified',
       icon: Volume2,
     },
     {
-      title: 'Montagem Mecânica Limpa',
-      desc: 'Módulos leves com encaixe oculto fixados diretamente em drywall, alvenaria ou concreto. Sem risco de vazamentos prediais ou reformas estruturais.',
+      title: isPt ? 'Montagem Mecânica Limpa' : 'Clean Mechanical Assembly',
+      desc: isPt
+        ? 'Módulos leves com encaixe oculto fixados diretamente em drywall, alvenaria ou concreto. Sem risco de vazamentos prediais ou reformas estruturais.'
+        : 'Lightweight concealed-interlocking modules mounted onto drywall, masonry or concrete. Zero structural remodeling or leak hazards.',
       metric: 'Plug & Play',
-      metricLabel: 'Instalação em horas',
+      metricLabel: isPt ? 'Instalação em horas' : 'Hours-fast install',
       icon: Droplets,
     },
     {
-      title: 'Créditos WELL & LEED',
-      desc: 'Composição livre de compostos orgânicos voláteis (VOC free), certificada para pontuação nos critérios de neuroarquitetura e qualidade do ambiente interno.',
+      title: isPt ? 'Créditos WELL & LEED' : 'WELL & LEED Credits',
+      desc: isPt
+        ? 'Composição livre de compostos orgânicos voláteis (VOC free), certificada para pontuação nos critérios de neuroarquitetura e qualidade do ambiente interno.'
+        : 'Zero VOC formulation tested and certified to yield direct neuroarchitecture and indoor environmental quality credits.',
       metric: '+12 Pts',
-      metricLabel: 'Homologação Green Building',
+      metricLabel: isPt ? 'Homologação Green Building' : 'Green Building Certified',
       icon: Award,
     },
   ];
@@ -40,11 +53,22 @@ export const ValueProps: React.FC = () => {
         {/* Editorial Section Header */}
         <div className="max-w-3xl mb-12 sm:mb-16">
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#072a1a] tracking-tight leading-tight">
-            Engenharia botânica para <br />
-            <span className="italic font-light text-emerald-800">arquitetura perene.</span>
+            {isPt ? (
+              <>
+                Engenharia botânica para <br />
+                <span className="italic font-light text-emerald-800">arquitetura perene.</span>
+              </>
+            ) : (
+              <>
+                Botanical engineering for <br />
+                <span className="italic font-light text-emerald-800">perennial architecture.</span>
+              </>
+            )}
           </h2>
           <p className="text-gray-600 text-base sm:text-lg leading-relaxed pt-3 font-normal">
-            Eliminamos os custos contínuos de jardinagem, riscos de infiltração e descarte de plantas mortas com tecnologia de preservação vegetal testada e homologada.
+            {isPt
+              ? 'Eliminamos os custos contínuos de jardinagem, riscos de infiltração e descarte de plantas mortas com tecnologia de preservação vegetal testada e homologada.'
+              : 'Eliminate recurring landscaping costs, structural leak hazards, and plant mortality with certified, lab-tested plant preservation technology.'}
           </p>
         </div>
 

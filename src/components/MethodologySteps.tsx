@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Camera, Layers, Wrench, ShieldCheck, ArrowRight, Sparkles, BookOpen, Compass, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Camera, ArrowRight, CheckCircle2, ChevronRight } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
+import { useLanguage } from '../context/LanguageContext';
 
 interface MethodologyStepsProps {
   onOpenSimulator: () => void;
@@ -11,51 +12,77 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
   onOpenSimulator,
   onOpenQuote,
 }) => {
+  const { language } = useLanguage();
+  const isPt = language === 'pt';
   const [activeStep, setActiveStep] = useState(0);
 
   const steps = [
     {
       num: '01',
-      stage: 'ETAPA INICIAL • CONCEPT',
-      title: 'Diagnóstico Digital & Simulação IA',
-      subtitle: 'Uma fotografia do seu espaço é o ponto de partida',
-      desc: 'Nossa inteligência artificial analisa a geometria do ambiente, incidência lumínica e mobiliário existente, projetando em segundos uma composição biofílica fotorrealista para você e seus clientes avaliarem antes de qualquer intervenção física.',
-      tools: ['Visão Computacional Gemini IA', 'Renderização Instantânea', 'Estimativa Orçamentária Paramétrica'],
-      materialNote: 'Sem compromisso comercial prévio • Acesso instantâneo via browser',
-      actionLabel: 'Abrir Simulador Agora',
+      stage: isPt ? 'ETAPA INICIAL • CONCEPT' : 'INITIAL STAGE • CONCEPT',
+      title: isPt ? 'Diagnóstico Digital & Simulação IA' : 'Digital Assessment & AI Simulation',
+      subtitle: isPt ? 'Uma fotografia do seu espaço é o ponto de partida' : 'A single photo of your space is all it takes',
+      desc: isPt
+        ? 'Nossa inteligência artificial analisa a geometria do ambiente, incidência lumínica e mobiliário existente, projetando em segundos uma composição biofílica fotorrealista para você e seus clientes avaliarem antes de qualquer intervenção física.'
+        : 'Our AI analyzes space geometry, ambient lighting, and furnishings, instantly rendering a photorealistic biophilic composition for you and your clients before any physical work begins.',
+      tools: isPt
+        ? ['Visão Computacional Gemini IA', 'Renderização Instantânea', 'Estimativa Orçamentária Paramétrica']
+        : ['Computer Vision Gemini AI', 'Instant Photorealistic Rendering', 'Parametric Cost Estimation'],
+      materialNote: isPt
+        ? 'Sem compromisso comercial prévio • Acesso instantâneo via browser'
+        : 'No prior commitment required • Instant browser access',
+      actionLabel: isPt ? 'Abrir Simulador Agora' : 'Launch AI Simulator Now',
       isSimulatorAction: true,
     },
     {
       num: '02',
-      stage: 'CURADORIA BOTÂNICA • ATELIÊ',
-      title: 'Seleção das Espécies & Amostras Físicas',
-      subtitle: 'Composição sob medida para harmonizar com a paleta do projeto',
-      desc: 'Nossa equipe de biólogos e designers botânicos combina texturas de Musgo Polar escandinavo, Samambaias imperiais e Folhas de Eucalipto preservadas. Enviamos a caixa de amostras físicas de toque real para validação em prancha de materiais com o cliente.',
-      tools: ['Caixa de Amostras Físicas', 'Estudo de Densidade por m²', 'Equilíbrio Cromático Orgânico'],
-      materialNote: 'Plantas 100% naturais preservadas em seiva vegetal ecológica',
-      actionLabel: 'Solicitar Caixa de Amostras',
+      stage: isPt ? 'CURADORIA BOTÂNICA • ATELIÊ' : 'BOTANICAL CURATION • STUDIO',
+      title: isPt ? 'Seleção das Espécies & Amostras Físicas' : 'Species Selection & Physical Samples',
+      subtitle: isPt ? 'Composição sob medida para harmonizar com a paleta do projeto' : 'Tailored botanical mix matching your architectural palette',
+      desc: isPt
+        ? 'Nossa equipe de biólogos e designers botânicos combina texturas de Musgo Polar escandinavo, Samambaias imperiais e Folhas de Eucalipto preservadas. Enviamos a caixa de amostras físicas de toque real para validação em prancha de materiais com o cliente.'
+        : 'Our biologists and designers curate Scandinavian reindeer moss, royal ferns, and eucalyptus foliage. We ship an tactile sample box for material board validation with your client.',
+      tools: isPt
+        ? ['Caixa de Amostras Físicas', 'Estudo de Densidade por m²', 'Equilíbrio Cromático Orgânico']
+        : ['Tactile Material Box', 'm² Density Study', 'Organic Chromatic Balance'],
+      materialNote: isPt
+        ? 'Plantas 100% naturais preservadas em seiva vegetal ecológica'
+        : '100% natural foliage preserved with eco-friendly vegetal glycerin',
+      actionLabel: isPt ? 'Solicitar Caixa de Amostras' : 'Request Physical Sample Box',
       isSimulatorAction: false,
     },
     {
       num: '03',
-      stage: 'ENGENHARIA FABRIL • PRECISION',
-      title: 'Usinagem Modular Plug & Play',
-      subtitle: 'Módulos milimétricos com fixação mecânica oculta',
-      desc: 'Toda a montagem é executada em nosso ateliê industrial em São Paulo. As placas recebem suporte em compensado naval certificado FSC com engate macho/fêmea oculto. Zero marcenaria úmida ou barulho prolongado na sua obra.',
-      tools: ['Corte Computadorizado CNC', 'Painéis Ultraleves (14 kg/m²)', 'Travamento Francês Invisível'],
-      materialNote: 'Compatível com qualquer parede (Drywall, Alvenaria ou Concreto)',
-      actionLabel: 'Consultar Memorial Fabril',
+      stage: isPt ? 'ENGENHARIA FABRIL • PRECISION' : 'FACTORY FABRICATION • PRECISION',
+      title: isPt ? 'Usinagem Modular Plug & Play' : 'Modular Plug & Play Engineering',
+      subtitle: isPt ? 'Módulos milimétricos com fixação mecânica oculta' : 'Millimetric modules with concealed mechanical french cleat joints',
+      desc: isPt
+        ? 'Toda a montagem é executada em nosso ateliê industrial em São Paulo. As placas recebem suporte em compensado naval certificado FSC com engate macho/fêmea oculto. Zero marcenaria úmida ou barulho prolongado na sua obra.'
+        : 'Complete pre-fabrication at our industrial studio. Panels are mounted onto FSC-certified marine plywood with concealed interlocking. Zero wet carpentry or prolonged noisy work on site.',
+      tools: isPt
+        ? ['Corte Computadorizado CNC', 'Painéis Ultraleves (14 kg/m²)', 'Travamento Francês Invisível']
+        : ['CNC Precision Cutting', 'Ultralight Panels (14 kg/m²)', 'Concealed French Cleats'],
+      materialNote: isPt
+        ? 'Compatível com qualquer parede (Drywall, Alvenaria ou Concreto)'
+        : 'Compatible with drywall, masonry, structural glass or concrete',
+      actionLabel: isPt ? 'Consultar Memorial Fabril' : 'View Technical Specifications',
       isSimulatorAction: false,
     },
     {
       num: '04',
-      stage: 'INSTALAÇÃO LIMPA • FINAL TOUCH',
-      title: 'Fixação em Poucas Horas & Garantia Decenal',
-      subtitle: 'Sem água, sem tubulações, sem manutenções surpresa',
-      desc: 'Instaladores certificados realizam a fixação limpa em um único período — frequentemente durante o fim de semana para não interromper a rotina corporativa. Entregamos o certificado de garantia de 10 anos e laudos IPT de isolamento acústico e fogo.',
-      tools: ['Instalação Silenciosa', 'Laudo IPT ISO 354', 'Certificado 10 Anos All Green'],
-      materialNote: 'Zero custos recorrentes de irrigação, jardineiro ou troca de mudas',
-      actionLabel: 'Agendar Visita Técnica',
+      stage: isPt ? 'INSTALAÇÃO LIMPA • FINAL TOUCH' : 'CLEAN INSTALLATION • FINAL TOUCH',
+      title: isPt ? 'Fixação em Poucas Horas & Garantia Decenal' : 'Fast Clean Installation & 10-Year Warranty',
+      subtitle: isPt ? 'Sem água, sem tubulações, sem manutenções surpresa' : 'No plumbing, no dripping pipes, zero surprise maintenance',
+      desc: isPt
+        ? 'Instaladores certificados realizam a fixação limpa em um único período — frequentemente durante o fim de semana para não interromper a rotina corporativa. Entregamos o certificado de garantia de 10 anos e laudos IPT de isolamento acústico e fogo.'
+        : 'Certified technicians complete installation in hours — often off-hours or weekends to avoid workplace disruption. Backed by 10-year factory warranty and certified IPT acoustic reports.',
+      tools: isPt
+        ? ['Instalação Silenciosa', 'Laudo IPT ISO 354', 'Certificado 10 Anos All Green']
+        : ['Silent Clean Installation', 'IPT ISO 354 Acoustic Report', '10-Year All Green Warranty'],
+      materialNote: isPt
+        ? 'Zero custos recorrentes de irrigação, jardineiro ou troca de mudas'
+        : 'Zero recurring irrigation bills, gardener visits, or wilted plants',
+      actionLabel: isPt ? 'Agendar Visita Técnica' : 'Schedule Technical Visit',
       isSimulatorAction: false,
     },
   ];
@@ -73,12 +100,23 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
         <ScrollReveal animation="fade-up" distance={20}>
           <div className="max-w-3xl space-y-3">
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-white tracking-tight leading-[1.12]">
-              Do conceito inicial à instalação em <br />
-              <span className="italic font-light text-[#86efac]">quatro etapas estruturadas.</span>
+              {isPt ? (
+                <>
+                  Do conceito inicial à instalação em <br />
+                  <span className="italic font-light text-[#86efac]">quatro etapas estruturadas.</span>
+                </>
+              ) : (
+                <>
+                  From initial concept to install in <br />
+                  <span className="italic font-light text-[#86efac]">four structured stages.</span>
+                </>
+              )}
             </h2>
 
             <p className="text-emerald-100/70 text-base sm:text-lg font-sans font-light leading-relaxed">
-              Processo turnkey completo para arquitetura de interiores com previsibilidade orçamentária e sem reformas hidráulicas.
+              {isPt
+                ? 'Processo turnkey completo para arquitetura de interiores com previsibilidade orçamentária e sem reformas hidráulicas.'
+                : 'Turnkey interior architectural workflow with complete budget predictability and zero plumbing interventions.'}
             </p>
           </div>
         </ScrollReveal>
@@ -160,7 +198,7 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
               {/* Tools & Deliverables Checklist */}
               <div className="space-y-2 pt-2">
                 <span className="text-xs font-mono tracking-wider text-emerald-400 uppercase block font-semibold">
-                  Entregáveis & Especificação:
+                  {isPt ? 'Entregáveis & Especificação:' : 'Deliverables & Specifications:'}
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {steps[activeStep].tools.map((t, idx) => (
@@ -191,7 +229,11 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
               </button>
 
               <div className="text-right text-[11px] font-mono text-emerald-400/80">
-                <span>Passo {activeStep + 1} de 4 • Garantia Total de Fábrica</span>
+                <span>
+                  {isPt
+                    ? `Passo ${activeStep + 1} de 4 • Garantia Total de Fábrica`
+                    : `Step ${activeStep + 1} of 4 • Factory Backed Warranty`}
+                </span>
               </div>
             </div>
 
