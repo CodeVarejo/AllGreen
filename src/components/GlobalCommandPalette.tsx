@@ -80,7 +80,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   const isMac = useMemo(() => isMacUser(), []);
   const modKey = isMac ? '⌘' : 'Ctrl+';
 
-  const { theme, toggleTheme, isHighContrast, toggleHighContrast } = useAccessibility();
+  const { theme, themeMode, setThemeMode, toggleTheme, isHighContrast, toggleHighContrast } = useAccessibility();
 
   // Reset query and focus input when opened
   useEffect(() => {
@@ -319,16 +319,40 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['galeria', 'fotos', 'antes e depois', 'cases', 'projetos reais', 'slider'],
       },
       {
-        id: 'cmd-theme',
+        id: 'cmd-theme-solar',
         category: 'Acessibilidade',
-        title: theme === 'dark' ? 'Mudar para Tema Claro (Editorial)' : 'Mudar para Tema Escuro (Botânico Noturno)',
-        subtitle: 'Alterna a paleta de cores global entre claro e escuro preservando acessibilidade',
-        icon: theme === 'dark' ? Sun : Moon,
-        badge: theme === 'dark' ? 'Escuro Ativo' : 'Claro Ativo',
+        title: 'Ativar Horário Solar Automático (Claro 6h-18h / Escuro 18h-6h)',
+        subtitle: 'Sincroniza automaticamente com o ciclo circadiano natural de iluminação solar',
+        icon: Clock,
+        badge: themeMode === 'auto' ? 'Solar Ativo' : undefined,
         action: () => {
-          toggleTheme();
+          setThemeMode('auto');
         },
-        keywords: ['tema', 'escuro', 'claro', 'dark', 'light', 'cores', 'noite', 'visual', 'modo'],
+        keywords: ['solar', 'circadiano', 'automatico', 'auto', 'horario', 'sol', 'dia', 'noite', 'relogio'],
+      },
+      {
+        id: 'cmd-theme-light',
+        category: 'Acessibilidade',
+        title: 'Tema Claro Fixo (Editorial Botânico)',
+        subtitle: 'Força o modo claro independente do horário solar',
+        icon: Sun,
+        badge: themeMode === 'light' ? 'Claro Fixo' : undefined,
+        action: () => {
+          setThemeMode('light');
+        },
+        keywords: ['tema', 'claro', 'light', 'dia', 'branco', 'manual'],
+      },
+      {
+        id: 'cmd-theme-dark',
+        category: 'Acessibilidade',
+        title: 'Tema Escuro Fixo (Noturno Atmosférico)',
+        subtitle: 'Força o modo escuro independente do horário solar',
+        icon: Moon,
+        badge: themeMode === 'dark' ? 'Escuro Fixo' : undefined,
+        action: () => {
+          setThemeMode('dark');
+        },
+        keywords: ['tema', 'escuro', 'dark', 'noite', 'preto', 'manual'],
       },
       {
         id: 'cmd-contrast',

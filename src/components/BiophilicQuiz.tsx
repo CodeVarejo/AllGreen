@@ -36,6 +36,8 @@ import { QUIZ_QUESTIONS, calculateBiophilicProfile } from '../data/quizData';
 import { BiophilicProfileResult, QuizQuestion, UserProfile } from '../types';
 import { BiophilicRadarChart } from './BiophilicRadarChart';
 import { generateBiophilicGuidePdf } from '../utils/generateBiophilicGuidePdf';
+import { ShareHighlightButton } from './common/ShareHighlightButton';
+import { formatBiophilicProfileShare } from '../utils/nativeSocialShare';
 import confetti from 'canvas-confetti';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -563,15 +565,11 @@ Código: ${result.recommendedSolutionCode}`;
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={handleCopySummary}
-                        className="px-3 py-1.5 bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 text-xs font-bold rounded-xl border border-emerald-700/60 flex items-center gap-1.5 cursor-pointer transition-all"
-                        title="Copiar resumo do diagnóstico"
-                      >
-                        {copiedSuccess ? <Check className="w-3.5 h-3.5 text-[#86efac]" /> : <Copy className="w-3.5 h-3.5" />}
-                        <span>{copiedSuccess ? 'Copiado!' : 'Copiar Resumo'}</span>
-                      </button>
+                      <ShareHighlightButton
+                        payload={() => formatBiophilicProfileShare(result, currentUser)}
+                        label="Compartilhar Perfil"
+                        variant="dark"
+                      />
 
                       <button
                         type="button"
@@ -709,6 +707,13 @@ Código: ${result.recommendedSolutionCode}`;
                         <Download className="w-3.5 h-3.5 text-[#15803d]" />
                         <span>Baixar Guia Personalizado (PDF)</span>
                       </button>
+
+                      {/* Native Social Share Button */}
+                      <ShareHighlightButton
+                        payload={() => formatBiophilicProfileShare(result, currentUser)}
+                        label="Compartilhar"
+                        variant="secondary"
+                      />
 
                       {/* Save to Profile Button */}
                       {currentUser ? (

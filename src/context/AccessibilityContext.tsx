@@ -2,14 +2,26 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export type FontSizeOption = 'normal' | 'large' | 'xlarge' | 'huge';
 export type AppTheme = 'light' | 'dark';
+export type ThemeMode = 'auto' | 'light' | 'dark';
+
+/**
+ * Returns 'light' from 06:00 to 17:59, and 'dark' from 18:00 to 05:59.
+ */
+export function getCircadianTheme(): AppTheme {
+  if (typeof window === 'undefined') return 'light';
+  const hour = new Date().getHours();
+  return hour >= 6 && hour < 18 ? 'light' : 'dark';
+}
 
 interface AccessibilityContextType {
   theme: AppTheme;
+  themeMode: ThemeMode;
   isHighContrast: boolean;
   fontSize: FontSizeOption;
   isWcagTableMode: boolean;
   toggleTheme: () => void;
   setTheme: (theme: AppTheme) => void;
+  setThemeMode: (mode: ThemeMode) => void;
   toggleHighContrast: () => void;
   setFontSize: (size: FontSizeOption) => void;
   toggleWcagTableMode: () => void;
@@ -19,28 +31,70 @@ interface AccessibilityContextType {
 const AccessibilityContext = createContext<AccessibilityContextType | undefined>(undefined);
 
 export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<AppTheme>(() => {
-    const saved = localStorage.getItem('ag_theme');
-    if (saved === 'dark' || saved === 'light') return saved;
-    // Check system preference
-    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
+  // Theme Mode: 'auto' (Circadian Solar 6h-18h), 'light' (manual), or 'dark' (manual)
+  const [themeMode, setThemeModeState] = useState<ThemeMode>(() => {
+    if (typeof window !== 'undefined') {
+      const savedMode = localStorage.getItem('ag_theme_mode') as ThemeMode | null;
+      if (savedMode === 'auto' || savedMode === 'light' || savedMode === 'dark') {
+        return savedMode;
+      }
     }
-    return 'light';
+    // Default strictly to automatic system / solar circadian schedule
+    return 'auto';
+  });
+
+  // Active resolved theme: 'light' or 'dark'
+  const [theme, setThemeState] = useState<AppTheme>(() => {
+    const savedMode = typeof window !== 'undefined' ? (localStorage.getItem('ag_theme_mode') as ThemeMode | null) : null;
+    if (savedMode === 'light') return 'light';
+    if (savedMode === 'dark') return 'dark';
+    return getCircadianTheme();
   });
 
   const [isHighContrast, setIsHighContrast] = useState<boolean>(() => {
-    return localStorage.getItem('ag_high_contrast') === 'true';
+    return typeof window !== 'undefined' ? localStorage.getItem('ag_high_contrast') === 'true' : false;
   });
 
   const [fontSize, setFontSizeState] = useState<FontSizeOption>(() => {
-    return (localStorage.getItem('ag_font_size') as FontSizeOption) || 'normal';
+    return typeof window !== 'undefined' ? ((localStorage.getItem('ag_font_size') as FontSizeOption) || 'normal') : 'normal';
   });
 
   const [isWcagTableMode, setIsWcagTableMode] = useState<boolean>(() => {
-    return localStorage.getItem('ag_wcag_table') === 'true';
+    return typeof window !== 'undefined' ? localStorage.getItem('ag_wcag_table') === 'true' : false;
   });
 
+  // When themeMode changes, synchronize active theme
+  useEffect(() => {
+    localStorage.setItem('ag_theme_mode', themeMode);
+    if (themeMode === 'light') {
+      setThemeState('light');
+    } else if (themeMode === 'dark') {
+      setThemeState('dark');
+    } else {
+      setThemeState(getCircadianTheme());
+    }
+  }, [themeMode]);
+
+  // Periodic check for automatic solar schedule (every 30 seconds & on window focus)
+  useEffect(() => {
+    if (themeMode !== 'auto') return;
+
+    const checkSolarTime = () => {
+      const expected = getCircadianTheme();
+      setThemeState((current) => (current !== expected ? expected : current));
+    };
+
+    checkSolarTime();
+    const intervalId = setInterval(checkSolarTime, 30000);
+    window.addEventListener('focus', checkSolarTime);
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('focus', checkSolarTime);
+    };
+  }, [themeMode]);
+
+  // Apply theme to document root
   useEffect(() => {
     localStorage.setItem('ag_theme', theme);
     const root = document.documentElement;
@@ -51,6 +105,7 @@ export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [theme]);
 
+  // High contrast styling
   useEffect(() => {
     localStorage.setItem('ag_high_contrast', String(isHighContrast));
     const root = document.documentElement;
@@ -69,12 +124,27 @@ export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem('ag_wcag_table', String(isWcagTableMode));
   }, [isWcagTableMode]);
 
-  const toggleTheme = () => {
-    setThemeState((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  // Explicitly set theme mode ('auto', 'light', or 'dark')
+  const setThemeMode = (mode: ThemeMode) => {
+    setThemeModeState(mode);
+    if (mode === 'light' || mode === 'dark') {
+      setThemeState(mode);
+    } else {
+      setThemeState(getCircadianTheme());
+    }
   };
 
+  // Direct manual setTheme
   const setTheme = (newTheme: AppTheme) => {
+    setThemeModeState(newTheme);
     setThemeState(newTheme);
+  };
+
+  // Toggle theme manually (switches between light and dark)
+  const toggleTheme = () => {
+    const nextTheme: AppTheme = theme === 'dark' ? 'light' : 'dark';
+    setThemeModeState(nextTheme);
+    setThemeState(nextTheme);
   };
 
   const toggleHighContrast = () => {
@@ -93,18 +163,21 @@ export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsHighContrast(false);
     setFontSizeState('normal');
     setIsWcagTableMode(false);
-    setThemeState('light');
+    setThemeModeState('auto');
+    setThemeState(getCircadianTheme());
   };
 
   return (
     <AccessibilityContext.Provider
       value={{
         theme,
+        themeMode,
         isHighContrast,
         fontSize,
         isWcagTableMode,
         toggleTheme,
         setTheme,
+        setThemeMode,
         toggleHighContrast,
         setFontSize,
         toggleWcagTableMode,

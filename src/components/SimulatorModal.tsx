@@ -24,6 +24,8 @@ import {
 import { SimulationResult } from '../types';
 import { exportSimulationToPdf } from '../services/simulationPdfExport';
 import { useUnsavedChangesGuard } from '../hooks/useUnsavedChangesGuard';
+import { ShareHighlightButton } from './common/ShareHighlightButton';
+import { formatSimulationShare } from '../utils/nativeSocialShare';
 
 interface SimulatorModalProps {
   isOpen: boolean;
@@ -211,26 +213,26 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-6 overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           handleAttemptClose();
         }
       }}
     >
-      <div className="bg-white rounded-3xl max-w-4xl w-full my-auto overflow-hidden shadow-2xl relative border border-emerald-900/20">
+      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-4xl w-full my-auto overflow-hidden shadow-2xl relative border border-emerald-900/20 max-h-[92dvh] flex flex-col">
         
         {/* Modal Header */}
-        <div className="bg-[#072a1a] text-white p-5 sm:p-6 flex items-center justify-between">
+        <div className="bg-[#072a1a] text-white p-4 sm:p-6 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#86efac] text-[#072a1a] flex items-center justify-center font-bold">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#86efac] text-[#072a1a] flex items-center justify-center font-bold shrink-0">
               <Camera className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-serif font-bold text-lg sm:text-xl text-white">
+              <h2 className="font-serif font-bold text-base sm:text-xl text-white">
                 Simulador de Parede Verde IA
               </h2>
-              <p className="text-xs text-emerald-300">
+              <p className="text-[11px] sm:text-xs text-emerald-300">
                 All Green Decor & Biophilia • Tecnologia Visio-Botânica
               </p>
             </div>
@@ -239,14 +241,14 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
           <button
             onClick={handleAttemptClose}
             aria-label="Fechar Simulador"
-            className="w-9 h-9 rounded-full bg-emerald-950 text-gray-300 hover:text-white hover:bg-emerald-900 flex items-center justify-center transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-full bg-emerald-950 text-gray-300 hover:text-white hover:bg-emerald-900 flex items-center justify-center transition-colors cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 sm:p-8 space-y-6">
+        <div className="p-4 sm:p-8 space-y-6 overflow-y-auto flex-1">
           
           {/* STEP 1: UPLOAD & SELECTION */}
           {step === 'upload' && (
@@ -399,24 +401,26 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
               
               {/* Mode Switcher & Visual Comparison */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 bg-gray-100 p-1 rounded-xl">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 bg-gray-100 p-1 rounded-xl w-full sm:w-auto">
                     <button
                       type="button"
                       onClick={() => setViewMode('slider')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                      className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                         viewMode === 'slider'
                           ? 'bg-[#072a1a] text-white shadow-sm'
                           : 'text-gray-600 hover:text-gray-900'
                       }`}
                     >
                       <MoveHorizontal className="w-3.5 h-3.5" />
-                      <span>Slider Interativo (Antes / Depois)</span>
+                      <span>
+                        <span className="hidden sm:inline">Slider </span>Antes / Depois
+                      </span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setViewMode('side-by-side')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                      className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                         viewMode === 'side-by-side'
                           ? 'bg-[#072a1a] text-white shadow-sm'
                           : 'text-gray-600 hover:text-gray-900'
@@ -742,6 +746,14 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
                   )}
                   <span>Exportar PDF</span>
                 </button>
+
+                <ShareHighlightButton
+                  payload={() => formatSimulationShare(simulationResult, roomType, activeArea)}
+                  label="Compartilhar"
+                  variant="outline"
+                  className="min-h-[44px]"
+                  titleTooltip="Compartilhar estimativa e métricas WELL desta simulação via Web Share API"
+                />
 
                 <button
                   onClick={() => setStep('upload')}

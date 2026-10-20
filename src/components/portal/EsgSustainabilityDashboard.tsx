@@ -301,7 +301,7 @@ export const EsgSustainabilityDashboard: React.FC<EsgSustainabilityDashboardProp
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold tracking-tight text-white leading-tight">
               Dashboard de Sustentabilidade & Impacto ESG
             </h1>
 

@@ -101,32 +101,32 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
     switch (status) {
       case 'instalado':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100/95 text-emerald-950 border border-emerald-300 shadow-2xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#15803d]" /> Instalado & Homologado
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-950 border border-emerald-300 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#15803d]" /> Instalado & Homologado
           </span>
         );
       case 'em_producao':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100/95 text-amber-950 border border-amber-300 shadow-2xs">
-            <Clock className="w-3.5 h-3.5 text-amber-700" /> Em Produção Plug & Play
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-300 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" /> Em Produção Plug & Play
           </span>
         );
       case 'enviado_transportadora':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-100/95 text-blue-950 border border-blue-300 shadow-2xs">
-            <Truck className="w-3.5 h-3.5 text-blue-700" /> Em Transporte
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-900 border border-blue-300 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Em Transporte
           </span>
         );
       case 'orcamento_enviado':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-100/95 text-purple-950 border border-purple-300 shadow-2xs">
-            <FileText className="w-3.5 h-3.5 text-purple-700" /> Proposta Comercial
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-50 text-purple-900 border border-purple-300 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-500" /> Proposta Comercial
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100/95 text-gray-900 border border-gray-300 shadow-2xs">
-            <Camera className="w-3.5 h-3.5 text-gray-700" /> Estudo IA
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-50 text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-gray-400" /> Estudo Técnico
           </span>
         );
     }
@@ -186,7 +186,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
             className="px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] font-bold rounded-full text-xs border border-emerald-200 transition-all flex items-center gap-2 cursor-pointer active:scale-95 min-h-[44px]"
           >
             <Camera className="w-4 h-4 text-[#15803d]" />
-            <span>Simular Nova Foto IA</span>
+            <span>Simular Nova Foto</span>
           </button>
         </div>
       </div>

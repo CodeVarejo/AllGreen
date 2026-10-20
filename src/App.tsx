@@ -40,6 +40,8 @@ import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { GuidedTour } from './components/GuidedTour';
 import { HabitTrackerModal } from './components/habits/HabitTrackerModal';
+import { OfflineIndicator } from './components/pwa/OfflineIndicator';
+import { startNatureNotificationScheduler, stopNatureNotificationScheduler } from './utils/natureNotificationService';
 
 function AppContent() {
   const { isHighContrast, fontSize, isWcagTableMode, toggleHighContrast } = useAccessibility();
@@ -110,6 +112,28 @@ function AppContent() {
       }
     } catch (e) {}
   }, [openTour]);
+
+  // Recurring local notification scheduler: reminds user to 'take a moment of nature'
+  // based on their saved biophilic profile preferences
+  useEffect(() => {
+    startNatureNotificationScheduler((content) => {
+      const newNotif: PortalNotification = {
+        id: `notif_nature_${Date.now()}`,
+        type: 'botanical_update',
+        title: content.title,
+        description: `${content.body} (${content.suggestedAction})`,
+        timestamp: 'Agora mesmo',
+        isRead: false,
+        actionLabel: 'Abrir Rastreador de Hábitos',
+        actionType: 'open_habits' as any,
+      };
+      setNotifications((prev) => [newNotif, ...prev]);
+    });
+
+    return () => {
+      stopNatureNotificationScheduler();
+    };
+  }, []);
 
   const handleSaveBiophilicProfile = (
     profile: BiophilicProfileResult,
@@ -255,7 +279,9 @@ function AppContent() {
     closeNotificationCenter();
     handleMarkNotificationAsRead(notification.id);
 
-    if (notification.actionType === 'open_simulator') {
+    if ((notification.actionType as string) === 'open_habits' || notification.id.startsWith('notif_nature_')) {
+      openHabitTracker();
+    } else if (notification.actionType === 'open_simulator') {
       openSimulator();
     } else if (notification.actionType === 'view_project') {
       if (currentUser) {
@@ -395,7 +421,7 @@ function AppContent() {
   const wcagTableClass = isWcagTableMode ? 'wcag-table-mode' : '';
 
   return (
-    <div className={`min-h-screen bg-[#f3f7f4] text-gray-900 font-sans antialiased selection:bg-[#86efac] selection:text-[#072a1a] transition-all ${fontSizeClass} ${contrastClass} ${wcagTableClass}`}>
+    <div className={`min-h-screen w-full max-w-full overflow-x-clip bg-[#f3f7f4] text-gray-900 font-sans antialiased selection:bg-[#86efac] selection:text-[#072a1a] transition-all ${fontSizeClass} ${contrastClass} ${wcagTableClass}`}>
       
       {/* Skip Links for Screen Readers */}
       <a 
@@ -693,6 +719,7 @@ function AppContent() {
       </ErrorBoundary>
 
       {/* Floating Widgets */}
+      <OfflineIndicator />
       <LgpdBanner />
 
     </div>

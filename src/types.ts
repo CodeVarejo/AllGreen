@@ -163,6 +163,25 @@ export interface PortalProject {
   co2OffsetKgYear?: number;
   maintenanceFreq?: string;
   weightPerM2?: number;
+  simulationHistory?: LeedWellSimulationPoint[];
+}
+
+export interface LeedWellSimulationPoint {
+  id: string;
+  simulationIndex: number;
+  simulationName: string;
+  shortLabel: string;
+  date: string;
+  leedCredits: number;
+  wellScore: number;
+  acousticNrc: number;
+  waterSavedLiters: number;
+  co2OffsetKg: number;
+  certificationTierLeed: 'Certificado' | 'Silver' | 'Gold' | 'Platinum';
+  certificationTierWell: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
+  technicalEnhancements: string[];
+  keyMilestone?: string;
+  isForecast?: boolean;
 }
 
 export interface TechnicalAsset {

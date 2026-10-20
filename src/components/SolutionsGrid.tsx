@@ -46,79 +46,212 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
   const { t, language } = useLanguage();
   const [selectedModal, setSelectedModal] = useState<any | null>(null);
   const isPt = language === 'pt';
+  const isEs = language === 'es';
 
   const solutions = [
     {
       id: 'preservado',
-      title: 'Jardins Verticais Preservados',
-      desc: 'Plantas 100% naturais que passam por processo ecológico de preservação com glicerina vegetal. Mantêm textura macia e viva por anos sem precisar de sol, rega ou poda.',
+      title: isPt
+        ? 'Jardins Verticais Preservados'
+        : isEs
+        ? 'Jardines Verticales Preservados'
+        : 'Preserved Vertical Gardens',
+      desc: isPt
+        ? 'Plantas 100% naturais que passam por processo ecológico de preservação com glicerina vegetal. Mantêm textura macia e viva por anos sem precisar de sol, rega ou poda.'
+        : isEs
+        ? 'Plantas 100% naturales tratadas con glicerina vegetal ecológica. Conservan textura suave y viva por años sin necesidad de sol, riego o poda.'
+        : '100% natural foliage stabilized with eco-friendly plant glycerin. Maintains authentic soft texture and vibrant color for years with zero sunlight, water, or pruning.',
       image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80',
-      highlights: [
-        'Plantas naturais estabilizadas com glicerina vegetal',
-        'Máxima absorção acústica certificada (NRC 0.85)',
-        'Garantia de 5 anos com zero manutenção de irrigação',
-        'Perfeito para interiores corporativos, salas de reunião e livings',
-      ],
+      highlights: isPt
+        ? [
+            'Plantas naturais estabilizadas com glicerina vegetal',
+            'Máxima absorção acústica certificada (NRC 0.85)',
+            'Garantia de 5 anos com zero manutenção de irrigação',
+            'Perfeito para interiores corporativos, salas de reunião e livings',
+          ]
+        : isEs
+        ? [
+            'Plantas naturales estabilizadas con glicerina vegetal',
+            'Máxima absorción acústica certificada (NRC 0.85)',
+            'Garantía de 5 años con cero mantenimiento de riego',
+            'Perfecto para interiores corporativos, salas de juntas y livings',
+          ]
+        : [
+            'Natural plants stabilized with organic plant glycerin',
+            'Certified maximum acoustic absorption (NRC 0.85)',
+            '5-year manufacturer warranty with zero irrigation maintenance',
+            'Ideal for corporate workplaces, boardrooms, and living spaces',
+          ],
     },
     {
       id: 'permanente',
-      title: 'Jardins Verticais Permanentes',
-      desc: 'Folhagens artificiais importadas com toque real (silicone, seda e látex) e tratamento anti-UV resistente ao sol, intempéries e áreas gourmet.',
+      title: isPt
+        ? 'Jardins Verticais Permanentes'
+        : isEs
+        ? 'Jardines Verticales Permanentes'
+        : 'Permanent Anti-UV Gardens',
+      desc: isPt
+        ? 'Folhagens artificiais importadas com toque real (silicone, seda e látex) e tratamento anti-UV resistente ao sol, intempéries e áreas gourmet.'
+        : isEs
+        ? 'Follajes artificiales de tacto real (silicona, seda y látex) con tratamiento anti-UV resistente al sol directo, intemperie y terrazas.'
+        : 'Real-touch artificial foliage (silicone, silk, and latex) engineered with anti-UV protection against sun fade, weather, and outdoor balconies.',
       image: 'https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=800&q=80',
-      highlights: [
-        'Mais de 30 espécies botânicas com fidelidade botânica',
-        'Tratamento Anti-UV que impede desbotamento e ressecamento',
-        'Leveza estrutural (~4kg/m²) instalável em drywall e alvenaria',
-        'Ideal para varandas gourmet, fachadas e áreas com luz solar',
-      ],
+      highlights: isPt
+        ? [
+            'Mais de 30 espécies botânicas com fidelidade botânica',
+            'Tratamento Anti-UV que impede desbotamento e ressecamento',
+            'Leveza estrutural (~4kg/m²) instalável em drywall e alvenaria',
+            'Ideal para varandas gourmet, fachadas e áreas com luz solar',
+          ]
+        : isEs
+        ? [
+            'Más de 30 especies botánicas con fidelidad artesanal',
+            'Tratamiento Anti-UV que previene decoloración y resequedad',
+            'Ligereza estructural (~4kg/m²) instalable en drywall y mampostería',
+            'Ideal para terrazas gourmet, fachadas y áreas soleadas',
+          ]
+        : [
+            'Over 30 botanical species with high botanical fidelity',
+            'Anti-UV treatment preventing discoloration and brittleness',
+            'Structural lightweight (~4kg/m²) mountable on drywall',
+            'Ideal for outdoor terraces, facades, and high-sun spaces',
+          ],
     },
     {
       id: 'moss',
-      title: 'Musgo Polar Moss & Quadros Biofílicos',
-      desc: 'Musgo escandinavo preservado de alta densidade (Cladonia rangiferina). Disponível em várias cores para composições artísticas, logotipos e painéis acústicos.',
+      title: isPt
+        ? 'Musgo Polar Moss & Quadros Biofílicos'
+        : isEs
+        ? 'Musgo Polar Moss & Cuadros Biofílicos'
+        : 'Polar Reindeer Moss & Acoustic Panels',
+      desc: isPt
+        ? 'Musgo escandinavo preservado de alta densidade (Cladonia rangiferina). Disponível em várias cores para composições artísticas, logotipos e painéis acústicos.'
+        : isEs
+        ? 'Musgo escandinavo preservado de alta densidad (Cladonia rangiferina). Disponible en varios colores para composiciones artísticas, logotipos y paneles acústicos.'
+        : 'High-density preserved Scandinavian reindeer moss (Cladonia rangiferina). Available in varied shades for bespoke artistic compositions and acoustic absorption.',
       image: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=800&q=80',
-      highlights: [
-        'Musgo escandinavo autêntico de toque aveludado tridimensional',
-        'Excelente atenuação de eco e reverberação em escritórios',
-        'Customizável com cortes geométricos, logos e iluminação LED',
-        'Imune a pragas, ácaros e livre de fungos',
-      ],
+      highlights: isPt
+        ? [
+            'Musgo escandinavo autêntico de toque aveludado tridimensional',
+            'Excelente atenuação de eco e reverberação em escritórios',
+            'Customizável com cortes geométricos, logos e iluminação LED',
+            'Imune a pragas, ácaros e livre de fungos',
+          ]
+        : isEs
+        ? [
+            'Musgo escandinavo auténtico de tacto aterciopelado tridimensional',
+            'Excelente atenuación de eco y reverberación en oficinas',
+            'Personalizable con cortes geométricos, logos e iluminación LED',
+            'Inmune a plagas, ácaros y libre de hongos',
+          ]
+        : [
+            'Authentic Scandinavian moss with a velvety 3D touch',
+            'High-performance echo and reverberation attenuation',
+            'Customizable with geometric shapes, corporate logos, and LED accents',
+            'Naturally hypoallergenic, dust repellent, and insect-proof',
+          ],
     },
     {
       id: 'modulos_diy',
-      title: 'Módulos Plug & Play Sob Medida',
-      desc: 'Painéis verdes pré-montados com engate oculto enviados para qualquer cidade do Brasil. Sistema que permite instalação rápida e sem sujeira.',
+      title: isPt
+        ? 'Módulos Plug & Play Sob Medida'
+        : isEs
+        ? 'Módulos Plug & Play a Medida'
+        : 'Custom Plug & Play Modules',
+      desc: isPt
+        ? 'Painéis verdes pré-montados com engate oculto enviados para qualquer cidade do Brasil. Sistema que permite instalação rápida e sem sujeira.'
+        : isEs
+        ? 'Paneles verdes premontados con anclaje oculto enviados a todo el país. Sistema que permite instalación limpia y rápida.'
+        : 'Pre-assembled green wall modules with hidden hardware delivered ready-to-hang for rapid, dust-free installation.',
       image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80',
-      highlights: [
-        'Módulos padronizados de 100x50 cm ou sob medida',
-        'Gabarito e kit de ancoragem rápida inclusos',
-        'Envio express por transportadora com seguro total',
-        'Manual passo a passo ilustrado para instalação em minutos',
-      ],
+      highlights: isPt
+        ? [
+            'Módulos padronizados de 100x50 cm ou sob medida',
+            'Gabarito e kit de ancoragem rápida inclusos',
+            'Envio express por transportadora com seguro total',
+            'Manual passo a passo ilustrado para instalação em minutos',
+          ]
+        : isEs
+        ? [
+            'Módulos estandarizados de 100x50 cm o a medida',
+            'Plantilla y kit de anclaje rápido incluidos',
+            'Envío express con seguro total de transporte',
+            'Manual ilustrado paso a paso para instalación en minutos',
+          ]
+        : [
+            'Standardized 100x50 cm modules or custom dimensions',
+            'Drilling template and quick-mount anchor kit included',
+            'Express insured freight shipping',
+            'Illustrated step-by-step guide for installation in minutes',
+          ],
     },
     {
       id: 'vasos',
-      title: 'Paisagismo em Vasos & Árvores Semi-Naturais',
-      desc: 'Árvores montadas com troncos naturais tratados e folhagens de alta escala (Ficus Lyrata, Costela de Adão, Palmeiras e Oliveiras) com vasos em fibra de vidro.',
+      title: isPt
+        ? 'Paisagismo em Vasos & Árvores Semi-Naturais'
+        : isEs
+        ? 'Paisajismo en Macetas & Árboles Semi-Naturales'
+        : 'Planter Greenery & Semi-Natural Trees',
+      desc: isPt
+        ? 'Árvores montadas com troncos naturais tratados e folhagens de alta escala (Ficus Lyrata, Costela de Adão, Palmeiras e Oliveiras) com vasos em fibra de vidro.'
+        : isEs
+        ? 'Árboles confeccionados con troncos naturales tratados y follajes de gran escala (Ficus Lyrata, Monstera, Palmeras y Olivos) con macetas de fibra de vidrio.'
+        : 'Bespoke trees assembled with preserved organic wood trunks and high-grade foliage (Ficus Lyrata, Monstera, Palms, and Olive trees) paired with fiberglass planters.',
       image: 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80',
-      highlights: [
-        'Troncos naturais desidratados e tratados contra cupim',
-        'Folhagens com caimento natural e visual imponente',
-        'Vasos sob medida para halls e divisórias de ambiente',
-        'Flexibilidade total para reformas e reposicionamento',
-      ],
+      highlights: isPt
+        ? [
+            'Troncos naturais desidratados e tratados contra cupim',
+            'Folhagens com caimento natural e visual imponente',
+            'Vasos sob medida para halls e divisórias de ambiente',
+            'Flexibilidade total para reformas e reposicionamento',
+          ]
+        : isEs
+        ? [
+            'Troncos naturales deshidratados y tratados contra termitas',
+            'Follajes de caída orgánica y porte imponente',
+            'Macetas a medida para vestíbulos y divisorias de ambientes',
+            'Flexibilidad total para reformas y reorganización espacial',
+          ]
+        : [
+            'Natural dehydrated wood trunks treated against pests',
+            'Foliage with natural draping and architectural presence',
+            'Custom fiberglass planters for lobbies and space zoning',
+            'Total agility for interior layout reconfigurations',
+          ],
     },
     {
       id: 'eventos',
-      title: 'Cenografia Verde & Locação para Eventos',
-      desc: 'Backdrops biofílicos, painéis para estandes em feiras de negócios, cenografia corporativa, casamentos e congressos com montagem ágil.',
+      title: isPt
+        ? 'Cenografia Verde & Locação para Eventos'
+        : isEs
+        ? 'Escenografía Verde & Alquiler para Eventos'
+        : 'Green Scenography & Event Rentals',
+      desc: isPt
+        ? 'Backdrops biofílicos, painéis para estandes em feiras de negócios, cenografia corporativa, casamentos e congressos com montagem ágil.'
+        : isEs
+        ? 'Backdrops biofílicos, paneles para stands de ferias comerciales, escenografía corporativa, bodas y congresos con montaje ágil.'
+        : 'Biophilic backdrops, trade show booth green walls, corporate staging, and special event installations with rapid setup.',
       image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80',
-      highlights: [
-        'Estruturas autoportantes ou modulares para estandes',
-        'Integração com letreiros neon e iluminação cênica',
-        'Opções flexíveis de compra ou locação temporária',
-        'Equipe de montagem ágil em feiras e pavilhões',
-      ],
+      highlights: isPt
+        ? [
+            'Estruturas autoportantes ou modulares para estandes',
+            'Integração com letreiros neon e iluminação cênica',
+            'Opções flexíveis de compra ou locação temporária',
+            'Equipe de montagem ágil em feiras e pavilhões',
+          ]
+        : isEs
+        ? [
+            'Estructuras autoportantes o modulares para stands',
+            'Integración con letreros de neón e iluminación escénica',
+            'Opciones flexibles de compra o alquiler temporal',
+            'Equipo de montaje ágil en ferias y centros de exposiciones',
+          ]
+        : [
+            'Freestanding or modular structural backdrops',
+            'Seamless integration with neon signs and stage lighting',
+            'Flexible outright purchase or short-term rental plans',
+            'Swift assembly crew for trade shows and venues',
+          ],
     },
   ];
 
@@ -136,6 +269,11 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
                   Verde autoral desenhado para <br className="hidden sm:inline" />
                   <span className="italic font-light text-[#15803d]">cada projeto e ambiente</span>
                 </>
+              ) : isEs ? (
+                <>
+                  Verde de autor diseñado para <br className="hidden sm:inline" />
+                  <span className="italic font-light text-[#15803d]">cada espacio y visión arquitectónica</span>
+                </>
               ) : (
                 <>
                   Signature greenery designed for <br className="hidden sm:inline" />
@@ -146,6 +284,8 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
             description={
               isPt
                 ? "Soluções modulares de jardins preservados, musgo polar escandinavo e biofilia arquitetônica com entrega e instalação em todo o Brasil."
+                : isEs
+                ? "Soluciones modulares de jardines preservados, musgo polar escandinavo y biofilia arquitectónica con entrega e instalación garantizada."
                 : "Modular preserved vertical walls, Scandinavian reindeer moss, and architectural biophilia delivered and installed nationwide."
             }
           />
@@ -238,7 +378,11 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
 
               <div className="bg-emerald-50 p-4 rounded-2xl space-y-2 border border-emerald-100">
                 <p className="text-xs font-bold text-[#072a1a] uppercase tracking-wider">
-                  {isPt ? 'Destaques & Especificações:' : 'Highlights & Specifications:'}
+                  {isPt
+                    ? 'Destaques & Especificações:'
+                    : isEs
+                    ? 'Aspectos Destacados & Especificaciones:'
+                    : 'Highlights & Specifications:'}
                 </p>
                 <ul className="space-y-1.5 text-xs text-gray-700">
                   {selectedModal.highlights.map((h: string, idx: number) => (
@@ -261,7 +405,11 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
                   }}
                   className="flex-1 py-3 bg-[#072a1a] text-white font-bold rounded-xl text-xs hover:bg-[#15803d] transition-colors cursor-pointer shadow-md"
                 >
-                  {isPt ? 'Solicitar Orçamento para esta Linha' : 'Request Quote for this Line'}
+                  {isPt
+                    ? 'Solicitar Orçamento para esta Linha'
+                    : isEs
+                    ? 'Solicitar Presupuesto para esta Línea'
+                    : 'Request Quote for this Line'}
                 </button>
               </div>
             </motion.div>

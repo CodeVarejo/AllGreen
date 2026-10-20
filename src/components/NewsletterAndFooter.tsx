@@ -22,8 +22,11 @@ import {
   Keyboard
 } from 'lucide-react';
 import { useAccessibility } from '../context/AccessibilityContext';
+import { useLanguage } from '../context/LanguageContext';
 import { ScrollReveal } from './ScrollReveal';
 import { BiophilicChatWidget } from './BiophilicChatWidget';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { ThemeSelector } from './ThemeSelector';
 
 interface NewsletterAndFooterProps {
   onOpenSimulator: () => void;
@@ -49,6 +52,10 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
   const [email, setEmail] = useState('');
   const [newsMessage, setNewsMessage] = useState('');
 
+  const { language, t } = useLanguage();
+  const isPt = language === 'pt';
+  const isEs = language === 'es';
+
   const {
     isHighContrast,
     fontSize,
@@ -63,7 +70,13 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
     e.preventDefault();
     if (!email.trim()) return;
 
-    setNewsMessage('Inscrição confirmada com sucesso! Bem-vindo ao Clube All Green Decor.');
+    const successMsg = isPt
+      ? 'Inscrição confirmada com sucesso! Bem-vindo ao Clube All Green Decor.'
+      : isEs
+      ? '¡Suscripción confirmada con éxito! Bienvenido al Club All Green Decor.'
+      : 'Subscription confirmed! Welcome to the All Green Decor Biophilic Club.';
+
+    setNewsMessage(successMsg);
     setEmail('');
     setTimeout(() => {
       setNewsMessage('');

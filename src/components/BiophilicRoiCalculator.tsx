@@ -21,12 +21,15 @@ import {
   RotateCcw,
   Volume2,
   Building2,
-  Lightbulb
+  Lightbulb,
+  BarChart3,
+  Scale
 } from 'lucide-react';
 import { BiophilicMlPredictionHelper } from './BiophilicMlPredictionHelper';
 import { RoiEnergyScatterPlot } from './RoiEnergyScatterPlot';
 import { LongTermRoiArchitectChart, GrowthScenario } from './LongTermRoiArchitectChart';
 import { ContextualOptimizationSidePanel } from './ContextualOptimizationSidePanel';
+import { InvestmentVsSavingsBarChart } from './InvestmentVsSavingsBarChart';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -217,7 +220,7 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
   const [timeHorizonYears, setTimeHorizonYears] = useState<1 | 3 | 5>(3);
   const [growthScenario, setGrowthScenario] = useState<GrowthScenario>('conservative');
   const [isSidePanelOpen, setIsSidePanelOpen] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'projection' | 'long_term' | 'breakdown' | 'energy_scatter' | 'certifications' | 'ml_allocation'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'bar_comparison' | 'projection' | 'long_term' | 'breakdown' | 'energy_scatter' | 'certifications' | 'ml_allocation'>('bar_comparison');
 
   // Apply optimizations from contextual panel
   const handleApplyAdjustment = (adjustments: {
@@ -630,6 +633,13 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
         {/* Header Section */}
         <ScrollReveal animation="fade-up" distance={25}>
           <div className="text-center max-w-4xl mx-auto space-y-3">
+            <div className="flex items-center justify-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-300 text-[10px] font-mono font-bold tracking-wide uppercase">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#15803d]" />
+                <span>Calculadora Operacional 100% Offline (PWA)</span>
+              </span>
+            </div>
+
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-gray-950 leading-tight">
               {isPt ? (
                 <>
@@ -1026,7 +1036,7 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                   </div>
 
                   {/* 3 Core Highlight Badges */}
-                  <div className="grid grid-cols-3 gap-3 text-center">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-center">
                     <div className="p-3 rounded-2xl bg-emerald-950/60 border border-emerald-800/70">
                       <span className="text-[10px] text-emerald-300 font-semibold block uppercase">
                         Tempo de Payback
@@ -1074,8 +1084,25 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
             <div className="bg-white rounded-3xl p-5 sm:p-6 border border-gray-200 shadow-md space-y-5">
               
               {/* Tab Navigation */}
-              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-3 overflow-x-auto no-scrollbar">
+                <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl min-w-max">
+                  <button
+                    type="button"
+                    id="tab-bar-comparison"
+                    onClick={() => setActiveTab('bar_comparison')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      activeTab === 'bar_comparison'
+                        ? 'bg-[#072a1a] text-[#86efac] shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <BarChart3 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Investimento vs. Economia</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-100 text-[#15803d] font-bold">
+                      5 / 10 Anos
+                    </span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => setActiveTab('overview')}
@@ -1264,6 +1291,27 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                     </button>
                   </div>
 
+                </div>
+              )}
+
+              {/* TAB: Visual Bar Chart - Investimento vs Economia Operacional (5 vs 10 Anos) */}
+              {activeTab === 'bar_comparison' && (
+                <div className="animate-in fade-in duration-300">
+                  <InvestmentVsSavingsBarChart
+                    area={area}
+                    employees={employees}
+                    salary={salary}
+                    estimatedInvestment={calculation.estimatedInvestment}
+                    annualTotalGrossSavings={calculation.annualTotalGrossSavings}
+                    annualMaintenanceAvoided={calculation.annualMaintenanceAvoided}
+                    annualProductivityGainValue={calculation.annualProductivityGainValue}
+                    annualAbsenteeismSavings={calculation.annualAbsenteeismSavings}
+                    annualTurnoverSavings={calculation.annualTurnoverSavings}
+                    annualHvacSavings={calculation.annualHvacSavings}
+                    growthScenario={growthScenario}
+                    paybackMonths={calculation.paybackMonths}
+                    onOpenQuote={onOpenQuote}
+                  />
                 </div>
               )}
 

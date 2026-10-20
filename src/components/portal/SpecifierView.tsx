@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { BiophilicRoiCalculator } from '../BiophilicRoiCalculator';
 import { PageHeader } from '../PageHeader';
+import { LeedWellSimulationEvolutionChart } from './LeedWellSimulationEvolutionChart';
 
 interface SpecifierViewProps {
   onOpenQuote: (context: string) => void;
@@ -43,7 +44,7 @@ export const SpecifierView: React.FC<SpecifierViewProps> = ({
   setWellNatureAccess,
   onBackToDashboard,
 }) => {
-  const [calculatorMode, setCalculatorMode] = useState<'leed' | 'roi'>('leed');
+  const [calculatorMode, setCalculatorMode] = useState<'leed' | 'roi' | 'evolution'>('leed');
   const [calcArea, setCalcArea] = useState<number>(24);
   const [calcStyle, setCalcStyle] = useState<'preservado' | 'permanente' | 'moss'>('preservado');
   const [calcStructure, setCalcStructure] = useState<'drywall' | 'alvenaria' | 'madeira'>('alvenaria');
@@ -68,11 +69,11 @@ export const SpecifierView: React.FC<SpecifierViewProps> = ({
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Sub-mode switch pills */}
       <div className="flex justify-center">
-        <div className="inline-flex p-1.5 rounded-2xl bg-white border border-gray-200 shadow-sm gap-1">
+        <div className="inline-flex flex-wrap justify-center p-1.5 rounded-2xl bg-white border border-gray-200 shadow-sm gap-1">
           <button
             type="button"
             onClick={() => setCalculatorMode('leed')}
-            className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               calculatorMode === 'leed'
                 ? 'bg-[#072a1a] text-[#86efac] shadow-sm'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -85,7 +86,7 @@ export const SpecifierView: React.FC<SpecifierViewProps> = ({
           <button
             type="button"
             onClick={() => setCalculatorMode('roi')}
-            className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               calculatorMode === 'roi'
                 ? 'bg-[#072a1a] text-[#86efac] shadow-sm'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -94,7 +95,23 @@ export const SpecifierView: React.FC<SpecifierViewProps> = ({
             <TrendingUp className="w-4 h-4" />
             <span>Calculadora de ROI Biofílico</span>
             <span className="px-1.5 py-0.2 bg-emerald-100 text-[#15803d] rounded text-[10px] font-bold">
-              Novo
+              ROI
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setCalculatorMode('evolution')}
+            className={`flex items-center gap-2 px-4 sm:px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              calculatorMode === 'evolution'
+                ? 'bg-[#072a1a] text-[#86efac] shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            <Award className="w-4 h-4 text-[#15803d]" />
+            <span>Evolução das Simulações</span>
+            <span className="px-1.5 py-0.2 bg-[#86efac]/30 text-[#072a1a] rounded text-[10px] font-bold">
+              Recharts
             </span>
           </button>
         </div>
@@ -102,6 +119,8 @@ export const SpecifierView: React.FC<SpecifierViewProps> = ({
 
       {calculatorMode === 'roi' ? (
         <BiophilicRoiCalculator onOpenQuote={onOpenQuote} />
+      ) : calculatorMode === 'evolution' ? (
+        <LeedWellSimulationEvolutionChart />
       ) : (
         <div className="space-y-8 max-w-4xl mx-auto">
           {/* Header */}

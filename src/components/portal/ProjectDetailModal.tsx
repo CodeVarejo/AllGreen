@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   X,
   MapPin,
@@ -23,9 +23,13 @@ import {
   RotateCcw,
   ChevronRight,
   ArrowLeft,
-  LayoutDashboard
+  LayoutDashboard,
+  TrendingUp
 } from 'lucide-react';
 import { PortalProject, UserProfile } from '../../types';
+import { LeedWellSimulationEvolutionChart } from './LeedWellSimulationEvolutionChart';
+import { ShareHighlightButton } from '../common/ShareHighlightButton';
+import { formatProjectReportShare } from '../../utils/nativeSocialShare';
 
 interface ProjectDetailModalProps {
   project: PortalProject | null;
@@ -50,6 +54,8 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
   onOpenEditProject,
   onStatusChange,
 }) => {
+  const [activeDetailTab, setActiveDetailTab] = useState<'specs' | 'simulation_evolution'>('specs');
+
   if (!isOpen || !project) return null;
 
   const versionCount = project.versionHistory?.length || 1;
@@ -59,32 +65,32 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
     switch (status) {
       case 'instalado':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100/95 text-emerald-950 border border-emerald-300 shadow-2xs">
-            <CheckCircle2 className="w-4 h-4 text-[#15803d]" /> Instalado & Homologado
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-950 border border-emerald-300 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#15803d]" /> Instalado & Homologado
           </span>
         );
       case 'em_producao':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100/95 text-amber-950 border border-amber-300 shadow-2xs">
-            <Clock className="w-4 h-4 text-amber-700" /> Em Produção Plug & Play
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-300 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" /> Em Produção Plug & Play
           </span>
         );
       case 'enviado_transportadora':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-100/95 text-blue-950 border border-blue-300 shadow-2xs">
-            <Truck className="w-4 h-4 text-blue-700" /> Em Trânsito p/ Obra
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-900 border border-blue-300 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Em Trânsito p/ Obra
           </span>
         );
       case 'orcamento_enviado':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-100/95 text-purple-950 border border-purple-300 shadow-2xs">
-            <FileText className="w-4 h-4 text-purple-700" /> Proposta Emitida
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-50 text-purple-900 border border-purple-300 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-500" /> Proposta Emitida
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100/95 text-gray-950 border border-gray-300 shadow-2xs">
-            <Camera className="w-4 h-4 text-gray-700" /> Estudo & Simulação IA
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-50 text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-gray-400" /> Estudo & Simulação Técnica
           </span>
         );
     }
@@ -136,14 +142,23 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
               </span>
             </div>
 
-            <button
-              onClick={onClose}
-              className="px-3.5 py-1.5 rounded-full bg-black/70 hover:bg-black text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-xs border border-white/20 active:scale-95 shadow-sm"
-              aria-label="Voltar para a lista de obras"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 text-[#86efac]" />
-              <span>Voltar</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <ShareHighlightButton
+                payload={() => formatProjectReportShare(project, user.name)}
+                label="Compartilhar"
+                variant="compact"
+                titleTooltip="Compartilhar destaques e certificações LEED/WELL deste projeto"
+              />
+
+              <button
+                onClick={onClose}
+                className="px-3.5 py-1.5 rounded-full bg-black/70 hover:bg-black text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-xs border border-white/20 active:scale-95 shadow-sm"
+                aria-label="Voltar para a lista de obras"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 text-[#86efac]" />
+                <span>Voltar</span>
+              </button>
+            </div>
           </div>
 
           {/* Badges */}
@@ -225,115 +240,156 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Quick Metrics Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-100">
-              <span className="text-[10px] text-emerald-800 font-bold uppercase block">Área Projetada</span>
-              <span className="text-lg font-serif font-bold text-[#072a1a]">{project.area} m²</span>
-            </div>
-            <div className="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-100">
-              <span className="text-[10px] text-emerald-800 font-bold uppercase block">Tipologia</span>
-              <span className="text-xs font-bold text-gray-800 block mt-1 line-clamp-1">{project.style}</span>
-            </div>
-            <div className="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-100">
-              <span className="text-[10px] text-emerald-800 font-bold uppercase block">Investimento Estimado</span>
-              <span className="text-sm font-bold text-emerald-950 block mt-1">
-                R$ {project.estimatedTotal.toLocaleString('pt-BR')}
-              </span>
-            </div>
-            <div className="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-100">
-              <span className="text-[10px] text-emerald-800 font-bold uppercase block">Créditos LEED</span>
-              <span className="text-lg font-serif font-bold text-[#15803d]">
-                +{project.leedPointsTotal || 12} pts
-              </span>
-            </div>
+          {/* Subtabs: Memorial & Especificações vs Evolução Histórica LEED & WELL */}
+          <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
+            <button
+              type="button"
+              onClick={() => setActiveDetailTab('specs')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                activeDetailTab === 'specs'
+                  ? 'bg-[#072a1a] text-[#86efac] shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>Memorial & Fichas Técnicas</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveDetailTab('simulation_evolution')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                activeDetailTab === 'simulation_evolution'
+                  ? 'bg-[#072a1a] text-[#86efac] shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              <TrendingUp className="w-3.5 h-3.5 text-yellow-500" />
+              <span>Evolução LEED & WELL (+{project.leedPointsTotal || 12} cr / {project.wellScore || 88} pts)</span>
+            </button>
           </div>
 
-          {/* Botanical Species List */}
-          {project.speciesUsed && project.speciesUsed.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
-                <Leaf className="w-4 h-4 text-[#15803d]" />
-                <span>Paleta Botânica & Espécies Homologadas</span>
-              </h4>
-              <div className="flex flex-wrap gap-1.5">
-                {project.speciesUsed.map((sp, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1.5 bg-emerald-50 text-[#072a1a] text-xs font-medium rounded-xl border border-emerald-200 flex items-center gap-1.5"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#15803d]" />
-                    {sp}
+          {activeDetailTab === 'simulation_evolution' ? (
+            <div className="space-y-4">
+              <LeedWellSimulationEvolutionChart
+                selectedProject={project}
+                onDownloadSpecPdf={onDownloadSpecPdf}
+                compact={false}
+              />
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Quick Metrics Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-100">
+                  <span className="text-[10px] text-emerald-800 font-bold uppercase block">Área Projetada</span>
+                  <span className="text-lg font-serif font-bold text-[#072a1a]">{project.area} m²</span>
+                </div>
+                <div className="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-100">
+                  <span className="text-[10px] text-emerald-800 font-bold uppercase block">Tipologia</span>
+                  <span className="text-xs font-bold text-gray-800 block mt-1 line-clamp-1">{project.style}</span>
+                </div>
+                <div className="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-100">
+                  <span className="text-[10px] text-emerald-800 font-bold uppercase block">Investimento Estimado</span>
+                  <span className="text-sm font-bold text-emerald-950 block mt-1">
+                    R$ {project.estimatedTotal.toLocaleString('pt-BR')}
                   </span>
-                ))}
+                </div>
+                <div className="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-100">
+                  <span className="text-[10px] text-emerald-800 font-bold uppercase block">Créditos LEED</span>
+                  <span className="text-lg font-serif font-bold text-[#15803d]">
+                    +{project.leedPointsTotal || 12} pts
+                  </span>
+                </div>
               </div>
-            </div>
-          )}
 
-          {/* Technical Specs Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            {/* Structural & Acoustic */}
-            <div className="bg-gray-50 p-4 sm:p-5 rounded-2xl border border-gray-200 space-y-3">
-              <h4 className="text-xs font-bold text-gray-800 uppercase flex items-center gap-1.5">
-                <Wrench className="w-4 h-4 text-emerald-700" />
-                <span>Engenharia & Conforto Acústico</span>
-              </h4>
-              <ul className="text-xs text-gray-600 space-y-2">
-                <li className="flex justify-between">
-                  <span className="font-semibold text-gray-700">Substrato / Fixação:</span>
-                  <span className="text-right text-gray-900">{project.structureType || 'Modular Plug & Play'}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span className="font-semibold text-gray-700">Absorção Acústica:</span>
-                  <span className="font-bold text-[#15803d]">NRC {project.acousticNrc || 0.88} (Laudo IPT)</span>
-                </li>
-                <li className="flex justify-between">
-                  <span className="font-semibold text-gray-700">Carga Estrutural:</span>
-                  <span className="text-gray-900">{project.weightPerM2 || 12} kg/m²</span>
-                </li>
-                <li className="flex justify-between">
-                  <span className="font-semibold text-gray-700">Segurança ao Fogo:</span>
-                  <span className="text-gray-900">{project.fireRating || 'Classe B-s1,d0 (Auto-extinguível)'}</span>
-                </li>
-              </ul>
-            </div>
+              {/* Botanical Species List */}
+              {project.speciesUsed && project.speciesUsed.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
+                    <Leaf className="w-4 h-4 text-[#15803d]" />
+                    <span>Paleta Botânica & Espécies Homologadas</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.speciesUsed.map((sp, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1.5 bg-emerald-50 text-[#072a1a] text-xs font-medium rounded-xl border border-emerald-200 flex items-center gap-1.5"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#15803d]" />
+                        {sp}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-            {/* Sustainability & Maintenance */}
-            <div className="bg-gradient-to-br from-[#072a1a] to-emerald-950 text-white p-4 sm:p-5 rounded-2xl border border-emerald-800 space-y-3">
-              <h4 className="text-xs font-bold text-[#86efac] uppercase flex items-center gap-1.5">
-                <Award className="w-4 h-4" />
-                <span>Métricas LEED & WELL v2</span>
-              </h4>
-              <ul className="text-xs text-emerald-100 space-y-2">
-                <li className="flex justify-between border-b border-emerald-900 pb-1">
-                  <span>Economia de Água / Ano:</span>
-                  <span className="font-bold text-[#86efac]">
-                    {(project.waterSavedLitersYear || 32000).toLocaleString('pt-BR')} L/ano (Zero Rega)
-                  </span>
-                </li>
-                <li className="flex justify-between border-b border-emerald-900 pb-1">
-                  <span>WELL Mind Score:</span>
-                  <span className="font-bold text-yellow-300">{project.wellScore || 88} Pontos</span>
-                </li>
-                <li className="flex justify-between border-b border-emerald-900 pb-1">
-                  <span>Garantia de Fábrica:</span>
-                  <span>{project.warrantyYears || 5} anos contra descoloração</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Plano de Manutenção:</span>
-                  <span className="text-[11px] text-emerald-300 text-right">{project.maintenanceFreq || 'Semestral / Ar Suave'}</span>
-                </li>
-              </ul>
-            </div>
+              {/* Technical Specs Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {/* Structural & Acoustic */}
+                <div className="bg-gray-50 p-4 sm:p-5 rounded-2xl border border-gray-200 space-y-3">
+                  <h4 className="text-xs font-bold text-gray-800 uppercase flex items-center gap-1.5">
+                    <Wrench className="w-4 h-4 text-emerald-700" />
+                    <span>Engenharia & Conforto Acústico</span>
+                  </h4>
+                  <ul className="text-xs text-gray-600 space-y-2">
+                    <li className="flex justify-between">
+                      <span className="font-semibold text-gray-700">Substrato / Fixação:</span>
+                      <span className="text-right text-gray-900">{project.structureType || 'Modular Plug & Play'}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="font-semibold text-gray-700">Absorção Acústica:</span>
+                      <span className="font-bold text-[#15803d]">NRC {project.acousticNrc || 0.88} (Laudo IPT)</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="font-semibold text-gray-700">Carga Estrutural:</span>
+                      <span className="text-gray-900">{project.weightPerM2 || 12} kg/m²</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="font-semibold text-gray-700">Segurança ao Fogo:</span>
+                      <span className="text-gray-900">{project.fireRating || 'Classe B-s1,d0 (Auto-extinguível)'}</span>
+                    </li>
+                  </ul>
+                </div>
 
-          </div>
+                {/* Sustainability & Maintenance */}
+                <div className="bg-gradient-to-br from-[#072a1a] to-emerald-950 text-white p-4 sm:p-5 rounded-2xl border border-emerald-800 space-y-3">
+                  <h4 className="text-xs font-bold text-[#86efac] uppercase flex items-center gap-1.5">
+                    <Award className="w-4 h-4" />
+                    <span>Métricas LEED & WELL v2</span>
+                  </h4>
+                  <ul className="text-xs text-emerald-100 space-y-2">
+                    <li className="flex justify-between border-b border-emerald-900 pb-1">
+                      <span>Economia de Água / Ano:</span>
+                      <span className="font-bold text-[#86efac]">
+                        {(project.waterSavedLitersYear || 32000).toLocaleString('pt-BR')} L/ano (Zero Rega)
+                      </span>
+                    </li>
+                    <li className="flex justify-between border-b border-emerald-900 pb-1">
+                      <span>WELL Mind Score:</span>
+                      <span className="font-bold text-yellow-300">{project.wellScore || 88} Pontos</span>
+                    </li>
+                    <li className="flex justify-between border-b border-emerald-900 pb-1">
+                      <span>Garantia de Fábrica:</span>
+                      <span>{project.warrantyYears || 5} anos contra descoloração</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span>Plano de Manutenção:</span>
+                      <span className="text-[11px] text-emerald-300 text-right">{project.maintenanceFreq || 'Semestral / Ar Suave'}</span>
+                    </li>
+                  </ul>
+                </div>
 
-          {/* Notes */}
-          {project.notes && (
-            <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200 text-xs text-amber-900">
-              <span className="font-bold block mb-1">Notas do Arquiteto / Memorial Técnico:</span>
-              <p className="leading-relaxed">{project.notes}</p>
+              </div>
+
+              {/* Notes */}
+              {project.notes && (
+                <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200 text-xs text-amber-900">
+                  <span className="font-bold block mb-1">Notas do Arquiteto / Memorial Técnico:</span>
+                  <p className="leading-relaxed">{project.notes}</p>
+                </div>
+              )}
             </div>
           )}
 
@@ -354,7 +410,15 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <ShareHighlightButton
+              payload={() => formatProjectReportShare(project, user.name)}
+              label="Compartilhar Destaques"
+              variant="outline"
+              className="min-h-[44px]"
+              titleTooltip="Compartilhar relatório e certificações LEED/WELL com contatos"
+            />
+
             <a
               href={`https://wa.me/5511912720799?text=Ol%C3%A1%2C%20estou%20analisando%20o%20projeto%20${project.code}%20(${encodeURIComponent(project.title)})%20no%20Portal%20e%20gostaria%20de%20suporte`}
               target="_blank"

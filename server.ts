@@ -1,3 +1,5 @@
+process.env.DISABLE_HMR = 'true';
+
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
@@ -94,7 +96,10 @@ async function startServer() {
   // Vite development middleware vs production static distribution
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: false,
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);

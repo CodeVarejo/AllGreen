@@ -32,6 +32,7 @@ interface PortalHeaderProps {
   onOpenSearch?: () => void;
   onTriggerSimulation?: (type: 'botanical' | 'leed') => void;
   onOpenCloudStorage?: () => void;
+  onOpenSettings?: () => void;
 }
 
 export const PortalHeader: React.FC<PortalHeaderProps> = ({
@@ -46,6 +47,7 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
   onOpenSearch,
   onTriggerSimulation,
   onOpenCloudStorage,
+  onOpenSettings,
 }) => {
   const { theme, toggleTheme } = useAccessibility();
   const { t, language } = useLanguage();
@@ -145,9 +147,11 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
             </button>
           )}
 
-          {/* Cloud Storage & Sync CTA */}
+          {/* Cloud Storage & Sync CTA (Hidden on smallest mobile to prevent header overflow) */}
           {onOpenCloudStorage && (
-            <CloudSyncButton onClick={onOpenCloudStorage} variant="portal" />
+            <div className="hidden sm:block">
+              <CloudSyncButton onClick={onOpenCloudStorage} variant="portal" />
+            </div>
           )}
 
           {/* Language Switcher in Portal */}
@@ -165,16 +169,16 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
             <span>{t('portal.newProject', 'Nova Obra')}</span>
           </button>
 
-          {/* AI Simulator CTA (Matching Landing Page Style) */}
+          {/* Simulator CTA (Matching Landing Page Style) */}
           <button
             type="button"
             onClick={onOpenSimulator}
             className="inline-flex items-center justify-center gap-1.5 bg-[#072a1a] text-[#86efac] hover:bg-[#15803d] hover:text-white h-9 sm:h-10 w-9 sm:w-auto px-0 sm:px-4 rounded-full font-bold text-xs sm:text-sm shadow-xs transition-all cursor-pointer active:scale-95 shrink-0"
-            title={`Simulador IA de Ambientes (${modKey}+M)`}
-            aria-label="Abrir Simulador IA"
+            title={`Simulador de Ambientes (${modKey}+M)`}
+            aria-label="Abrir Simulador de Ambientes"
           >
             <Camera className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#86efac]" />
-            <span className="hidden sm:inline">{t('nav.simulator', 'Simulador IA')}</span>
+            <span className="hidden sm:inline">{t('nav.simulator', 'Simulador de Ambientes')}</span>
           </button>
 
           {/* Theme Toggle Button */}
@@ -215,14 +219,20 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
 
           {/* User Profile & Logout */}
           <div className="flex items-center gap-1.5 sm:gap-2 pl-1.5 sm:pl-2 border-l border-gray-200">
-            <div className="relative group cursor-pointer" title={`${user.name} - ${user.cau_rrt || user.role}`}>
+            <button
+              type="button"
+              onClick={onOpenSettings}
+              className="relative group cursor-pointer focus:outline-none rounded-full"
+              title={`${user.name} - ${user.cau_rrt || user.role} (Configurações)`}
+              aria-label="Abrir Perfil e Configurações"
+            >
               <img
                 src={user.avatar}
                 alt={user.name}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-emerald-500/50 shadow-xs"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-emerald-500/50 group-hover:ring-[#072a1a] transition-all shadow-xs"
               />
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white absolute bottom-0 right-0" />
-            </div>
+            </button>
 
             <button
               type="button"

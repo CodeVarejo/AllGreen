@@ -7,6 +7,7 @@ import {
   Download,
   Package,
   Calculator,
+  Settings,
   Plus,
   Edit3,
   History,
@@ -162,6 +163,14 @@ export const PortalBreadcrumbs: React.FC<PortalBreadcrumbsProps> = ({
       onClick: () => onNavigateTab?.('calculator'),
       active: true,
       tooltip: 'Simulador de Pontuação e Retorno de Investimento',
+    });
+  } else if (activeTab === 'settings') {
+    trailItems.push({
+      label: 'Configurações',
+      icon: Settings,
+      onClick: () => onNavigateTab?.('settings'),
+      active: true,
+      tooltip: 'Perfil Técnico & Preferências de Especificação',
     });
   }
 

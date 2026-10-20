@@ -244,12 +244,12 @@ export const ConsultationBookingModal: React.FC<ConsultationBookingModalProps> =
   return (
     <div
       id="consultation-booking-modal"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/75 backdrop-blur-sm animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/75 backdrop-blur-sm animate-in fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleRequestClose();
       }}
     >
-      <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-gray-200">
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-4xl max-h-[92dvh] flex flex-col shadow-2xl overflow-hidden border border-gray-200">
         
         {/* Modal Header */}
         <div className="bg-[#072a1a] text-white p-5 sm:p-6 flex items-center justify-between shrink-0 border-b border-emerald-800">

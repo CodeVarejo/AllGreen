@@ -31,6 +31,8 @@ import {
   ProjectReportSectionToggles,
   DEFAULT_PDF_SECTIONS
 } from '../utils/generateProjectReportPdf';
+import { ShareHighlightButton } from './common/ShareHighlightButton';
+import { formatProjectReportShare } from '../utils/nativeSocialShare';
 import confetti from 'canvas-confetti';
 
 interface ProjectPdfReportModalProps {
@@ -292,15 +294,39 @@ export const ProjectPdfReportModal: React.FC<ProjectPdfReportModalProps> = ({
             </div>
           </div>
 
-          <button
-            type="button"
-            id="close-pdf-modal-btn"
-            onClick={onClose}
-            className="p-2 rounded-full text-gray-300 hover:text-white hover:bg-emerald-900/60 transition-colors cursor-pointer"
-            aria-label="Fechar modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <ShareHighlightButton
+              payload={() => formatProjectReportShare({
+                projectName,
+                clientName,
+                architectName,
+                projectCode,
+                roomType,
+                totalAreaM2,
+                estimatedBudget,
+                wellScore,
+                leedCredits,
+                acousticNrc,
+                productivityGainPercent: productivityGain,
+                absenteeismReductionPercent: absenteeismReduction,
+                annualSavingsFormatted: annualSavings,
+                solutionType,
+                speciesSelected: speciesList,
+              })}
+              label="Compartilhar"
+              variant="compact"
+            />
+
+            <button
+              type="button"
+              id="close-pdf-modal-btn"
+              onClick={onClose}
+              className="p-2 rounded-full text-gray-300 hover:text-white hover:bg-emerald-900/60 transition-colors cursor-pointer"
+              aria-label="Fechar modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Step Navigation Wizard Bar */}
@@ -1043,13 +1069,37 @@ export const ProjectPdfReportModal: React.FC<ProjectPdfReportModalProps> = ({
             )}
           </div>
 
-          <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end flex-wrap sm:flex-nowrap">
+            <ShareHighlightButton
+              payload={() => formatProjectReportShare({
+                projectName,
+                clientName,
+                architectName,
+                projectCode,
+                roomType,
+                totalAreaM2,
+                estimatedBudget,
+                wellScore,
+                leedCredits,
+                acousticNrc,
+                productivityGainPercent: productivityGain,
+                absenteeismReductionPercent: absenteeismReduction,
+                annualSavingsFormatted: annualSavings,
+                solutionType,
+                speciesSelected: speciesList,
+              })}
+              label="Compartilhar Destaques"
+              variant="outline"
+              className="min-h-[44px]"
+              titleTooltip="Compartilhar laudo técnico e créditos LEED/WELL com contatos"
+            />
+
             <button
               type="button"
               id="download-project-pdf-confirm-btn"
               disabled={isGenerating || activeSectionCount === 0}
               onClick={handleGeneratePdf}
-              className="w-full sm:w-auto px-6 py-3 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] font-bold rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99]"
+              className="w-full sm:w-auto px-6 py-3 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] font-bold rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99] min-h-[44px]"
             >
               {isGenerating ? (
                 <>

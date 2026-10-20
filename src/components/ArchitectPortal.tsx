@@ -26,6 +26,7 @@ import { ProjectsView } from './portal/ProjectsView';
 import { BimCadView } from './portal/BimCadView';
 import { SamplesView } from './portal/SamplesView';
 import { SpecifierView } from './portal/SpecifierView';
+import { SettingsView } from './portal/SettingsView';
 import { ProjectDetailModal } from './portal/ProjectDetailModal';
 import { NewProjectModal } from './portal/NewProjectModal';
 import { EditProjectModal } from './portal/EditProjectModal';
@@ -123,6 +124,24 @@ export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
         cau_rrt: isArch ? 'CAU A84920-1 (Homologado)' : 'Cliente Corporativo (São Paulo, SP)'
       };
     });
+  };
+
+  const handleUpdateUserProfile = (updatedUser: UserProfile) => {
+    setCurrentUserProfile(updatedUser);
+    try {
+      localStorage.setItem('allgreen_user_profile', JSON.stringify(updatedUser));
+    } catch (e) {}
+
+    const newNotif: PortalNotification = {
+      id: `notif_set_${Date.now()}`,
+      title: 'Configurações do Escritório Atualizadas',
+      description: `Os dados cadastrais e parâmetros de homologação técnica foram salvos com sucesso no perfil de ${updatedUser.name}.`,
+      timestamp: 'Agora',
+      type: 'project_status',
+      isRead: false,
+    };
+    setNotifications((prev) => [newNotif, ...prev]);
+    setActiveToast(newNotif);
   };
 
   const handleRestoreDemoProjects = () => {
@@ -622,6 +641,7 @@ Portal do Arquiteto: https://allgreendecor.com.br
         onToggleUserRole={handleToggleUserRole}
         onTriggerSimulation={handleTriggerSimulation}
         onOpenCloudStorage={() => setIsCloudStorageModalOpen(true)}
+        onOpenSettings={() => setActiveTab('settings')}
       />
 
       {/* Floating Real-Time Notification Alert Toast */}
@@ -858,6 +878,23 @@ Portal do Arquiteto: https://allgreendecor.com.br
                 setLeedAcousticPanel={setLeedAcousticPanel}
                 wellNatureAccess={wellNatureAccess}
                 setWellNatureAccess={setWellNatureAccess}
+                onBackToDashboard={() => setActiveTab('dashboard')}
+              />
+            </motion.div>
+          )}
+
+          {/* TAB 7: STUDIO PROFILE & SETTINGS */}
+          {activeTab === 'settings' && (
+            <motion.div
+              key="tab-settings"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <SettingsView
+                user={currentUserProfile}
+                onUpdateUser={handleUpdateUserProfile}
                 onBackToDashboard={() => setActiveTab('dashboard')}
               />
             </motion.div>

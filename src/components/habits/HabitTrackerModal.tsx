@@ -26,7 +26,14 @@ import {
   RotateCcw,
   Check,
   Award,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Bell,
+  BellRing,
+  BellOff,
+  Volume2,
+  VolumeX,
+  Play,
+  AlertCircle
 } from 'lucide-react';
 import { Habit, HabitCategory, HabitLogsMap } from '../../types';
 import {
@@ -43,6 +50,17 @@ import {
   HABIT_SUGGESTIONS,
 } from '../../utils/habitStorage';
 import { botanicalAudio } from '../../utils/botanicalAudio';
+import {
+  isNotificationSupported,
+  getNotificationPermission,
+  requestNotificationPermission,
+  loadNatureNotificationSettings,
+  saveNatureNotificationSettings,
+  getProfileBasedReminderContent,
+  sendNatureReminderNotification,
+  NatureNotificationSettings,
+  NatureReminderContent
+} from '../../utils/natureNotificationService';
 
 interface HabitTrackerModalProps {
   isOpen: boolean;
@@ -118,11 +136,102 @@ function renderHabitIcon(iconName: string, className: string = 'w-4 h-4') {
 }
 
 export const HabitTrackerModal: React.FC<HabitTrackerModalProps> = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState<'today' | 'stats' | 'new'>('today');
+  const [activeTab, setActiveTab] = useState<'today' | 'stats' | 'new' | 'notifications'>('today');
   const [habits, setHabits] = useState<Habit[]>(() => loadHabits());
   const [logs, setLogs] = useState<HabitLogsMap>(() => loadHabitLogs());
   const [selectedDate, setSelectedDate] = useState<string>(() => formatDateKey(new Date()));
   const [categoryFilter, setCategoryFilter] = useState<string>('todos');
+
+  // Recurring Nature Notification state
+  const [notificationSettings, setNotificationSettings] = useState<NatureNotificationSettings>(() => loadNatureNotificationSettings());
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(() => getNotificationPermission());
+  const [testStatus, setTestStatus] = useState<string | null>(null);
+
+  // Profile-based reminder content tailored to user's saved biophilic profile
+  const reminderContent = useMemo<NatureReminderContent>(() => getProfileBasedReminderContent(), []);
+
+  // Request browser permission for Web Notifications API
+  const handleRequestPermission = async () => {
+    const perm = await requestNotificationPermission();
+    setNotificationPermission(perm);
+    if (perm === 'granted') {
+      const updated = saveNatureNotificationSettings({ enabled: true });
+      setNotificationSettings(updated);
+      setTestStatus('Permissão concedida! Lembretes locais ativados com sucesso.');
+      setTimeout(() => setTestStatus(null), 4000);
+    } else if (perm === 'denied') {
+      setTestStatus('Permissão bloqueada no navegador. Permita notificações no ícone de segurança da URL.');
+      setTimeout(() => setTestStatus(null), 6000);
+    }
+  };
+
+  // Toggle notification on/off
+  const handleToggleNotification = async (enabled: boolean) => {
+    if (enabled && notificationPermission !== 'granted') {
+      const perm = await requestNotificationPermission();
+      setNotificationPermission(perm);
+      if (perm !== 'granted') {
+        return;
+      }
+    }
+    const updated = saveNatureNotificationSettings({ enabled });
+    setNotificationSettings(updated);
+  };
+
+  // Change notification frequency
+  const handleChangeInterval = (intervalMinutes: number) => {
+    const updated = saveNatureNotificationSettings({ intervalMinutes });
+    setNotificationSettings(updated);
+  };
+
+  // Toggle sound
+  const handleToggleSound = (soundEnabled: boolean) => {
+    const updated = saveNatureNotificationSettings({ soundEnabled });
+    setNotificationSettings(updated);
+  };
+
+  // Toggle quiet hours
+  const handleToggleQuietHours = (quietHoursEnabled: boolean) => {
+    const updated = saveNatureNotificationSettings({ quietHoursEnabled });
+    setNotificationSettings(updated);
+  };
+
+  // Test notification trigger
+  const handleTriggerTestNotification = () => {
+    if (notificationPermission !== 'granted') {
+      handleRequestPermission();
+      return;
+    }
+    const success = sendNatureReminderNotification(null, true);
+    if (success) {
+      setTestStatus('✓ Notificação enviada! Verifique a barra de notificações do seu sistema.');
+      setNotificationSettings(loadNatureNotificationSettings());
+    } else {
+      setTestStatus('Não foi possível disparar. Verifique se o navegador suporta notificações.');
+    }
+    setTimeout(() => setTestStatus(null), 5000);
+  };
+
+  // Complete nature moment directly and log habit
+  const handleCompleteNatureMoment = () => {
+    const natureHabit = habits.find(h => h.title.toLowerCase().includes('natureza') || h.category === 'biofilia');
+    if (natureHabit) {
+      handleToggle(natureHabit.id);
+    } else {
+      const newHabitPreset = HABIT_SUGGESTIONS.find(s => s.category === 'biofilia') || {
+        title: 'Momento de Natureza Consciente',
+        description: reminderContent.suggestedAction,
+        category: 'biofilia' as HabitCategory,
+        icon: 'Leaf',
+        color: 'emerald',
+        targetDaysPerWeek: 7,
+        timeOfDay: 'qualquer' as const,
+      };
+      handleAddSuggestion(newHabitPreset);
+    }
+    setTestStatus('✓ Momento de natureza registrado com sucesso no seu histórico diário!');
+    setTimeout(() => setTestStatus(null), 4000);
+  };
 
   // Form State for creating a habit
   const [newTitle, setNewTitle] = useState('');
@@ -241,18 +350,18 @@ export const HabitTrackerModal: React.FC<HabitTrackerModalProps> = ({ isOpen, on
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto animate-fade-in"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="habit-tracker-title"
     >
       <div
-        className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-gray-200/80 overflow-hidden flex flex-col max-h-[92vh] my-auto"
+        className="relative w-full max-w-4xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-200/80 overflow-hidden flex flex-col max-h-[92dvh] my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Top Header */}
-        <div className="bg-gradient-to-r from-[#072a1a] via-[#0d3822] to-[#072a1a] text-white p-5 sm:p-6 border-b border-emerald-900/50 relative">
+        <div className="bg-gradient-to-r from-[#072a1a] via-[#0d3822] to-[#072a1a] text-white p-4 sm:p-6 border-b border-emerald-900/50 relative">
           <button
             type="button"
             onClick={onClose}
@@ -370,7 +479,7 @@ export const HabitTrackerModal: React.FC<HabitTrackerModalProps> = ({ isOpen, on
                   </button>
                 </div>
 
-                <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+                <div className="grid grid-cols-7 gap-1 sm:gap-2">
                   {ribbonDays.map((d) => {
                     const isSelected = d.dateKey === selectedDate;
                     const dayLogsMap = logs[d.dateKey] || {};
@@ -382,16 +491,16 @@ export const HabitTrackerModal: React.FC<HabitTrackerModalProps> = ({ isOpen, on
                         key={d.dateKey}
                         type="button"
                         onClick={() => setSelectedDate(d.dateKey)}
-                        className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
+                        className={`flex flex-col items-center justify-center p-1 sm:p-2 rounded-xl border transition-all cursor-pointer ${
                           isSelected
                             ? 'bg-[#072a1a] text-white border-[#072a1a] shadow-sm scale-102'
                             : 'bg-gray-50 hover:bg-emerald-50/60 border-gray-200 text-gray-700'
                         }`}
                       >
-                        <span className={`text-[10px] font-medium ${isSelected ? 'text-emerald-300' : 'text-gray-500'}`}>
+                        <span className={`text-[9px] sm:text-[10px] font-medium ${isSelected ? 'text-emerald-300' : 'text-gray-500'}`}>
                           {d.dayName}
                         </span>
-                        <span className="text-sm sm:text-base font-bold my-0.5">
+                        <span className="text-xs sm:text-base font-bold my-0.5">
                           {d.dayNumber}
                         </span>
                         <div className="flex items-center gap-1 mt-0.5">
@@ -508,7 +617,7 @@ export const HabitTrackerModal: React.FC<HabitTrackerModalProps> = ({ isOpen, on
                           <button
                             type="button"
                             onClick={() => handleToggle(habit.id)}
-                            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0 mt-0.5 sm:mt-0 ${
+                            className={`w-9 h-9 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0 mt-0.5 sm:mt-0 ${
                               isDone
                                 ? 'bg-[#15803d] text-white shadow-sm scale-105'
                                 : 'bg-gray-100 hover:bg-emerald-100 text-gray-400 hover:text-emerald-700 border border-gray-300'

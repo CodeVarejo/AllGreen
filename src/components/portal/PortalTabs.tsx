@@ -7,11 +7,12 @@ import {
   Package,
   Calculator,
   Leaf,
+  Settings,
   MoreHorizontal,
   X
 } from 'lucide-react';
 
-export type PortalTabKey = 'dashboard' | 'projects' | 'comparison' | 'esg' | 'bim_cad' | 'samples' | 'calculator';
+export type PortalTabKey = 'dashboard' | 'projects' | 'comparison' | 'esg' | 'bim_cad' | 'samples' | 'calculator' | 'settings';
 
 interface PortalTabsProps {
   activeTab: PortalTabKey;
@@ -35,7 +36,7 @@ export const PortalTabs: React.FC<PortalTabsProps> = ({
     {
       key: 'dashboard' as PortalTabKey,
       label: 'Visão Geral',
-      sublabel: isArchitect ? 'Métricas & Status' : 'Empreendimentos & Status',
+      sublabel: isArchitect ? 'Métricas & Status' : 'Empreendimentos',
       icon: LayoutDashboard,
       badge: null,
     },
@@ -76,9 +77,16 @@ export const PortalTabs: React.FC<PortalTabsProps> = ({
     },
     {
       key: 'calculator' as PortalTabKey,
-      label: isArchitect ? 'LEED & ROI Biofílico' : 'Laudos & ROI Corporativo',
+      label: isArchitect ? 'LEED & ROI Biofílico' : 'Laudos & ROI',
       sublabel: isArchitect ? 'Pontos & Payback' : 'Certificados & Payback',
       icon: Calculator,
+      badge: null,
+    },
+    {
+      key: 'settings' as PortalTabKey,
+      label: 'Configurações',
+      sublabel: 'Perfil & Governança',
+      icon: Settings,
       badge: null,
     },
   ];
@@ -146,7 +154,7 @@ export const PortalTabs: React.FC<PortalTabsProps> = ({
       {/* Mobile Bottom Navigation Bar (Screens < 768px for Instant Thumb Navigation) */}
       <nav 
         aria-label="Navegação rápida móvel" 
-        className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#072a1a]/10 px-2 py-1.5 flex md:hidden items-center justify-around shadow-lg"
+        className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#072a1a]/10 px-2 pt-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))] flex md:hidden items-center justify-around shadow-lg"
       >
         {primaryMobileTabs.map((tab) => {
           const Icon = tab.icon;
@@ -181,13 +189,13 @@ export const PortalTabs: React.FC<PortalTabsProps> = ({
           type="button"
           onClick={() => setIsMobileMoreOpen(true)}
           className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer min-h-[44px] min-w-[56px] ${
-            ['bim_cad', 'samples', 'calculator'].includes(activeTab)
+            ['bim_cad', 'samples', 'calculator', 'settings'].includes(activeTab)
               ? 'text-[#072a1a] font-bold'
               : 'text-gray-500 font-medium'
           }`}
         >
           <div className={`p-1.5 rounded-lg ${
-            ['bim_cad', 'samples', 'calculator'].includes(activeTab) ? 'bg-emerald-100 text-[#072a1a]' : ''
+            ['bim_cad', 'samples', 'calculator', 'settings'].includes(activeTab) ? 'bg-emerald-100 text-[#072a1a]' : ''
           }`}>
             <MoreHorizontal className="w-5 h-5" />
           </div>

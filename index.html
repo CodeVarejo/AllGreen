@@ -10,9 +10,90 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#072a1a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="AllGreen" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+    <script>
+      (function() {
+        if (typeof window === 'undefined') return;
+
+        window.addEventListener('unhandledrejection', function(event) {
+          if (event.reason && event.reason.message && (
+            event.reason.message.indexOf('WebSocket') !== -1 ||
+            event.reason.message.indexOf('vite') !== -1
+          )) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        });
+
+        window.addEventListener('error', function(event) {
+          if (event.message && (
+            event.message.indexOf('WebSocket') !== -1 ||
+            event.message.indexOf('vite') !== -1
+          )) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        });
+
+        var OrigWS = window.WebSocket;
+        if (OrigWS) {
+          function SafeWS(url, protocols) {
+            var isViteHmr = protocols === 'vite-hmr' || (typeof url === 'string' && (url.indexOf('vite-hmr') !== -1 || url.indexOf('@vite-hmr') !== -1));
+            if (isViteHmr) {
+              this.url = url;
+              this.protocol = 'vite-hmr';
+              this.readyState = 1;
+              this.OPEN = 1;
+              this.CONNECTING = 0;
+              this.CLOSING = 2;
+              this.CLOSED = 3;
+              this.listeners = {};
+              var self = this;
+              setTimeout(function() {
+                var cbs = (self.listeners && self.listeners['open']) || [];
+                cbs.forEach(function(cb) { try { cb({ type: 'open' }); } catch (e) {} });
+              }, 0);
+              return;
+            }
+            return new OrigWS(url, protocols);
+          }
+          SafeWS.prototype.addEventListener = function(type, cb) {
+            if (!this.listeners) this.listeners = {};
+            if (!this.listeners[type]) this.listeners[type] = [];
+            this.listeners[type].push(cb);
+            if (type === 'open' && this.readyState === 1) {
+              setTimeout(function() { try { cb({ type: 'open' }); } catch (e) {} }, 0);
+            }
+          };
+          SafeWS.prototype.removeEventListener = function(type, cb) {
+            if (this.listeners && this.listeners[type]) {
+              this.listeners[type] = this.listeners[type].filter(function(fn) { return fn !== cb; });
+            }
+          };
+          SafeWS.prototype.send = function() {};
+          SafeWS.prototype.close = function() {
+            this.readyState = 3;
+            var cbs = (this.listeners && this.listeners['close']) || [];
+            cbs.forEach(function(cb) { try { cb({ type: 'close', wasClean: true }); } catch (e) {} });
+          };
+          SafeWS.CONNECTING = 0;
+          SafeWS.OPEN = 1;
+          SafeWS.CLOSING = 2;
+          SafeWS.CLOSED = 3;
+          window.WebSocket = SafeWS;
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

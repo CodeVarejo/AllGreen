@@ -174,11 +174,10 @@ export const ProjectComparison: React.FC<ProjectComparisonProps> = ({
       {/* Header with Title and Global Actions */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#072a1a] text-[10px] font-extrabold uppercase tracking-wider border border-emerald-300">
-              Análise Comparativa
-            </span>
-            <span className="text-xs text-gray-500 font-semibold">• Lado a Lado</span>
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#15803d]">
+            <span>Análise Comparativa Técnica</span>
+            <span aria-hidden="true">·</span>
+            <span className="text-gray-500 font-sans font-medium">Lado a Lado</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-serif font-bold text-gray-950 mt-1 tracking-tight">
             Comparativo Técnico & Sustentabilidade
@@ -191,7 +190,7 @@ export const ProjectComparison: React.FC<ProjectComparisonProps> = ({
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             onClick={handleSwapProjects}
-            className="px-4 py-2 bg-white hover:bg-emerald-50 text-gray-800 hover:text-[#072a1a] border border-gray-200 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
+            className="px-4 py-2.5 bg-white hover:bg-emerald-50 text-gray-800 hover:text-[#072a1a] border border-gray-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95 min-h-[42px]"
             title="Inverter colunas de comparação"
           >
             <ArrowLeftRight className="w-4 h-4 text-[#15803d]" />
@@ -200,7 +199,7 @@ export const ProjectComparison: React.FC<ProjectComparisonProps> = ({
 
           <button
             onClick={handleExportComparisonPdf}
-            className="px-5 py-2 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold rounded-full text-xs transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
+            className="px-5 py-2.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold rounded-xl text-xs transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95 min-h-[42px]"
           >
             <Download className="w-4 h-4" />
             <span>Exportar Relatório PDF</span>
@@ -214,7 +213,7 @@ export const ProjectComparison: React.FC<ProjectComparisonProps> = ({
         {/* Project A Card Selector */}
         <div className="bg-white p-5 rounded-3xl border-2 border-emerald-600/40 shadow-sm space-y-3 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="px-2.5 py-0.5 rounded-full bg-[#072a1a] text-[#86efac] text-[10px] font-bold">
+            <span className="px-2.5 py-1 rounded-lg bg-[#072a1a] text-[#86efac] text-[10px] font-mono font-bold border border-emerald-500/30">
               PROJETO A (Referência)
             </span>
             <select

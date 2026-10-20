@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Leaf, Search, Menu as MenuIcon, X, Camera, UserCheck, Bell, Keyboard, Volume2, VolumeX, Sun, Moon, Activity } from 'lucide-react';
+import { Leaf, Search, Menu as MenuIcon, X, Camera, UserCheck, Bell } from 'lucide-react';
 import { UserProfile } from '../types';
 import { isMacUser } from '../hooks/useKeyboardShortcuts';
 import { MobileMenuDrawer } from './MobileMenuDrawer';
-import { botanicalAudio } from '../utils/botanicalAudio';
-import { useAccessibility } from '../context/AccessibilityContext';
-import { useLanguage } from '../context/LanguageContext';
+import { ThemeSelector } from './ThemeSelector';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { botanicalAudio } from '../utils/botanicalAudio';
+import { useLanguage } from '../context/LanguageContext';
 
 interface NavbarProps {
   onOpenSimulator: () => void;
@@ -41,9 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenTour,
   onOpenHabitTracker,
 }) => {
-  const { theme, toggleTheme } = useAccessibility();
-  const { t, language } = useLanguage();
-  const [searchVal, setSearchVal] = useState('');
+  const { t } = useLanguage();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAudioActive, setIsAudioActive] = useState(false);
   const isMac = useMemo(() => isMacUser(), []);
@@ -53,17 +51,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     const active = botanicalAudio.toggle();
     setIsAudioActive(active);
   };
-
-  // Close drawer on window resize to xl (>= 1280px)
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1280) {
-        setIsDrawerOpen(false);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   // Lock body scroll when drawer is open
   useEffect(() => {
@@ -76,26 +63,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       document.body.style.overflow = 'unset';
     };
   }, [isDrawerOpen]);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchVal.trim()) return;
-
-    if (/^AG-\d+/i.test(searchVal.trim())) {
-      onOpenProjectLookup();
-      return;
-    }
-
-    if (onOpenSearch) {
-      onOpenSearch();
-    } else if (onSearchQueryChange) {
-      onSearchQueryChange(searchVal);
-      const elem = document.getElementById('solutions');
-      if (elem) {
-        elem.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
 
   const scrollToSection = (id: string) => {
     setIsDrawerOpen(false);
@@ -110,9 +77,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header
       id="main-app-header"
-      className="navbar sticky top-0 z-40 bg-[#f3f7f4]/95 backdrop-blur-md border-b border-[#0d3822]/10 transition-all w-full overflow-x-clip"
+      className="navbar sticky top-0 z-40 bg-[#f3f7f4]/95 dark:bg-[#06180f]/95 backdrop-blur-md border-b border-[#0d3822]/10 dark:border-emerald-800/30 transition-all w-full overflow-x-clip"
     >
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 h-14 sm:h-16 md:h-20 flex items-center justify-between gap-2 sm:gap-3 md:gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 h-14 sm:h-16 md:h-20 flex items-center justify-between gap-3 sm:gap-4 md:gap-6">
         
         {/* Brand Logo */}
         <a
@@ -120,14 +87,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           id="header-brand-logo"
           className="flex items-center gap-2 sm:gap-3 shrink-0 group focus:outline-none min-w-0"
         >
-          <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#072a1a] border border-[#86efac]/30 text-[#86efac] flex items-center justify-center shadow-sm group-hover:border-[#86efac]/70 transition-all shrink-0">
+          <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#072a1a] border border-[#86efac]/30 text-[#86efac] flex items-center justify-center shadow-sm group-hover:border-[#86efac]/70 transition-all shrink-0">
             <Leaf className="w-4 h-4 sm:w-5 sm:h-5 fill-[#86efac]/20 stroke-[#86efac]" />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="font-serif text-lg sm:text-xl font-semibold tracking-tight text-[#072a1a] leading-tight group-hover:text-emerald-900 transition-colors whitespace-nowrap">
+            <span className="font-serif text-base sm:text-xl font-bold tracking-tight text-[#072a1a] dark:text-[#86efac] leading-none group-hover:text-emerald-900 transition-colors whitespace-nowrap">
               ALL GREEN
             </span>
-            <span className="hidden sm:block text-[9px] sm:text-[10px] font-sans font-medium tracking-wider text-emerald-800/80 uppercase truncate">
+            <span className="hidden sm:block text-[9px] sm:text-[10px] font-sans font-medium tracking-wider text-emerald-800/80 dark:text-emerald-400 uppercase truncate mt-0.5">
               {t('common.tagline', 'Biofilia Arquitetônica')}
             </span>
           </div>
@@ -136,13 +103,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Desktop Navigation Links */}
         <nav
           id="desktop-navigation-links"
-          className="hidden xl:flex items-center gap-4 2xl:gap-6 text-xs lg:text-sm font-semibold text-[#0d3822]"
+          className="hidden lg:flex items-center gap-4 xl:gap-6 text-xs lg:text-sm font-semibold text-[#0d3822] dark:text-emerald-200"
         >
           <button 
             type="button"
             id="nav-link-solutions"
             onClick={() => scrollToSection('solutions')}
-            className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
+            className="hover:text-[#15803d] dark:hover:text-[#86efac] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
             {t('nav.solutions', 'Soluções')}
           </button>
@@ -150,7 +117,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             type="button"
             id="nav-link-catalog"
             onClick={() => scrollToSection('botanical-catalog')}
-            className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
+            className="hover:text-[#15803d] dark:hover:text-[#86efac] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
             {t('nav.catalog', 'Catálogo')}
           </button>
@@ -158,7 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             type="button"
             id="nav-link-quiz"
             onClick={() => scrollToSection('biophilic-quiz')}
-            className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
+            className="hover:text-[#15803d] dark:hover:text-[#86efac] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
             {t('nav.quiz', 'Quiz Biofílico')}
           </button>
@@ -166,7 +133,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             type="button"
             id="nav-link-comparison"
             onClick={() => scrollToSection('comparison-matrix')}
-            className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
+            className="hover:text-[#15803d] dark:hover:text-[#86efac] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
             {t('nav.comparison', 'Comparativo')}
           </button>
@@ -174,7 +141,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             type="button"
             id="nav-link-roi"
             onClick={() => scrollToSection('biophilic-roi-calculator')}
-            className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
+            className="hover:text-[#15803d] dark:hover:text-[#86efac] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
             {t('nav.roi', 'Calculadora & ROI')}
           </button>
@@ -182,100 +149,50 @@ export const Navbar: React.FC<NavbarProps> = ({
             type="button"
             id="nav-link-gallery"
             onClick={() => scrollToSection('before-after-gallery')}
-            className="hover:text-[#15803d] transition-colors py-1 cursor-pointer whitespace-nowrap"
+            className="hover:text-[#15803d] dark:hover:text-[#86efac] transition-colors py-1 cursor-pointer whitespace-nowrap"
           >
             {t('nav.projects', 'Projetos')}
           </button>
         </nav>
 
-        {/* Search Bar - Desktop with Ctrl+K trigger (Wide screens >= 1536px) */}
-        <div className="hidden 2xl:flex items-center relative max-w-[220px] w-full">
-          <form onSubmit={handleSearchSubmit} className="relative w-full">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#15803d]" />
-            <input
-              type="text"
-              value={searchVal}
-              onClick={() => onOpenSearch?.()}
-              onChange={(e) => setSearchVal(e.target.value)}
-              placeholder={t('nav.searchPlaceholder', 'Buscar produtos, laudos...')}
-              className="w-full pl-9 pr-14 py-1.5 bg-white rounded-full border border-gray-300 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0d3822] cursor-pointer"
-            />
-            <button
-              type="button"
-              onClick={onOpenSearch}
-              className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-gray-100 hover:bg-gray-200 text-gray-600 border border-gray-300 text-[10px] font-mono font-bold shadow-2xs cursor-pointer transition-colors"
-              title={`Abrir Busca Global (${modKey}+K)`}
-            >
-              {modKey}K
-            </button>
-          </form>
-        </div>
-
-        {/* Action Buttons (Desktop & Mobile) */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 min-w-0">
+        {/* Clean, Responsive Action Bar */}
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 min-w-0">
           
-          {/* Ambient Soundscape Toggle */}
-          <button
-            type="button"
-            id="header-ambient-audio-btn"
-            onClick={handleToggleAudio}
-            className={`hidden sm:flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border text-xs transition-all cursor-pointer shrink-0 ${
-              isAudioActive
-                ? 'bg-emerald-900 text-emerald-200 border-emerald-600 shadow-sm'
-                : 'bg-white hover:bg-emerald-50 text-emerald-950 border-gray-300/80 shadow-2xs'
-            }`}
-            title={isAudioActive ? t('nav.audioActive') : t('nav.audioInactive')}
-            aria-label={isAudioActive ? t('nav.audioActive') : t('nav.audioInactive')}
-          >
-            {isAudioActive ? (
-              <Volume2 className="w-4 h-4 text-emerald-400" />
-            ) : (
-              <VolumeX className="w-4 h-4 text-gray-400" />
-            )}
-          </button>
-
-          {/* Theme Toggle Button (Light / Dark Mode) */}
-          <button
-            type="button"
-            id="header-theme-toggle-btn"
-            onClick={toggleTheme}
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300/80 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer active:scale-95 flex items-center justify-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822]"
-            title={theme === 'dark' ? t('nav.themeLight') : t('nav.themeDark')}
-            aria-label={theme === 'dark' ? t('nav.themeLight') : t('nav.themeDark')}
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400 transition-transform duration-300 hover:rotate-45" />
-            ) : (
-              <Moon className="w-4 h-4 text-[#15803d] transition-transform duration-300 hover:-rotate-12" />
-            )}
-          </button>
-
-          {/* Language Switcher (PT / EN Toggle) */}
-          <LanguageSwitcher variant="navbar" />
-
-          {/* Quick Search Button (Hidden on xs mobile to prevent header overflow, available in drawer & on screens >= 640px) */}
+          {/* Quick Search Button (Visible on tablet & desktop) */}
           <button
             type="button"
             id="header-quick-search-btn"
             onClick={onOpenSearch}
-            className="hidden sm:flex 2xl:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300/80 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer active:scale-95 items-center justify-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822]"
-            title={`Buscar (${modKey}+K)`}
+            className="hidden sm:flex items-center gap-1.5 px-2.5 sm:px-3 h-8.5 sm:h-10 rounded-full bg-white dark:bg-emerald-950/60 hover:bg-emerald-50 dark:hover:bg-emerald-900 text-[#0d3822] dark:text-emerald-200 border border-gray-300/80 dark:border-emerald-800/80 shadow-2xs transition-all cursor-pointer active:scale-95 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822]"
+            title={`Buscar produtos, laudos e comandos (${modKey}+K)`}
             aria-label="Abrir busca e comandos"
           >
-            <Search className="w-4 h-4 text-[#15803d]" />
+            <Search className="w-4 h-4 text-[#15803d] dark:text-[#86efac]" />
+            <span className="hidden xl:inline text-xs font-medium text-gray-600 dark:text-gray-300">
+              {t('nav.search', 'Buscar')}
+            </span>
+            <kbd className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.5 rounded bg-gray-100 dark:bg-emerald-900 border border-gray-200 dark:border-emerald-800 text-gray-500 dark:text-emerald-300 font-bold ml-0.5">
+              {modKey}K
+            </kbd>
           </button>
 
-          {/* Notification Bell (Only visible when user is logged in) */}
+          {/* Circadian Solar Schedule & Theme Selector (Sistema / Claro / Escuro) */}
+          <ThemeSelector variant="compact" className="hidden sm:inline-flex" />
+
+          {/* Platform Language Switcher (PT / EN / ES) */}
+          <LanguageSwitcher variant="navbar" className="hidden sm:inline-flex" />
+
+          {/* Notification Bell (Only visible when user is logged in, >= sm) */}
           {currentUser && (
             <button
               type="button"
               id="header-notifications-btn"
               onClick={onOpenNotifications}
-              className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300 hover:border-emerald-400 shadow-2xs transition-all cursor-pointer group active:scale-95 flex items-center justify-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822]"
+              className="hidden sm:flex relative w-8.5 h-8.5 sm:w-10 sm:h-10 rounded-full bg-white dark:bg-emerald-950/60 hover:bg-emerald-50 dark:hover:bg-emerald-900 text-[#0d3822] dark:text-emerald-200 border border-gray-300 dark:border-emerald-800 shadow-2xs transition-all cursor-pointer group active:scale-95 items-center justify-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822]"
               title="Notificações"
               aria-label="Abrir notificações"
             >
-              <Bell className="w-4 h-4 text-[#15803d] group-hover:rotate-12 transition-transform" />
+              <Bell className="w-4 h-4 text-[#15803d] dark:text-[#86efac] group-hover:rotate-12 transition-transform" />
               {unreadNotificationsCount > 0 && (
                 <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 bg-red-600 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center border-2 border-white shadow-xs animate-pulse">
                   {unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount}
@@ -284,68 +201,75 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          {/* Habit Tracker CTA */}
-          <button
-            type="button"
-            id="header-habit-tracker-btn"
-            onClick={onOpenHabitTracker}
-            className="hidden lg:flex items-center gap-1.5 bg-white hover:bg-emerald-50 text-[#0d3822] border border-gray-300/80 hover:border-emerald-400 px-3 h-9 sm:h-10 rounded-full font-semibold text-xs shadow-2xs transition-all cursor-pointer whitespace-nowrap shrink-0"
-            title="Rastreador de Hábitos & Rotina Biofílica (H)"
-          >
-            <Activity className="w-3.5 h-3.5 text-[#15803d]" />
-            <span>Hábitos</span>
-          </button>
-
-          {/* Portal do Arquiteto CTA (Screens >= 640px) */}
+          {/* Portal do Arquiteto CTA (Screens >= 768px) */}
           <button
             type="button"
             id="header-portal-cta-btn"
             onClick={onOpenLogin}
-            className="hidden sm:flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#0d3822] border border-emerald-300/80 px-3.5 h-9 sm:h-10 rounded-full font-semibold text-xs shadow-2xs transition-all cursor-pointer whitespace-nowrap shrink-0"
+            className="hidden md:flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900 text-[#0d3822] dark:text-emerald-200 border border-emerald-300/80 dark:border-emerald-800 px-3.5 h-9 sm:h-10 rounded-full font-semibold text-xs shadow-2xs transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
             title={`Área do Arquiteto (${modKey}+P)`}
           >
-            <UserCheck className="w-3.5 h-3.5 text-[#15803d]" />
+            <UserCheck className="w-3.5 h-3.5 text-[#15803d] dark:text-[#86efac]" />
             <span>{currentUser ? currentUser.name.split(' ')[0] : t('nav.architectArea', 'Área do Arquiteto')}</span>
           </button>
 
-          {/* IA Simulator CTA (Compact icon on mobile, full pill on sm+) */}
+          {/* Simulator CTA (Flagship Action - Always clean and fits on mobile!) */}
           <button
             type="button"
             id="header-simulator-cta-btn"
             onClick={onOpenSimulator}
-            className="flex items-center justify-center gap-2 bg-[#0d3822] text-[#86efac] hover:bg-[#15803d] h-9 sm:h-10 w-9 sm:w-auto px-0 sm:px-4 rounded-full font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
-            title={`Simulador IA (${modKey}+M)`}
-            aria-label="Abrir Simulador IA"
+            className="flex items-center justify-center gap-1.5 sm:gap-2 bg-[#0d3822] text-[#86efac] hover:bg-[#15803d] hover:text-white h-8.5 sm:h-10 px-2.5 sm:px-4 rounded-full font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
+            title={`Simulador de Ambientes (${modKey}+M)`}
+            aria-label="Abrir Simulador de Ambientes"
           >
-            <Camera className="w-4 h-4 text-[#86efac] shrink-0" />
-            <span className="hidden sm:inline">{t('nav.simulator', 'Simulador IA')}</span>
+            <Camera className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#86efac] shrink-0" />
+            <span className="text-[11px] sm:text-sm">{t('nav.simulator', 'Simulador de Ambientes')}</span>
           </button>
 
-          {/* Hamburger Menu Toggle - Always pinned, accessible, never pushed off-screen */}
+          {/* Hamburger Menu Toggle (Universal: Available on desktop and mobile) */}
           <button
             type="button"
             id="header-mobile-hamburger-btn"
             onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-            aria-label={isDrawerOpen ? t('nav.closeNavigation') : t('nav.openNavigation')}
+            aria-label={isDrawerOpen ? t('nav.closeNavigation', 'Fechar menu') : t('nav.openNavigation', 'Abrir menu de ferramentas')}
             aria-expanded={isDrawerOpen}
-            aria-controls="mobile-menu-drawer"
-            className={`flex xl:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full items-center justify-center transition-all cursor-pointer shrink-0 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822] ${
+            aria-controls="menu-drawer"
+            title="Menu & Ferramentas"
+            className={`relative flex items-center justify-center gap-1.5 h-8.5 sm:h-10 px-2.5 sm:px-3 rounded-full transition-all cursor-pointer shrink-0 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822] ${
               isDrawerOpen
                 ? 'bg-[#0d3822] text-[#86efac] border border-[#0d3822] shadow-sm'
-                : 'bg-white text-[#0d3822] border border-gray-300/80 hover:bg-emerald-50 hover:border-emerald-400 shadow-2xs'
+                : 'bg-white dark:bg-emerald-950/60 text-[#0d3822] dark:text-emerald-200 border border-gray-300/80 dark:border-emerald-800/80 hover:bg-emerald-50 dark:hover:bg-emerald-900 shadow-2xs'
             }`}
           >
             {isDrawerOpen ? (
-              <X className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#86efac] transition-transform rotate-90 duration-200" />
+              <X className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#86efac] transition-transform rotate-90 duration-200" />
             ) : (
-              <MenuIcon className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#0d3822] transition-transform duration-200" />
+              <MenuIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#0d3822] dark:text-emerald-200 transition-transform duration-200" />
+            )}
+            <span className="hidden xl:inline text-xs font-bold text-[#0d3822] dark:text-emerald-200">
+              Menu
+            </span>
+
+            {/* Notification badge on mobile if user has unread notifications */}
+            {currentUser && unreadNotificationsCount > 0 && (
+              <span className="sm:hidden absolute -top-1 -right-1 min-w-[15px] h-[15px] px-0.5 bg-red-600 text-white text-[8px] font-extrabold rounded-full flex items-center justify-center border border-white shadow-xs animate-pulse">
+                {unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount}
+              </span>
+            )}
+
+            {/* Subtle green indicator if audio soundscape is playing */}
+            {isAudioActive && (
+              <span
+                className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"
+                title="Som ambiente ativo"
+              />
             )}
           </button>
         </div>
 
       </div>
 
-      {/* Extracted MobileMenuDrawer component (Rendered via React Portal for flawless full-screen coverage) */}
+      {/* Slide-over Drawer (Desktop & Mobile) */}
       <MobileMenuDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
@@ -370,4 +294,3 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
-

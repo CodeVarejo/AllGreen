@@ -129,20 +129,20 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-2.5 sm:p-4 overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           handleRequestClose();
         }
       }}
     >
-      <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative border border-emerald-900/20 my-auto">
+      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative border border-emerald-900/20 my-auto max-h-[92dvh] flex flex-col">
         
         {/* Header */}
-        <div className="bg-[#072a1a] text-white p-5 flex items-center justify-between">
+        <div className="bg-[#072a1a] text-white p-4 sm:p-5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <PhoneCall className="w-5 h-5 text-[#86efac]" />
-            <h2 className="font-serif font-bold text-lg text-white">
+            <h2 className="font-serif font-bold text-base sm:text-lg text-white">
               Solicitar Orçamento Executivo All Green
             </h2>
           </div>
@@ -156,7 +156,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({
         </div>
 
         {/* Form Body */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
           {submittedTicket ? (
             <div className="py-6 text-center space-y-4">
               <div className="w-16 h-16 rounded-full bg-emerald-100 text-[#15803d] mx-auto flex items-center justify-center">

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScrollReveal } from './ScrollReveal';
+import { useLanguage } from '../context/LanguageContext';
 
 export interface CustomerTestimonialItem {
   id: string;
@@ -135,11 +136,21 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
   onOpenSimulator,
   onOpenProjectDetail,
 }) => {
+  const { language } = useLanguage();
+  const isPt = language === 'pt';
+  const isEs = language === 'es';
+
   const [activeSector, setActiveSector] = useState<string>('Todos');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isAutoplay, setIsAutoplay] = useState<boolean>(true);
 
-  const sectors = ['Todos', 'Corporativo', 'Residencial', 'Saúde & Clínicas', 'Hotelaria & Gastronomia'];
+  const sectorLabels = [
+    { id: 'Todos', label: isPt ? 'Todos os Setores' : isEs ? 'Todos los Sectores' : 'All Sectors' },
+    { id: 'Corporativo', label: isPt ? 'Corporativo' : isEs ? 'Corporativo' : 'Corporate' },
+    { id: 'Residencial', label: isPt ? 'Residencial' : isEs ? 'Residencial' : 'Residential' },
+    { id: 'Saúde & Clínicas', label: isPt ? 'Saúde & Clínicas' : isEs ? 'Salud & Clínicas' : 'Healthcare & Clinics' },
+    { id: 'Hotelaria & Gastronomia', label: isPt ? 'Hotelaria & Gastronomia' : isEs ? 'Hotelería & Gastronomía' : 'Hospitality & Dining' },
+  ];
 
   const filteredTestimonials = TESTIMONIALS_DATA.filter((item) => {
     if (activeSector === 'Todos') return true;
@@ -187,12 +198,30 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
         <ScrollReveal animation="fade-up" distance={25}>
           <div className="text-center max-w-3xl mx-auto space-y-3">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-[#072a1a] leading-tight">
-              A palavra de quem especificou a <br className="hidden sm:inline" />
-              <span className="italic font-light text-emerald-800">biofilia de alta precisão.</span>
+              {isPt ? (
+                <>
+                  A palavra de quem especificou a <br className="hidden sm:inline" />
+                  <span className="italic font-light text-emerald-800">biofilia de alta precisão.</span>
+                </>
+              ) : isEs ? (
+                <>
+                  La palabra de quienes especificaron la <br className="hidden sm:inline" />
+                  <span className="italic font-light text-emerald-800">biofilia de alta precisión.</span>
+                </>
+              ) : (
+                <>
+                  Endorsements from leaders who specified <br className="hidden sm:inline" />
+                  <span className="italic font-light text-emerald-800">high-precision biophilia.</span>
+                </>
+              )}
             </h2>
 
             <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-sans font-light">
-              Avaliações de arquitetos, diretores de facilities e clientes residenciais sobre a experiência com os jardins verticais All Green.
+              {isPt
+                ? 'Avaliações de arquitetos, diretores de facilities e clientes residenciais sobre a experiência com os jardins verticais All Green.'
+                : isEs
+                ? 'Evaluaciones de arquitectos, directores de facilities y clientes residenciales sobre los jardines verticales All Green.'
+                : 'Verified reviews from architects, facility directors, and residential clients on All Green vertical gardens.'}
             </p>
           </div>
         </ScrollReveal>
@@ -200,18 +229,18 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
         {/* Sector Filter Chips */}
         <ScrollReveal animation="fade-up" delay={0.1} distance={15}>
           <div className="flex items-center justify-center gap-2 overflow-x-auto py-5 mt-3">
-            {sectors.map((sec) => (
+            {sectorLabels.map((sec) => (
               <button
-                key={sec}
+                key={sec.id}
                 type="button"
-                onClick={() => setActiveSector(sec)}
+                onClick={() => setActiveSector(sec.id)}
                 className={`px-4 py-2 rounded-full text-xs font-mono font-bold whitespace-nowrap transition-all cursor-pointer ${
-                  activeSector === sec
+                  activeSector === sec.id
                     ? 'bg-[#072a1a] text-[#86efac] shadow-md border border-[#86efac]/30'
                     : 'bg-white text-gray-700 border border-gray-200/90 hover:bg-emerald-50 hover:text-[#072a1a]'
                 }`}
               >
-                {sec}
+                {sec.label}
               </button>
             ))}
           </div>
@@ -410,10 +439,18 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
           <div className="mt-12 text-center bg-white p-6 rounded-2xl border border-gray-200/80 shadow-xs max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-left">
               <h4 className="font-serif font-bold text-gray-900 text-sm sm:text-base">
-                Quer transformar o seu ambiente com biofilia de impacto?
+                {isPt
+                  ? 'Quer transformar o seu ambiente com biofilia de impacto?'
+                  : isEs
+                  ? '¿Desea transformar su espacio con biofilia de impacto?'
+                  : 'Ready to elevate your architecture with high-impact biophilia?'}
               </h4>
               <p className="text-xs text-gray-600 mt-0.5">
-                Receba uma consultoria técnica de compatibilização ou simule seu espaço em tempo real.
+                {isPt
+                  ? 'Receba uma consultoria técnica de compatibilização ou simule seu espaço em tempo real.'
+                  : isEs
+                  ? 'Reciba consultoría técnica o simule su espacio en tiempo real.'
+                  : 'Schedule an architectural consultation or simulate your wall in real time.'}
               </p>
             </div>
 
@@ -425,7 +462,7 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
                   onClick={onOpenConsultation}
                   className="px-4 py-2.5 bg-[#072a1a] text-[#86efac] font-bold rounded-xl text-xs hover:bg-[#15803d] transition-all cursor-pointer shadow-md"
                 >
-                  Agendar Consultoria
+                  {isPt ? 'Agendar Consultoria' : isEs ? 'Agendar Consultoría' : 'Book Consultation'}
                 </button>
               )}
 
@@ -436,7 +473,7 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
                   onClick={onOpenSimulator}
                   className="px-4 py-2.5 bg-white text-[#072a1a] border border-gray-300 hover:border-emerald-400 hover:bg-emerald-50 font-bold rounded-xl text-xs transition-all cursor-pointer"
                 >
-                  Simulador IA
+                  {isPt ? 'Simulador IA' : isEs ? 'Simulador IA' : 'AI Simulator'}
                 </button>
               )}
             </div>

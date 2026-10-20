@@ -66,10 +66,10 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
         id: 'simulator',
         targetId: 'header-simulator-cta-btn',
         mobileTargetId: 'header-simulator-cta-btn',
-        title: '1. Simulador de Ambientes por IA',
+        title: '1. Simulador de Ambientes',
         tagline: 'Visualize antes mesmo de instalar',
         description:
-          'Envie uma foto da sua parede e veja a inteligência artificial projetar uma composição botânica realista com cálculo paramétrico de m², absorção acústica e estimativa de investimento.',
+          'Envie uma foto da sua parede e veja a tecnologia de projeção gerar uma composição botânica realista com cálculo paramétrico de m², absorção acústica e estimativa de investimento.',
         icon: Camera,
         primaryActionLabel: 'Abrir Simulador Agora',
         onPrimaryAction: () => {
@@ -252,7 +252,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
                   <StepIcon className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#15803d] bg-emerald-100 px-2.5 py-0.5 rounded-full inline-block mb-1">
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#15803d] block mb-0.5">
                     {currentStep.tagline}
                   </span>
                   <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#072a1a] leading-tight">
@@ -353,7 +353,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
                 type="button"
                 id="btn-tour-next"
                 onClick={handleNext}
-                className="w-full sm:w-auto px-5 py-2.5 bg-[#072a1a] hover:bg-[#15803d] text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                className="w-full sm:w-auto px-5 py-2.5 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 {currentStepIndex === steps.length - 1 ? (
                   <>

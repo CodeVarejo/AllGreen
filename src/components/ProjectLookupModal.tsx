@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Search, FileSearch, X, MapPin, Calendar, Layers, Check, PhoneCall } from 'lucide-react';
 import { PROJECT_SAMPLES } from '../data/mockData';
 import { ProjectSample } from '../types';
+import { ShareHighlightButton } from './common/ShareHighlightButton';
+import { formatProjectReportShare } from '../utils/nativeSocialShare';
 
 interface ProjectLookupModalProps {
   isOpen: boolean;
@@ -50,14 +52,14 @@ export const ProjectLookupModal: React.FC<ProjectLookupModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative border border-emerald-900/20 my-auto">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-2.5 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative border border-emerald-900/20 my-auto max-h-[92dvh] flex flex-col">
         
         {/* Header */}
-        <div className="bg-[#072a1a] text-white p-5 flex items-center justify-between">
+        <div className="bg-[#072a1a] text-white p-4 sm:p-5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <FileSearch className="w-5 h-5 text-[#86efac]" />
-            <h2 className="font-serif font-bold text-lg text-white">
+            <h2 className="font-serif font-bold text-base sm:text-lg text-white">
               Consultar Ficha Técnica do Projeto por Código
             </h2>
           </div>
@@ -70,7 +72,7 @@ export const ProjectLookupModal: React.FC<ProjectLookupModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
+        <div className="p-4 sm:p-6 space-y-5 overflow-y-auto flex-1">
           
           {/* Lookup Input Form */}
           <form onSubmit={handleLookup} className="space-y-2">
@@ -171,18 +173,37 @@ export const ProjectLookupModal: React.FC<ProjectLookupModalProps> = ({
                 </div>
               </div>
 
-              <div className="pt-2 flex items-center justify-between">
+              <div className="pt-2 flex flex-wrap items-center justify-between gap-2">
                 <span className="text-[11px] text-gray-500">Concluído em: {foundProject.completionDate}</span>
-                <button
-                  onClick={() => {
-                    onClose();
-                    onOpenQuoteForCode(foundProject.code);
-                  }}
-                  className="py-2.5 px-4 bg-[#072a1a] text-white font-bold rounded-xl text-xs hover:bg-[#15803d] transition-colors flex items-center gap-1.5"
-                >
-                  <PhoneCall className="w-3.5 h-3.5 text-[#86efac]" />
-                  <span>Solicitar Projeto Similar a Este</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <ShareHighlightButton
+                    payload={() => formatProjectReportShare({
+                      title: foundProject.title,
+                      code: foundProject.code,
+                      client: foundProject.client,
+                      area: foundProject.area,
+                      style: foundProject.type as any,
+                      leedPointsTotal: 14,
+                      wellScore: 88,
+                      acousticNrc: 0.88,
+                      waterSavedLitersYear: 32000,
+                    })}
+                    label="Compartilhar"
+                    variant="secondary"
+                    titleTooltip="Compartilhar especificações deste projeto via Web Share API"
+                  />
+
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onOpenQuoteForCode(foundProject.code);
+                    }}
+                    className="py-2.5 px-4 bg-[#072a1a] text-white font-bold rounded-xl text-xs hover:bg-[#15803d] transition-colors flex items-center gap-1.5"
+                  >
+                    <PhoneCall className="w-3.5 h-3.5 text-[#86efac]" />
+                    <span>Solicitar Projeto Similar</span>
+                  </button>
+                </div>
               </div>
             </div>
           )}

@@ -612,12 +612,13 @@ export const ProjectsPerformanceHeatmap: React.FC<ProjectsPerformanceHeatmapProp
       {/* Header with Title and Mode Switcher */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-gray-100 pb-5">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-emerald-100 text-[#072a1a] text-xs font-bold font-mono border border-emerald-300 flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-[#15803d]" />
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#15803d]">
+            <span className="flex items-center gap-1">
+              <Zap className="w-3.5 h-3.5" />
               ENGENHARIA BIOCLIMÁTICA
             </span>
-            <span className="text-xs text-gray-500 font-semibold">• Laudos IPT & ASHRAE 90.1</span>
+            <span aria-hidden="true">·</span>
+            <span className="text-gray-500 font-sans font-medium">Laudos IPT & ASHRAE 90.1</span>
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-serif font-bold text-gray-950 mt-1 flex items-center gap-2.5">
@@ -659,7 +660,7 @@ export const ProjectsPerformanceHeatmap: React.FC<ProjectsPerformanceHeatmapProp
             }`}
           >
             <TrendingUp className="w-3.5 h-3.5" />
-            <span>Dispersão IA</span>
+            <span>Dispersão Paramétrica</span>
           </motion.button>
 
           <motion.button

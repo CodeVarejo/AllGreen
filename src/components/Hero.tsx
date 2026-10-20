@@ -297,18 +297,18 @@ export const Hero: React.FC<HeroProps> = ({
             </div>
 
             {/* Essential Numeric Proofs */}
-            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-emerald-900/50">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-4 border-t border-emerald-900/50">
               <div>
-                <span className="font-serif text-2xl font-bold text-white block">0 L</span>
-                <span className="text-xs text-emerald-300/80">{t('hero.waterLabel', 'Água por ano')}</span>
+                <span className="font-serif text-xl sm:text-2xl font-bold text-white block">0 L</span>
+                <span className="text-[11px] sm:text-xs text-emerald-300/80">{t('hero.waterLabel', 'Água por ano')}</span>
               </div>
               <div>
-                <span className="font-serif text-2xl font-bold text-[#86efac] block">0.89</span>
-                <span className="text-xs text-emerald-300/80">{t('hero.acousticLabel', 'NRC acústico IPT')}</span>
+                <span className="font-serif text-xl sm:text-2xl font-bold text-[#86efac] block">0.89</span>
+                <span className="text-[11px] sm:text-xs text-emerald-300/80">{t('hero.acousticLabel', 'NRC acústico IPT')}</span>
               </div>
               <div>
-                <span className="font-serif text-2xl font-bold text-amber-300 block">{language === 'pt' ? '10 Anos' : '10 Years'}</span>
-                <span className="text-xs text-emerald-300/80">{t('hero.durabilityLabel', 'Durabilidade')}</span>
+                <span className="font-serif text-xl sm:text-2xl font-bold text-amber-300 block">{language === 'pt' ? '10 Anos' : '10 Years'}</span>
+                <span className="text-[11px] sm:text-xs text-emerald-300/80">{t('hero.durabilityLabel', 'Durabilidade')}</span>
               </div>
             </div>
           </motion.div>
@@ -320,7 +320,7 @@ export const Hero: React.FC<HeroProps> = ({
             transition={{ duration: 0.7, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-7"
           >
-            <div className="relative bg-[#062013]/90 p-2.5 sm:p-3 rounded-3xl border border-emerald-700/50 shadow-2xl backdrop-blur-xl">
+            <div className="relative bg-[#062013]/90 p-2 sm:p-3 rounded-3xl border border-emerald-700/50 shadow-2xl backdrop-blur-xl overflow-hidden max-w-full">
               
               {/* Compact Unified Control Bar */}
               <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-emerald-800/50 px-1 text-xs">

@@ -14,16 +14,37 @@ export const BeforeAfterGallery: React.FC<BeforeAfterGalleryProps> = ({
 }) => {
   const { language } = useLanguage();
   const isPt = language === 'pt';
+  const isEs = language === 'es';
 
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [sliderPositions, setSliderPositions] = useState<{ [key: string]: number }>({});
 
   const categories = [
-    { id: 'all', label: isPt ? 'Todos os Projetos' : 'All Projects', match: 'Todos os Projetos' },
-    { id: 'corp', label: isPt ? 'Escritórios Corporativos' : 'Corporate Workplaces', match: 'Escritórios Corporativos' },
-    { id: 'res', label: isPt ? 'Residencial & Living' : 'Residential & Living', match: 'Residencial & Living' },
-    { id: 'balcony', label: isPt ? 'Varandas & Sacadas' : 'Balconies & Terraces', match: 'Varandas & Sacadas' },
-    { id: 'retail', label: isPt ? 'Recepções & Lojas' : 'Retail & Receptions', match: 'Recepções & Lojas' },
+    {
+      id: 'all',
+      label: isPt ? 'Todos os Projetos' : isEs ? 'Todos los Proyectos' : 'All Projects',
+      match: 'Todos os Projetos',
+    },
+    {
+      id: 'corp',
+      label: isPt ? 'Escritórios Corporativos' : isEs ? 'Oficinas Corporativas' : 'Corporate Workplaces',
+      match: 'Escritórios Corporativos',
+    },
+    {
+      id: 'res',
+      label: isPt ? 'Residencial & Living' : isEs ? 'Residencial & Living' : 'Residential & Living',
+      match: 'Residencial & Living',
+    },
+    {
+      id: 'balcony',
+      label: isPt ? 'Varandas & Sacadas' : isEs ? 'Terrazas & Balcones' : 'Balconies & Terraces',
+      match: 'Varandas & Sacadas',
+    },
+    {
+      id: 'retail',
+      label: isPt ? 'Recepções & Lojas' : isEs ? 'Recepciones & Tiendas' : 'Retail & Receptions',
+      match: 'Recepções & Lojas',
+    },
   ];
 
   const currentMatch = categories.find(c => c.id === activeCategory)?.match || 'Todos os Projetos';
@@ -52,6 +73,11 @@ export const BeforeAfterGallery: React.FC<BeforeAfterGalleryProps> = ({
                   Galeria de Projetos & <br className="hidden sm:inline" />
                   <span className="italic font-light text-[#15803d]">Transformações Reais</span>
                 </>
+              ) : isEs ? (
+                <>
+                  Galería de Proyectos & <br className="hidden sm:inline" />
+                  <span className="italic font-light text-[#15803d]">Transformaciones Reales</span>
+                </>
               ) : (
                 <>
                   Project Gallery & <br className="hidden sm:inline" />
@@ -63,6 +89,8 @@ export const BeforeAfterGallery: React.FC<BeforeAfterGalleryProps> = ({
             <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
               {isPt
                 ? 'Arraste o divisor para comparar ambientes residenciais e corporativos antes e depois da instalação All Green.'
+                : isEs
+                ? 'Arrastre el control deslizante para comparar espacios antes y después de la instalación All Green.'
                 : 'Drag the interactive slider to compare residential and commercial spaces before and after All Green installation.'}
             </p>
           </div>
@@ -148,10 +176,10 @@ export const BeforeAfterGallery: React.FC<BeforeAfterGalleryProps> = ({
 
                       {/* Badges */}
                       <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-white uppercase tracking-wider">
-                        {isPt ? 'Antes' : 'Before'}
+                        {isPt ? 'Antes' : isEs ? 'Antes' : 'Before'}
                       </div>
                       <div className="absolute top-4 right-4 bg-[#072a1a]/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-[#86efac] uppercase tracking-wider">
-                        {isPt ? 'Depois' : 'After'}
+                        {isPt ? 'Depois' : isEs ? 'Después' : 'After'}
                       </div>
                     </div>
 
@@ -180,7 +208,7 @@ export const BeforeAfterGallery: React.FC<BeforeAfterGalleryProps> = ({
                           {project.type}
                         </span>
                         <span className="text-[10px] font-bold uppercase bg-gray-100 text-gray-700 px-2 py-0.5 rounded">
-                          {project.area} {isPt ? 'm² de área verde' : 'm² of green area'}
+                          {project.area} {isPt ? 'm² de área verde' : isEs ? 'm² de área verde' : 'm² of green area'}
                         </span>
                       </div>
                     </div>
@@ -195,6 +223,8 @@ export const BeforeAfterGallery: React.FC<BeforeAfterGalleryProps> = ({
                       <span>
                         {isPt
                           ? `Consultar Ficha Técnica Deste Projeto (${project.code})`
+                          : isEs
+                          ? `Consultar Ficha Técnica de este Proyecto (${project.code})`
                           : `View Technical Sheet for Project (${project.code})`}
                       </span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
