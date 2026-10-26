@@ -149,7 +149,7 @@ const RAW_PORTAL_PROJECTS: PortalProject[] = [
     style: 'Misto Biofílico',
     area: 45.0,
     status: 'estudo_ia',
-    statusLabel: 'Simulação IA em Validação Técnica',
+    statusLabel: 'Simulação em Validação Técnica',
     dateCreated: '17/08/2026',
     estimatedTotal: 63000,
     thumbnail: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80',
@@ -276,11 +276,11 @@ export const INITIAL_PORTAL_NOTIFICATIONS = [
   {
     id: 'notif_ai_1',
     type: 'ai_assistant_message' as const,
-    title: 'Assistente IA: Otimização Acústica Calculada',
-    description: 'O Assistente IA All Green analisou o ambiente do projeto AG-8492 e identificou oportunidade de elevar o isolamento sonoro em +4.2 dB com a adição de placas de Musgo Polar nas zonas de maior reverberação.',
+    title: 'Assistente Técnico: Otimização Acústica Calculada',
+    description: 'O Assistente Técnico All Green analisou o ambiente do projeto AG-8492 e identificou oportunidade de elevar o isolamento sonoro em +4.2 dB com a adição de placas de Musgo Polar nas zonas de maior reverberação.',
     timestamp: 'Há 5 minutos',
     isRead: false,
-    sender: 'Assistente IA All Green',
+    sender: 'Assistente Técnico All Green',
     projectCode: 'AG-8492',
     impactSummary: {
       parameterChanged: 'Absorção Acústica e Eco (RT60)',
@@ -289,7 +289,7 @@ export const INITIAL_PORTAL_NOTIFICATIONS = [
       deltaWell: '+3.0 Pts WELL Sound S04',
       deltaLeed: '+1 Crédito EQc9',
     },
-    actionLabel: 'Abrir Simulador IA',
+    actionLabel: 'Abrir Simulador',
     actionType: 'open_simulator' as const,
   },
   {
@@ -311,11 +311,11 @@ export const INITIAL_PORTAL_NOTIFICATIONS = [
   {
     id: 'notif_ai_2',
     type: 'ai_assistant_message' as const,
-    title: 'Assistente IA: Simulação LEED & WELL Pronta',
+    title: 'Assistente Técnico: Simulação LEED & WELL Pronta',
     description: 'A estimativa para a Varanda Gourmet Jardins (AG-7921) atingiu 9 créditos LEED (WEc1 + MRc2). O memorial descritivo em PDF já está homologado com laudo IPT.',
     timestamp: 'Há 1 hora',
     isRead: false,
-    sender: 'Assistente IA All Green',
+    sender: 'Assistente Técnico All Green',
     projectCode: 'AG-7921',
     impactSummary: {
       parameterChanged: 'Certificação LEED v4.1 & WELL',
@@ -324,7 +324,7 @@ export const INITIAL_PORTAL_NOTIFICATIONS = [
       deltaLeed: '+9 Créditos',
       deltaWell: '+72 Pts',
     },
-    actionLabel: 'Ver Simulação IA',
+    actionLabel: 'Ver Simulação',
     actionType: 'open_simulator' as const,
   },
   {

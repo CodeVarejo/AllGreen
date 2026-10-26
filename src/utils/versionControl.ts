@@ -263,7 +263,7 @@ export function seedProjectHistory(project: PortalProject): PortalProject {
       area: 25.0,
       estimatedTotal: 36250,
       status: 'estudo_ia',
-      statusLabel: 'Estudo Inicial com IA',
+      statusLabel: 'Estudo Técnico Inicial',
       speciesUsed: ['Moss Dinamarquês Verde Floresta', 'Samambaia Americana Estabilizada'],
       leedPointsTotal: 10,
       wellScore: 78,
@@ -290,12 +290,12 @@ export function seedProjectHistory(project: PortalProject): PortalProject {
       id: 'ver_proj1_v1',
       projectId: project.id,
       versionNumber: 1,
-      versionLabel: 'v1.0 • Estudo IA & Concepção Inicial',
+      versionLabel: 'v1.0 • Estudo Técnico & Concepção Inicial',
       author: authorName,
       authorRole,
       timestamp: `${baseDate} às 09:30`,
       changeType: 'created',
-      changeSummary: 'Concepção inicial gerada via Simulador IA para lounge de 25m².',
+      changeSummary: 'Concepção inicial gerada via Simulador para lounge de 25m².',
       snapshot: v1Snapshot,
     };
 

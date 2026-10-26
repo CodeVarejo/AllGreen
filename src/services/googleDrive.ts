@@ -312,7 +312,7 @@ export async function ensureAppFolder(token: string): Promise<string> {
     body: JSON.stringify({
       name: APP_FOLDER_NAME,
       mimeType: 'application/vnd.google-apps.folder',
-      description: 'Pasta do Ateliê All Green com dossiês biofílicos, simulações IA e especificações técnicas salvas na nuvem.',
+      description: 'Pasta do Ateliê All Green com dossiês biofílicos, simulações de ambientes e especificações técnicas salvas na nuvem.',
     }),
   });
 

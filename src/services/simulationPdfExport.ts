@@ -20,7 +20,7 @@ export async function exportSimulationToPdf(options: SimulationPdfOptions): Prom
     roomType = 'Ambiente Corporativo / Residencial',
     stylePreference = 'Jardim Preservado Moss & Samambaia',
     clientName = 'Cliente / Especificador',
-    projectName = 'Simulação Biofílica IA',
+    projectName = 'Simulação Biofílica Técnica',
   } = options;
 
   const doc = new jsPDF({
@@ -65,7 +65,7 @@ export async function exportSimulationToPdf(options: SimulationPdfOptions): Prom
   doc.setFontSize(7.5);
   doc.text(`PROTOCOLO: ${protocolCode}`, pageWidth - margin, 12, { align: 'right' });
   doc.text(`EMISSÃO: ${dateStr} às ${timeStr}`, pageWidth - margin, 17, { align: 'right' });
-  doc.text('STATUS: ANÁLISE IA CONCLUÍDA', pageWidth - margin, 22, { align: 'right' });
+  doc.text('STATUS: ANÁLISE TÉCNICA CONCLUÍDA', pageWidth - margin, 22, { align: 'right' });
 
   let yPos = 42;
 

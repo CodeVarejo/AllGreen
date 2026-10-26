@@ -46,7 +46,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
         },
         {
           id: 'simulator',
-          title: 'Simulador IA de Ambientes Biofílicos',
+          title: 'Simulador de Ambientes Biofílicos',
           description: 'Abre a ferramenta de cálculo botânico, acústico e investimento',
           keys: [isMac ? '⌘' : 'Ctrl', 'M'],
           icon: Camera,
@@ -87,7 +87,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
         {
           id: 'notifications',
           title: 'Central de Notificações',
-          description: 'Visualiza alertas de projetos, mensagens da IA e avisos',
+          description: 'Visualiza alertas de projetos, mensagens técnicas e avisos',
           keys: [isMac ? '⌘' : 'Ctrl', 'N'],
           icon: Bell,
         },

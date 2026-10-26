@@ -249,17 +249,17 @@ export const Hero: React.FC<HeroProps> = ({
   return (
     <section id="hero-section" className="hero-component bg-[#051c11] text-white py-12 md:py-18 relative overflow-hidden border-b border-emerald-900/40">
       
-      {/* Ambient background glow */}
-      <div className={`absolute -top-32 -right-32 w-[520px] h-[520px] rounded-full blur-[130px] pointer-events-none transition-all duration-1000 ${
+      {/* Ambient background glow with relative viewport scaling */}
+      <div className={`absolute -top-24 sm:-top-32 -right-24 sm:-right-32 w-72 sm:w-96 lg:w-[32rem] h-72 sm:h-96 lg:h-[32rem] max-w-[85vw] max-h-[85vw] rounded-full blur-[100px] sm:blur-[130px] pointer-events-none transition-all duration-1000 ${
         lightingMode === 'sunset'
           ? 'bg-amber-500/15'
           : lightingMode === 'twilight'
           ? 'bg-indigo-600/15'
           : 'bg-emerald-500/15'
       }`} />
-      <div className="absolute -bottom-32 -left-32 w-[460px] h-[460px] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute -bottom-24 sm:-bottom-32 -left-24 sm:-left-32 w-64 sm:w-80 lg:w-[28rem] h-64 sm:h-80 lg:h-[28rem] max-w-[80vw] max-h-[80vw] bg-emerald-600/10 rounded-full blur-[90px] sm:blur-[120px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
@@ -268,10 +268,10 @@ export const Hero: React.FC<HeroProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-5 space-y-6"
+            className="lg:col-span-5 flex flex-col justify-between space-y-6 w-full min-w-0"
           >
             {/* Main Headline - Clear Value Proposition in 5s */}
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-5.5xl font-normal tracking-tight text-white leading-[1.08]">
+            <h1 className="font-serif text-3xl xs:text-4xl sm:text-5xl lg:text-5.5xl font-normal tracking-tight text-white leading-[1.08]">
               {t('hero.headlinePart1', 'Jardins Verticais Preservados.')} <br />
               <span className="font-light text-[#86efac]">
                 {t('hero.headlinePart2', 'Folhagem natural com')}{' '}
@@ -292,7 +292,7 @@ export const Hero: React.FC<HeroProps> = ({
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#86efac] text-[#051c11] font-bold rounded-full hover:bg-emerald-300 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer text-sm sm:text-base shadow-xl shadow-emerald-950/50"
               >
                 <Camera className="w-5 h-5 text-[#051c11]" />
-                <span>{t('hero.simulateCta', 'Simular ambiente com IA')}</span>
+                <span>{t('hero.simulateCta', 'Simular ambiente')}</span>
               </button>
             </div>
 
@@ -409,7 +409,7 @@ export const Hero: React.FC<HeroProps> = ({
 
               {/* Main Interactive Viewport */}
               <div
-                className="relative h-[360px] sm:h-[440px] md:h-[480px] w-full rounded-2xl overflow-hidden select-none cursor-pointer group shadow-2xl"
+                className="relative h-[260px] xs:h-[320px] sm:h-[400px] md:h-[480px] w-full rounded-2xl overflow-hidden select-none cursor-pointer group shadow-2xl"
                 onMouseMove={isComparing ? handleSliderMouseMove : handleCardMouseMove}
                 onMouseLeave={handleCardMouseLeave}
                 onTouchMove={handleTouchMove}

@@ -1,6 +1,6 @@
 {
   "name": "All Green Decor & Biofilia",
-  "description": "Simulador IA de Ambientes Biofílicos, chatbot especialista Gemini IA para dúvidas metodológicas, quiz de perfil biofílico com gráfico radar multivariado, matriz comparativa de tecnologias verticais, catálogo botânico, calculadora WELL/LEED, calculadora de ROI e laudos em PDF.",
+  "description": "Simulador de Ambientes Biofílicos, assistente botânico para dúvidas metodológicas, quiz de perfil biofílico com gráfico radar multivariado, matriz comparativa de tecnologias verticais, catálogo botânico, calculadora WELL/LEED, calculadora de ROI e laudos em PDF.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

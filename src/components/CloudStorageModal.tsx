@@ -165,7 +165,7 @@ export const CloudStorageModal: React.FC<CloudStorageModalProps> = ({
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-emerald-100/90 mt-0.5 font-sans">
-                Salve dossiês técnicos, simulações IA e especificações com sincronização multiplataforma.
+                Salve dossiês técnicos, simulações de ambientes e especificações com sincronização multiplataforma.
               </p>
             </div>
           </div>

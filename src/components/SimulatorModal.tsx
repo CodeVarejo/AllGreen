@@ -122,7 +122,7 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
         stylePreference,
         originalImageUrl: activeImageUrl,
         clientName: 'Especificador / Cliente',
-        projectName: `${roomType} - Simulação IA`,
+        projectName: `${roomType} - Simulação Digital`,
       });
       setPdfSuccess(true);
       setTimeout(() => setPdfSuccess(false), 4000);
@@ -230,7 +230,7 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
             </div>
             <div>
               <h2 className="font-serif font-bold text-base sm:text-xl text-white">
-                Simulador de Parede Verde IA
+                Simulador de Parede Verde
               </h2>
               <p className="text-[11px] sm:text-xs text-emerald-300">
                 All Green Decor & Biophilia • Tecnologia Visio-Botânica
@@ -345,7 +345,7 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
                   <select
                     value={roomType}
                     onChange={(e) => setRoomType(e.target.value)}
-                    className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs font-semibold text-gray-800 focus:outline-none focus:border-[#072a1a]"
+                    className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-base sm:text-xs font-semibold text-gray-800 focus:outline-none focus:border-[#072a1a]"
                   >
                     <option value="Escritório Corporativo / Reunião">Escritório Corporativo / Sala de Reunião</option>
                     <option value="Varanda Gourmet / Sacada">Varanda Gourmet / Sacada Residencial</option>
@@ -361,7 +361,7 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
                   <select
                     value={stylePreference}
                     onChange={(e) => setStylePreference(e.target.value)}
-                    className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs font-semibold text-gray-800 focus:outline-none focus:border-[#072a1a]"
+                    className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-base sm:text-xs font-semibold text-gray-800 focus:outline-none focus:border-[#072a1a]"
                   >
                     <option value="Jardim Preservado Moss & Samambaia">Jardim Preservado Moss & Samambaia (100% Natural)</option>
                     <option value="Jardim Permanente UV Anti-Fade">Jardim Permanente UV Anti-Fade (Sem Água)</option>
@@ -376,7 +376,7 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
                 className="w-full py-4 bg-[#072a1a] text-[#86efac] font-bold rounded-2xl hover:bg-[#15803d] transition-all shadow-xl flex items-center justify-center gap-2.5 text-base cursor-pointer"
               >
                 <Camera className="w-5 h-5" />
-                <span>Analisar e Processar Simulação com Inteligência Artificial</span>
+                <span>Analisar e Processar Simulação do Ambiente</span>
               </button>
 
             </div>
@@ -387,7 +387,7 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
             <div className="py-16 text-center space-y-4">
               <div className="w-16 h-16 border-4 border-emerald-200 border-t-[#072a1a] rounded-full animate-spin mx-auto" />
               <h3 className="font-serif font-bold text-2xl text-gray-900">
-                A IA All Green está analisando o seu ambiente...
+                O sistema All Green está analisando o seu ambiente...
               </h3>
               <p className="text-xs text-gray-500 max-w-sm mx-auto">
                 Mapeando proporções da parede, incidência de luz, volumetria botânica e atenuadores acústicos.
@@ -457,7 +457,7 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
                           setSliderPos(Math.round(pct));
                         }
                       }}
-                      className="relative h-64 sm:h-80 md:h-96 w-full rounded-2xl overflow-hidden select-none border-2 border-[#072a1a] shadow-lg cursor-ew-resize bg-black"
+                      className="relative h-56 xs:h-64 sm:h-80 md:h-96 w-full rounded-2xl overflow-hidden select-none border-2 border-[#072a1a] shadow-lg cursor-ew-resize bg-black"
                     >
                       {/* Transformed Image (Simulação) Base */}
                       <img
@@ -622,7 +622,7 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
               {/* AI Report Summary */}
               <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-200 space-y-2">
                 <span className="text-[10px] font-bold text-[#072a1a] uppercase tracking-wider block">
-                  ANÁLISE DE DIAGNÓSTICO BIOFÍLICO (IA):
+                  ANÁLISE DE DIAGNÓSTICO BIOFÍLICO:
                 </span>
                 <p className="text-xs text-gray-800 leading-relaxed font-sans">
                   {simulationResult.aiAnalysisText}
@@ -680,7 +680,7 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
                       <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-[#86efac] text-[9px] font-mono border border-emerald-400/30">Pronto</span>
                     </h4>
                     <p className="text-[11px] text-emerald-200/80 mt-0.5">
-                      Contém diagnóstico da IA, memorial botânico, cálculo de absorção acústica e créditos LEED/WELL.
+                      Contém diagnóstico técnico, memorial botânico, cálculo de absorção acústica e créditos LEED/WELL.
                     </p>
                   </div>
                 </div>

@@ -298,7 +298,7 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mt-8 sm:mt-12 w-full"
         >
           {solutions.map((item) => (
             <motion.div
@@ -309,12 +309,12 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
               transition={{
                 y: { duration: 0.25, ease: 'easeOut' },
               }}
-              className="bg-white rounded-2xl overflow-hidden border border-gray-200/90 shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between group h-full cursor-pointer"
+              className="bg-white rounded-2xl overflow-hidden border border-gray-200/90 shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between group h-full w-full min-w-0 cursor-pointer"
               onClick={() => setSelectedModal(item)}
             >
-              <div>
-                {/* Image Box */}
-                <div className="relative h-48 overflow-hidden">
+              <div className="flex flex-col flex-1">
+                {/* Responsive Aspect-Ratio Image Box */}
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -357,7 +357,7 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
               exit={{ opacity: 0, scale: 0.95, y: 12 }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 relative shadow-2xl space-y-5"
+              className="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-8 relative shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
             >
               <button
                 type="button"

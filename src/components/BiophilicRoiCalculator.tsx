@@ -726,7 +726,7 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                     <span>Preditor de Verba ML</span>
                   </div>
                   <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-[#072a1a] text-[#86efac]">
-                    IA / ALGORITMO
+                    ALGORITMO PARAMÉTRICO
                   </span>
                 </div>
                 <p className="text-[11px] text-gray-600 leading-snug">
@@ -1193,7 +1193,7 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                     <Brain className="w-3.5 h-3.5 text-[#15803d]" />
                     <span>Preditor ML</span>
                     <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-100 text-[#15803d] font-bold">
-                      IA
+                      Algorítmico
                     </span>
                   </button>
                 </div>

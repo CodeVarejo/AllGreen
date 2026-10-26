@@ -3,13 +3,13 @@ process.env.DISABLE_HMR = 'true';
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
-import { createServer as createViteServer } from 'vite';
-import { analyzeRoomPhoto, answerBiophiliaQuestion } from './src/services/gemini';
-import { PROJECT_SAMPLES } from './src/data/mockData';
+import { analyzeRoomPhoto, answerBiophiliaQuestion } from './src/services/gemini.ts';
+import { PROJECT_SAMPLES } from './src/data/mockData.ts';
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const isProduction = process.env.NODE_ENV === 'production';
+  const PORT = isProduction && process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
   app.use(express.json({ limit: '15mb' }));
 
@@ -93,8 +93,18 @@ async function startServer() {
   // Serve static assets from public directory
   app.use(express.static(path.resolve(process.cwd(), 'public')));
 
-  // Vite development middleware vs production static distribution
-  if (process.env.NODE_ENV !== 'production') {
+  const distPath = path.join(process.cwd(), 'dist');
+  const hasDist = fs.existsSync(path.join(distPath, 'index.html'));
+
+  if (isProduction && hasDist) {
+    console.log(`Serving production static build on port ${PORT}`);
+    app.use(express.static(distPath));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  } else {
+    console.log(`Running Vite development middleware on port ${PORT}`);
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: {
         middlewareMode: true,
@@ -115,12 +125,6 @@ async function startServer() {
         vite.ssrFixStacktrace(e as Error);
         next(e);
       }
-    });
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 

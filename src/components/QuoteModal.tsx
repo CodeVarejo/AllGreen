@@ -242,7 +242,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Ex: Dra. Juliana Silveira"
-                  className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
+                  className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-base sm:text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
                 />
               </div>
 
@@ -257,7 +257,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="juliana@arquitetura.com"
-                    className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
+                    className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-base sm:text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
                   />
                 </div>
 
@@ -271,7 +271,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="(11) 99888-7766"
-                    className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
+                    className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-base sm:text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
                   />
                 </div>
               </div>
@@ -287,7 +287,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     placeholder="São Paulo, SP"
-                    className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
+                    className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-base sm:text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
                   />
                 </div>
 
@@ -302,7 +302,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({
                     value={formData.roomArea}
                     onChange={(e) => setFormData({ ...formData, roomArea: e.target.value })}
                     placeholder="15"
-                    className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
+                    className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-base sm:text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
                   />
                 </div>
               </div>
@@ -314,7 +314,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({
                 <select
                   value={formData.projectType}
                   onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-                  className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
+                  className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-base sm:text-xs text-gray-900 focus:outline-none focus:border-[#072a1a]"
                 >
                   <option value="Jardim Preservado (100% Natural)">Jardim Preservado (100% Natural Estabilizado)</option>
                   <option value="Jardim Permanente (Anti-UV)">Jardim Permanente (Artificial Premium Anti-UV)</option>

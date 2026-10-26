@@ -20,18 +20,18 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
     {
       num: '01',
       stage: isPt ? 'ETAPA INICIAL • CONCEPT' : 'INITIAL STAGE • CONCEPT',
-      title: isPt ? 'Diagnóstico Digital & Simulação IA' : 'Digital Assessment & AI Simulation',
+      title: isPt ? 'Diagnóstico Digital & Simulação de Ambientes' : 'Digital Assessment & Space Simulation',
       subtitle: isPt ? 'Uma fotografia do seu espaço é o ponto de partida' : 'A single photo of your space is all it takes',
       desc: isPt
-        ? 'Nossa inteligência artificial analisa a geometria do ambiente, incidência lumínica e mobiliário existente, projetando em segundos uma composição biofílica fotorrealista para você e seus clientes avaliarem antes de qualquer intervenção física.'
-        : 'Our AI analyzes space geometry, ambient lighting, and furnishings, instantly rendering a photorealistic biophilic composition for you and your clients before any physical work begins.',
+        ? 'Nosso algoritmo de projeção analisa a geometria do ambiente, incidência lumínica e mobiliário existente, projetando em segundos uma composição biofílica fotorrealista para você e seus clientes avaliarem antes de qualquer intervenção física.'
+        : 'Our projection algorithm analyzes space geometry, ambient lighting, and furnishings, instantly rendering a photorealistic biophilic composition for you and your clients before any physical work begins.',
       tools: isPt
-        ? ['Visão Computacional Gemini IA', 'Renderização Instantânea', 'Estimativa Orçamentária Paramétrica']
-        : ['Computer Vision Gemini AI', 'Instant Photorealistic Rendering', 'Parametric Cost Estimation'],
+        ? ['Visão Computacional & Análise de Espaço', 'Renderização Instantânea', 'Estimativa Orçamentária Paramétrica']
+        : ['Computer Vision & Space Analysis', 'Instant Photorealistic Rendering', 'Parametric Cost Estimation'],
       materialNote: isPt
         ? 'Sem compromisso comercial prévio • Acesso instantâneo via browser'
         : 'No prior commitment required • Instant browser access',
-      actionLabel: isPt ? 'Abrir Simulador Agora' : 'Launch AI Simulator Now',
+      actionLabel: isPt ? 'Abrir Simulador Agora' : 'Launch Space Simulator Now',
       isSimulatorAction: true,
     },
     {
@@ -90,11 +90,11 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
   return (
     <section id="metodologia-ateliê" className="bg-[#051c11] text-white py-16 md:py-28 relative overflow-hidden bg-grain-dark border-y border-emerald-900/50">
       
-      {/* Delicate organic glow */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-emerald-700/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Delicate organic glow with relative scaling */}
+      <div className="absolute top-1/2 left-0 w-72 sm:w-96 h-72 sm:h-96 max-w-[80vw] max-h-[80vw] bg-emerald-700/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-72 sm:w-96 h-72 sm:h-96 max-w-[80vw] max-h-[80vw] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         
         {/* Editorial Section Header */}
         <ScrollReveal animation="fade-up" distance={20}>
@@ -122,10 +122,10 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
         </ScrollReveal>
 
         {/* Interactive Editorial Stepper & Journal Navigation */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-12 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 mt-8 sm:mt-12 items-stretch w-full">
           
           {/* Left Column: Timeline Selectors */}
-          <div className="lg:col-span-5 flex flex-col justify-between gap-3">
+          <div className="lg:col-span-5 flex flex-col justify-between gap-2.5 sm:gap-3 w-full min-w-0">
             {steps.map((s, idx) => {
               const isSelected = activeStep === idx;
               return (
@@ -133,30 +133,30 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
                   key={s.num}
                   type="button"
                   onClick={() => setActiveStep(idx)}
-                  className={`text-left p-5 sm:p-6 rounded-2xl border transition-all duration-300 cursor-pointer flex items-start gap-4 group ${
+                  className={`text-left p-4 sm:p-6 rounded-2xl border transition-all duration-300 cursor-pointer flex items-start gap-3 sm:gap-4 group w-full min-w-0 ${
                     isSelected
                       ? 'bg-emerald-950/90 border-[#86efac]/70 shadow-xl shadow-emerald-950/80 scale-[1.01]'
                       : 'bg-emerald-950/30 border-emerald-900/50 hover:bg-emerald-950/60 hover:border-emerald-800'
                   }`}
                 >
-                  <span className={`font-serif text-2xl sm:text-3xl font-bold transition-colors ${
+                  <span className={`font-serif text-2xl sm:text-3xl font-bold transition-colors shrink-0 ${
                     isSelected ? 'text-[#86efac]' : 'text-emerald-500/60 group-hover:text-emerald-400'
                   }`}>
                     {s.num}
                   </span>
 
-                  <div className="space-y-1 flex-1">
-                    <span className="font-mono text-[10px] tracking-wider uppercase block text-emerald-400 font-semibold">
+                  <div className="space-y-1 flex-1 min-w-0">
+                    <span className="font-mono text-[10px] tracking-wider uppercase block text-emerald-400 font-semibold truncate">
                       {s.stage}
                     </span>
-                    <h3 className={`font-serif text-lg sm:text-xl font-semibold transition-colors ${
+                    <h3 className={`font-serif text-base sm:text-xl font-semibold transition-colors ${
                       isSelected ? 'text-white' : 'text-gray-300 group-hover:text-white'
                     }`}>
                       {s.title}
                     </h3>
                   </div>
 
-                  <ChevronRight className={`w-5 h-5 transition-transform mt-2 ${
+                  <ChevronRight className={`w-5 h-5 transition-transform mt-2 shrink-0 ${
                     isSelected ? 'text-[#86efac] translate-x-1' : 'text-emerald-700/60 group-hover:text-emerald-400'
                   }`} />
                 </button>
@@ -165,7 +165,7 @@ export const MethodologySteps: React.FC<MethodologyStepsProps> = ({
           </div>
 
           {/* Right Column: Expanded Architectural Spec Sheet for Active Step */}
-          <div className="lg:col-span-7 bg-emerald-950/70 p-6 sm:p-10 rounded-3xl border border-emerald-700/60 shadow-2xl backdrop-blur-md flex flex-col justify-between relative overflow-hidden">
+          <div className="lg:col-span-7 bg-emerald-950/70 p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl border border-emerald-700/60 shadow-2xl backdrop-blur-md flex flex-col justify-between relative overflow-hidden w-full min-w-0">
             
             {/* Top Spec Header */}
             <div className="space-y-6">

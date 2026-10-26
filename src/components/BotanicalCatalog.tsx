@@ -476,10 +476,10 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
         </ScrollReveal>
 
         {/* Interactive Split View */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start w-full">
           
           {/* Left Species List with Staggered Entrance Animation */}
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5 w-full min-w-0">
             {filteredList.length === 0 ? (
               <div className="bg-white rounded-2xl p-6 border border-gray-200 text-center space-y-3">
                 <p className="text-sm font-semibold text-gray-700">Nenhuma espécie encontrada com estes filtros.</p>
@@ -659,8 +659,8 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
           </div>
 
           {/* Right Detail Card - FICHA TÉCNICA DE ESPECIFICAÇÃO */}
-          <ScrollReveal animation="fade-left" delay={0.15} distance={25} className="lg:col-span-7">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-xl overflow-hidden">
+          <ScrollReveal animation="fade-left" delay={0.15} distance={25} className="lg:col-span-7 w-full min-w-0">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 xs:p-6 sm:p-8 border border-gray-200 shadow-xl overflow-hidden w-full min-w-0">
               
               {selectedSpecies && (
                 <AnimatePresence mode="wait">
@@ -670,7 +670,7 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    className="space-y-6"
+                    className="space-y-6 w-full min-w-0"
                   >
                     {/* Header Badge */}
                     <div className="flex items-start sm:items-center justify-between border-b border-gray-100 pb-4 gap-4 flex-col sm:flex-row">
@@ -720,12 +720,12 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
                     </div>
 
                     {/* Image & Metric Cards Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6 items-center w-full">
                       
-                      {/* Species Preview Image */}
+                      {/* Species Preview Image with proportional aspect ratio */}
                       <motion.div 
                         variants={metricBoxVariants}
-                        className="sm:col-span-5 h-56 rounded-2xl overflow-hidden border border-gray-200 group relative"
+                        className="sm:col-span-5 aspect-[4/3] sm:h-56 w-full rounded-2xl overflow-hidden border border-gray-200 group relative"
                       >
                         <img
                           src={selectedSpecies.image}
@@ -741,7 +741,7 @@ export const BotanicalCatalog: React.FC<BotanicalCatalogProps> = ({
                       </motion.div>
 
                       {/* Metrics */}
-                      <div className="sm:col-span-7 space-y-3">
+                      <div className="sm:col-span-7 flex flex-col gap-2.5 sm:gap-3 w-full min-w-0">
                         <motion.div
                           variants={metricBoxVariants}
                           whileHover={{ y: -2 }}

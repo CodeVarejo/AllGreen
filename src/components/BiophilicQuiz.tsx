@@ -1020,7 +1020,7 @@ Código: ${result.recommendedSolutionCode}`;
                         className="px-4 py-2.5 bg-emerald-900 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl border border-emerald-700/80 transition-all flex items-center gap-1.5 cursor-pointer"
                       >
                         <Camera className="w-3.5 h-3.5 text-[#86efac]" />
-                        <span>Simular com IA</span>
+                        <span>Simular Ambiente</span>
                       </button>
                     )}
                   </div>

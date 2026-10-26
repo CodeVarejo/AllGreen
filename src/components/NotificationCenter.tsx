@@ -96,7 +96,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         return (
           <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-100 text-[#072a1a] border border-emerald-300 flex items-center gap-1">
             <Bot className="w-2.5 h-2.5 text-[#15803d]" />
-            Assistente IA
+            Assistente Técnico
           </span>
         );
       case 'project_status':
@@ -153,7 +153,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 )}
               </h3>
               <p className="text-[11px] text-emerald-200">
-                Status de projetos, mensagens da IA e laudos técnicos
+                Status de projetos, atualizações técnicas e laudos
               </p>
             </div>
           </div>
@@ -200,7 +200,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
                 }`}
               >
-                Assistente IA
+                Assistente Técnico
               </button>
               <button
                 onClick={() => setFilter('project')}
@@ -242,9 +242,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               <button
                 onClick={() => onTriggerSimulation('ai')}
                 className="text-[10px] bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] font-bold px-2.5 py-1 rounded-full border border-emerald-200 transition-colors cursor-pointer"
-                title="Simular nova mensagem do Assistente IA"
+                title="Simular nova mensagem do Assistente Técnico"
               >
-                + Testar IA
+                + Testar Assistente
               </button>
               <button
                 onClick={() => onTriggerSimulation('project')}

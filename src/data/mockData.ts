@@ -1,4 +1,4 @@
-import { BotanicalSpecies, ComparisonRow, ProjectSample, SearchResultItem } from '../types';
+import type { BotanicalSpecies, ComparisonRow, ProjectSample, SearchResultItem } from '../types.ts';
 
 export const BOTANICAL_SPECIES: BotanicalSpecies[] = [
   {

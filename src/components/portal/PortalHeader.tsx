@@ -155,7 +155,9 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
           )}
 
           {/* Language Switcher in Portal */}
-          <LanguageSwitcher variant="navbar" />
+          <div className="hidden md:block">
+            <LanguageSwitcher variant="navbar" />
+          </div>
 
           {/* New Project CTA (Desktop) */}
           <button

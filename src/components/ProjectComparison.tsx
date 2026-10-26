@@ -157,7 +157,7 @@ export const ProjectComparison: React.FC<ProjectComparisonProps> = ({
           Você precisa de pelo menos 2 projetos para realizar a comparação
         </h3>
         <p className="text-xs text-gray-600 max-w-md mx-auto">
-          Crie novos estudos utilizando o simulador com inteligência artificial para poder comparar soluções lado a lado.
+          Crie novos estudos utilizando o simulador de ambientes para poder comparar soluções lado a lado.
         </p>
         <button
           onClick={onOpenSimulator}

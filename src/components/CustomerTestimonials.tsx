@@ -473,7 +473,7 @@ export const CustomerTestimonials: React.FC<CustomerTestimonialsProps> = ({
                   onClick={onOpenSimulator}
                   className="px-4 py-2.5 bg-white text-[#072a1a] border border-gray-300 hover:border-emerald-400 hover:bg-emerald-50 font-bold rounded-xl text-xs transition-all cursor-pointer"
                 >
-                  {isPt ? 'Simulador IA' : isEs ? 'Simulador IA' : 'AI Simulator'}
+                  {isPt ? 'Simulador de Ambientes' : isEs ? 'Simulador de Espacios' : 'Space Simulator'}
                 </button>
               )}
             </div>

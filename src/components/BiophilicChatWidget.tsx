@@ -123,7 +123,7 @@ export const BiophilicChatWidget: React.FC<BiophilicChatWidgetProps> = ({
       const errorReply: BiophilicChatMessage = {
         id: `err-${Date.now()}`,
         sender: 'assistant',
-        text: 'Desculpe, ocorreu uma oscilação na conexão com a IA. As metodologias da All Green destacam-se pelo design biofílico sustentável, 100% livre de rega, com painéis modulares Plug & Play e garantia de fábrica de 5 anos. Por favor, tente novamente ou fale com nossos consultores no WhatsApp.',
+        text: 'Desculpe, ocorreu uma oscilação na conexão com o assistente. As metodologias da All Green destacam-se pelo design biofílico sustentável, 100% livre de rega, com painéis modulares Plug & Play e garantia de fábrica de 5 anos. Por favor, tente novamente ou fale com nossos consultores no WhatsApp.',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages(prev => [...prev, errorReply]);
@@ -194,7 +194,7 @@ export const BiophilicChatWidget: React.FC<BiophilicChatWidgetProps> = ({
               </h4>
               <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-emerald-950 text-[#86efac] border border-emerald-700/80 rounded-full">
                 <Bot className="w-2.5 h-2.5 text-[#86efac]" />
-                Gemini 3.8 IA
+                Assistente Técnico
               </span>
             </div>
             <p className="text-[11px] text-emerald-300/80">
@@ -321,7 +321,7 @@ export const BiophilicChatWidget: React.FC<BiophilicChatWidgetProps> = ({
                   className="text-emerald-300 hover:text-white font-semibold cursor-pointer underline underline-offset-2 flex items-center gap-1"
                 >
                   <CheckCircle2 className="w-3 h-3 text-[#86efac]" />
-                  <span>Testar no Simulador IA</span>
+                  <span>Testar no Simulador</span>
                 </button>
               )}
               {onOpenQuote && (

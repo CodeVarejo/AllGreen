@@ -44,7 +44,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
   if (variant === 'compact' || variant === 'navbar') {
     return (
       <div
-        className={`relative inline-flex items-center p-0.5 rounded-full bg-gray-100/90 dark:bg-emerald-950/80 border border-gray-300/80 dark:border-emerald-800 shadow-2xs ${className}`}
+        className={`relative ${className.includes('hidden') ? '' : 'inline-flex'} items-center p-0.5 rounded-full bg-gray-100/90 dark:bg-emerald-950/80 border border-gray-300/80 dark:border-emerald-800 shadow-2xs ${className}`}
         role="group"
         aria-label={systemTitle}
       >

@@ -3,6 +3,7 @@ import { Leaf, Search, Menu as MenuIcon, X, Camera, UserCheck, Bell } from 'luci
 import { UserProfile } from '../types';
 import { isMacUser } from '../hooks/useKeyboardShortcuts';
 import { MobileMenuDrawer } from './MobileMenuDrawer';
+import { MobileBottomNav } from './MobileBottomNav';
 import { ThemeSelector } from './ThemeSelector';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { botanicalAudio } from '../utils/botanicalAudio';
@@ -79,7 +80,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id="main-app-header"
       className="navbar sticky top-0 z-40 bg-[#f3f7f4]/95 dark:bg-[#06180f]/95 backdrop-blur-md border-b border-[#0d3822]/10 dark:border-emerald-800/30 transition-all w-full overflow-x-clip"
     >
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 h-14 sm:h-16 md:h-20 flex items-center justify-between gap-3 sm:gap-4 md:gap-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 h-14 sm:h-16 md:h-20 flex items-center justify-between gap-2 sm:gap-4 md:gap-6">
         
         {/* Brand Logo */}
         <a
@@ -176,11 +177,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             </kbd>
           </button>
 
-          {/* Circadian Solar Schedule & Theme Selector (Sistema / Claro / Escuro) */}
-          <ThemeSelector variant="compact" className="hidden sm:inline-flex" />
+          {/* Circadian Solar Schedule & Theme Selector (Desktop / Tablet only) */}
+          <div className="hidden lg:flex items-center shrink-0">
+            <ThemeSelector variant="compact" />
+          </div>
 
-          {/* Platform Language Switcher (PT / EN / ES) */}
-          <LanguageSwitcher variant="navbar" className="hidden sm:inline-flex" />
+          {/* Platform Language Switcher (Desktop / Tablet only) */}
+          <div className="hidden md:flex items-center shrink-0">
+            <LanguageSwitcher variant="navbar" />
+          </div>
 
           {/* Notification Bell (Only visible when user is logged in, >= sm) */}
           {currentUser && (
@@ -213,17 +218,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span>{currentUser ? currentUser.name.split(' ')[0] : t('nav.architectArea', 'Área do Arquiteto')}</span>
           </button>
 
-          {/* Simulator CTA (Flagship Action - Always clean and fits on mobile!) */}
+          {/* Simulator CTA (Flagship Action - Fully responsive from 320px up to 4K) */}
           <button
             type="button"
             id="header-simulator-cta-btn"
             onClick={onOpenSimulator}
-            className="flex items-center justify-center gap-1.5 sm:gap-2 bg-[#0d3822] text-[#86efac] hover:bg-[#15803d] hover:text-white h-8.5 sm:h-10 px-2.5 sm:px-4 rounded-full font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
+            className="flex items-center justify-center gap-1 sm:gap-2 bg-[#0d3822] text-[#86efac] hover:bg-[#15803d] hover:text-white h-8 sm:h-9.5 px-2.5 sm:px-4 rounded-full font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
             title={`Simulador de Ambientes (${modKey}+M)`}
             aria-label="Abrir Simulador de Ambientes"
           >
             <Camera className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#86efac] shrink-0" />
-            <span className="text-[11px] sm:text-sm">{t('nav.simulator', 'Simulador de Ambientes')}</span>
+            <span className="hidden min-[480px]:inline text-xs sm:text-sm">{t('nav.simulator', 'Simulador de Ambientes')}</span>
+            <span className="inline min-[480px]:hidden text-xs">Simulador</span>
           </button>
 
           {/* Hamburger Menu Toggle (Universal: Available on desktop and mobile) */}
@@ -290,6 +296,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         modKey={modKey}
         isAudioActive={isAudioActive}
         onToggleAudio={handleToggleAudio}
+      />
+
+      {/* Mobile-First Sticky Bottom Tab Bar (Thumbs-reachable navigation) */}
+      <MobileBottomNav
+        onOpenSimulator={onOpenSimulator}
+        onOpenQuote={onOpenQuote}
+        onOpenDrawer={() => setIsDrawerOpen(true)}
+        isDrawerOpen={isDrawerOpen}
       />
     </header>
   );

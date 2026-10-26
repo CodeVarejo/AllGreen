@@ -28,8 +28,8 @@ const SEEDED_SIMULATION_HISTORY: Record<string, LeedWellSimulationPoint[]> = {
     {
       id: 'sim_proj1_1',
       simulationIndex: 1,
-      simulationName: 'Simulação 1: Estudo Conceitual IA Preliminar',
-      shortLabel: 'Sim. 1 • IA Preliminar',
+      simulationName: 'Simulação 1: Estudo Conceitual Preliminar',
+      shortLabel: 'Sim. 1 • Preliminar',
       date: '12/08/2026',
       leedCredits: 8,
       wellScore: 68,
@@ -286,7 +286,7 @@ const SEEDED_SIMULATION_HISTORY: Record<string, LeedWellSimulationPoint[]> = {
         'Zero consumo de 54.000 L/ano de água tratada (WEc1)',
         'Conexão com a natureza no hall corporativo de alta circulação'
       ],
-      keyMilestone: 'Simulação IA Validada'
+      keyMilestone: 'Simulação Validada'
     }
   ],
   proj_5: [
@@ -519,7 +519,7 @@ export function computeForecastSimulationPoint(
     id: 'sim_forecast_next',
     simulationIndex: lastPoint.simulationIndex + 1,
     simulationName: `Simulação ${lastPoint.simulationIndex + 1} (Projeção): Salto Técnico Parametrizado`,
-    shortLabel: `Sim. ${lastPoint.simulationIndex + 1} • Projeção IA`,
+    shortLabel: `Sim. ${lastPoint.simulationIndex + 1} • Projeção Paramétrica`,
     date: 'Projeção',
     leedCredits: projectedLeed,
     wellScore: projectedWell,

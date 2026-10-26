@@ -88,7 +88,7 @@ export const ProjectLookupModal: React.FC<ProjectLookupModalProps> = ({
                   value={inputCode}
                   onChange={(e) => setInputCode(e.target.value)}
                   placeholder="Ex: AG-4891, AG-2024, AG-3090..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono font-bold text-gray-900 focus:outline-none focus:border-[#072a1a]"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-base sm:text-sm font-mono font-bold text-gray-900 focus:outline-none focus:border-[#072a1a]"
                 />
               </div>
 

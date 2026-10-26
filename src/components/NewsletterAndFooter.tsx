@@ -360,7 +360,7 @@ export const NewsletterAndFooter: React.FC<NewsletterAndFooterProps> = ({
                     onClick={onOpenSimulator}
                     className="hover:text-white transition-colors cursor-pointer text-left"
                   >
-                    Simulador de Parede Verde IA
+                    Simulador de Parede Verde
                   </button>
                 </li>
                 <li>

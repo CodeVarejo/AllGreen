@@ -249,7 +249,7 @@ function generateLocalFallbackAnswer(question: string): string {
 
 • Projetos em **Jardim Preservado ou Musgo Polar**: média entre R$ 850 e R$ 1.800/m² dependendo da densidade e relevo botânico.
 • Projetos em **Jardim Permanente Anti-UV**: média entre R$ 750 e R$ 1.500/m².
-• Você pode simular a sua parede no nosso **Simulador IA** no topo da página ou abrir o formulário de orçamento para receber uma proposta técnica detalhada com condições comerciais sob medida!`;
+• Você pode simular a sua parede no nosso **Simulador de Ambientes** no topo da página ou abrir o formulário de orçamento para receber uma proposta técnica detalhada com condições comerciais sob medida!`;
   }
 
   return `Na All Green Decor & Biophilia, desenvolvemos soluções biofílicas que unem alta estética à engenharia sustentável:

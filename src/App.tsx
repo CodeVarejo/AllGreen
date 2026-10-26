@@ -314,11 +314,11 @@ function AppContent() {
       newNotif = {
         id: `notif_ai_${Date.now()}`,
         type: 'ai_assistant_message',
-        title: 'Assistente IA: Nova Simulação Biofílica Gerada',
+        title: 'Assistente Técnico: Nova Simulação Biofílica Gerada',
         description: 'O algoritmo analisou a orientação solar e a acústica do projeto e recomenda uma composição mista de Musgo Polar com Eucalipto Preservado para ganho de +5.8 dB no isolamento.',
         timestamp,
         isRead: false,
-        sender: 'Assistente IA All Green',
+        sender: 'Assistente Técnico All Green',
         projectCode: 'AG-8492',
         impactSummary: {
           parameterChanged: 'Composição de Espécies & Acústica',
@@ -327,7 +327,7 @@ function AppContent() {
           deltaWell: '+4 Pts WELL Sound',
           deltaLeed: '+2 Créditos LEED v4.1',
         },
-        actionLabel: 'Abrir Simulador IA',
+        actionLabel: 'Abrir Simulador',
         actionType: 'open_simulator',
       };
     } else if (type === 'project') {
@@ -401,7 +401,7 @@ function AppContent() {
   };
 
   const handleOpenQuoteFromSimulation = (simResult: SimulationResult) => {
-    const summary = `Simulação IA: ${simResult.roomType} (${simResult.estimatedArea}m²) - ${simResult.recommendedStyle}. Orçamento estimado: R$ ${simResult.estimatedBudgetMin} - R$ ${simResult.estimatedBudgetMax}.`;
+    const summary = `Simulação de Ambiente: ${simResult.roomType} (${simResult.estimatedArea}m²) - ${simResult.recommendedStyle}. Orçamento estimado: R$ ${simResult.estimatedBudgetMin} - R$ ${simResult.estimatedBudgetMax}.`;
     openQuote(summary);
   };
 
@@ -421,7 +421,7 @@ function AppContent() {
   const wcagTableClass = isWcagTableMode ? 'wcag-table-mode' : '';
 
   return (
-    <div className={`min-h-screen w-full max-w-full overflow-x-clip bg-[#f3f7f4] text-gray-900 font-sans antialiased selection:bg-[#86efac] selection:text-[#072a1a] transition-all ${fontSizeClass} ${contrastClass} ${wcagTableClass}`}>
+    <div className={`min-h-screen w-full max-w-full overflow-x-clip bg-[#f3f7f4] text-gray-900 font-sans antialiased selection:bg-[#86efac] selection:text-[#072a1a] transition-all pb-20 md:pb-0 ${fontSizeClass} ${contrastClass} ${wcagTableClass}`}>
       
       {/* Skip Links for Screen Readers */}
       <a 
@@ -617,7 +617,7 @@ function AppContent() {
       </AnimatePresence>
 
       {/* Interactive Modals with Error Boundaries */}
-      <ErrorBoundary sectionName="Simulador IA Modal">
+      <ErrorBoundary sectionName="Simulador de Ambientes Modal">
         <SimulatorModal
           isOpen={isSimulatorOpen}
           onClose={closeSimulator}

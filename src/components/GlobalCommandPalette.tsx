@@ -99,16 +99,16 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       {
         id: 'cmd-sim',
         category: 'Ações Rápidas',
-        title: 'Abrir Simulador IA de Ambientes Biofílicos',
-        subtitle: 'Calcule espécies, acústica e orçamento com inteligência artificial',
-        badge: 'IA Exclusiva',
+        title: 'Abrir Simulador de Ambientes Biofílicos',
+        subtitle: 'Calcule espécies, acústica e orçamento com projeção paramétrica',
+        badge: 'Simulação Técnica',
         icon: Camera,
         shortcut: `${modKey}M`,
         action: () => {
           onClose();
           onOpenSimulator();
         },
-        keywords: ['simulador', 'ia', 'inteligencia', 'ambiente', 'reforma', 'orçamento', 'calculo', 'foto'],
+        keywords: ['simulador', 'ambiente', 'reforma', 'orçamento', 'calculo', 'foto', 'projeção'],
       },
       {
         id: 'cmd-quiz',
@@ -269,7 +269,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         category: 'Laudos & Ferramentas',
         title: 'Heatmap de Energia & Desempenho Acústico das Obras',
         subtitle: 'Matriz visual e gráficos Recharts com dados térmicos e NRC de todos os projetos',
-        badge: 'Recharts IA',
+        badge: 'Recharts Projeção',
         icon: Zap,
         action: () => {
           onClose();
