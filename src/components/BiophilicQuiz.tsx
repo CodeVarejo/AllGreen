@@ -30,7 +30,8 @@ import {
   UserCheck,
   Building,
   User,
-  ExternalLink
+  ExternalLink,
+  Mail
 } from 'lucide-react';
 import { QUIZ_QUESTIONS, calculateBiophilicProfile } from '../data/quizData';
 import { BiophilicProfileResult, QuizQuestion, UserProfile } from '../types';
@@ -38,6 +39,7 @@ import { BiophilicRadarChart } from './BiophilicRadarChart';
 import { generateBiophilicGuidePdf } from '../utils/generateBiophilicGuidePdf';
 import { ShareHighlightButton } from './common/ShareHighlightButton';
 import { formatBiophilicProfileShare } from '../utils/nativeSocialShare';
+import { SendBiophilicReportModal } from './SendBiophilicReportModal';
 import confetti from 'canvas-confetti';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -70,6 +72,7 @@ export const BiophilicQuiz: React.FC<BiophilicQuizProps> = ({
   const [calculationStep, setCalculationStep] = useState<string>('');
   const [result, setResult] = useState<BiophilicProfileResult | null>(null);
   const [copiedSuccess, setCopiedSuccess] = useState<boolean>(false);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState<boolean>(false);
 
   // Profile Saving & Guide Download State
   const [autoDownloadGuide, setAutoDownloadGuide] = useState<boolean>(true);
@@ -564,7 +567,18 @@ Código: ${result.recommendedSolutionCode}`;
                       <strong className="text-sm font-mono text-white tracking-wider">{result.recommendedSolutionCode}</strong>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        id="btn-email-biophilic-report-top"
+                        onClick={() => setIsEmailModalOpen(true)}
+                        className="px-3 py-1.5 bg-emerald-800/80 hover:bg-emerald-700 text-[#86efac] text-xs font-bold rounded-xl border border-emerald-600/60 flex items-center gap-1.5 cursor-pointer transition-all shadow-xs active:scale-95"
+                        title="Enviar Laudo Técnico para seu E-mail via Serviço de Mensageria"
+                      >
+                        <Mail className="w-3.5 h-3.5 text-[#86efac]" />
+                        <span>Enviar por E-mail</span>
+                      </button>
+
                       <ShareHighlightButton
                         payload={() => formatBiophilicProfileShare(result, currentUser)}
                         label="Compartilhar Perfil"
@@ -574,7 +588,7 @@ Código: ${result.recommendedSolutionCode}`;
                       <button
                         type="button"
                         onClick={handleRestart}
-                        className="px-3 py-1.5 bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 text-xs font-bold rounded-xl border border-emerald-700/60 flex items-center gap-1.5 cursor-pointer transition-all"
+                        className="px-3 py-1.5 bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 text-xs font-bold rounded-xl border border-emerald-700/60 flex items-center gap-1.5 cursor-pointer transition-all active:scale-95"
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
                         <span>Refazer</span>
@@ -705,7 +719,19 @@ Código: ${result.recommendedSolutionCode}`;
                         title="Baixar Guia Técnico Personalizado em PDF"
                       >
                         <Download className="w-3.5 h-3.5 text-[#15803d]" />
-                        <span>Baixar Guia Personalizado (PDF)</span>
+                        <span>Baixar Guia (PDF)</span>
+                      </button>
+
+                      {/* Send Biophilic Report to Email Button */}
+                      <button
+                        type="button"
+                        id="btn-email-biophilic-report"
+                        onClick={() => setIsEmailModalOpen(true)}
+                        className="px-4 py-2 bg-emerald-100/90 hover:bg-emerald-200 text-[#072a1a] border border-emerald-300 font-bold text-xs rounded-xl shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                        title="Receba o laudo técnico oficial no seu e-mail com anexo em PDF"
+                      >
+                        <Mail className="w-3.5 h-3.5 text-[#15803d]" />
+                        <span>Enviar para Meu E-mail</span>
                       </button>
 
                       {/* Native Social Share Button */}
@@ -1034,6 +1060,16 @@ Código: ${result.recommendedSolutionCode}`;
         </div>
 
       </div>
+
+      {/* Messaging Service Modal: Dispatch Technical Report to User Email */}
+      {result && (
+        <SendBiophilicReportModal
+          isOpen={isEmailModalOpen}
+          onClose={() => setIsEmailModalOpen(false)}
+          result={result}
+          currentUser={currentUser}
+        />
+      )}
     </section>
   );
 };

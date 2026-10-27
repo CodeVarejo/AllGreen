@@ -8,6 +8,7 @@ import { ThemeSelector } from './ThemeSelector';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { botanicalAudio } from '../utils/botanicalAudio';
 import { useLanguage } from '../context/LanguageContext';
+import { useAccessibility } from '../context/AccessibilityContext';
 
 interface NavbarProps {
   onOpenSimulator: () => void;
@@ -43,6 +44,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenHabitTracker,
 }) => {
   const { t } = useLanguage();
+  const { theme } = useAccessibility();
+  const isDark = theme === 'dark';
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAudioActive, setIsAudioActive] = useState(false);
   const isMac = useMemo(() => isMacUser(), []);
@@ -241,18 +244,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             aria-expanded={isDrawerOpen}
             aria-controls="menu-drawer"
             title="Menu & Ferramentas"
-            className={`relative flex items-center justify-center gap-1.5 h-8.5 sm:h-10 px-2.5 sm:px-3 rounded-full transition-all cursor-pointer shrink-0 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0d3822] ${
+            className={`relative flex items-center justify-center gap-1.5 h-9 sm:h-10 px-2.5 sm:px-3 rounded-full transition-all cursor-pointer shrink-0 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#86efac] ${
               isDrawerOpen
-                ? 'bg-[#0d3822] text-[#86efac] border border-[#0d3822] shadow-sm'
-                : 'bg-white dark:bg-emerald-950/60 text-[#0d3822] dark:text-emerald-200 border border-gray-300/80 dark:border-emerald-800/80 hover:bg-emerald-50 dark:hover:bg-emerald-900 shadow-2xs'
+                ? 'bg-[#072a1a] text-[#86efac] border border-[#86efac]/80 shadow-md'
+                : isDark
+                ? 'bg-[#082015] text-[#86efac] border border-emerald-500/60 hover:bg-emerald-900/90 hover:border-[#86efac] shadow-md'
+                : 'bg-white text-[#072a1a] border border-gray-300 hover:bg-emerald-50 hover:border-emerald-600 shadow-xs'
             }`}
           >
             {isDrawerOpen ? (
-              <X className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#86efac] transition-transform rotate-90 duration-200" />
+              <X className="w-5 h-5 text-[#86efac] transition-transform rotate-90 duration-200 stroke-[2.5]" />
             ) : (
-              <MenuIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#0d3822] dark:text-emerald-200 transition-transform duration-200" />
+              <MenuIcon className={`w-5 h-5 ${isDark ? 'text-[#86efac]' : 'text-[#072a1a]'} transition-transform duration-200 stroke-[2.5]`} />
             )}
-            <span className="hidden xl:inline text-xs font-bold text-[#0d3822] dark:text-emerald-200">
+            <span className={`hidden xl:inline text-xs font-extrabold ${isDark ? 'text-[#86efac]' : 'text-[#072a1a]'}`}>
               Menu
             </span>
 
