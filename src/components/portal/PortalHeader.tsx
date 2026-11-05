@@ -11,7 +11,8 @@ import {
   Search,
   CheckCircle2,
   Sun,
-  Moon
+  Moon,
+  Smartphone
 } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { isMacUser } from '../../hooks/useKeyboardShortcuts';
@@ -33,6 +34,7 @@ interface PortalHeaderProps {
   onTriggerSimulation?: (type: 'botanical' | 'leed') => void;
   onOpenCloudStorage?: () => void;
   onOpenSettings?: () => void;
+  onOpenPublicLinkShare?: () => void;
 }
 
 export const PortalHeader: React.FC<PortalHeaderProps> = ({
@@ -48,6 +50,7 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
   onTriggerSimulation,
   onOpenCloudStorage,
   onOpenSettings,
+  onOpenPublicLinkShare,
 }) => {
   const { theme, toggleTheme } = useAccessibility();
   const { t, language } = useLanguage();
@@ -158,6 +161,19 @@ export const PortalHeader: React.FC<PortalHeaderProps> = ({
           <div className="hidden md:block">
             <LanguageSwitcher variant="navbar" />
           </div>
+
+          {/* Testar no Celular CTA */}
+          {onOpenPublicLinkShare && (
+            <button
+              type="button"
+              onClick={onOpenPublicLinkShare}
+              className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] px-3.5 py-2 rounded-full text-xs font-bold border border-emerald-300 shadow-2xs hover:border-[#15803d] transition-all cursor-pointer active:scale-95 min-h-[44px]"
+              title="Abrir Link Público Oficial e QR Code para testar no celular"
+            >
+              <Smartphone className="w-3.5 h-3.5 text-emerald-700" />
+              <span>Testar no Celular</span>
+            </button>
+          )}
 
           {/* New Project CTA (Desktop) */}
           <button

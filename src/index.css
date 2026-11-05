@@ -100,10 +100,10 @@ body {
   border-color: rgba(34, 197, 94, 0.2) !important;
 }
 
-.dark:not(.high-contrast) .bg-[#fbfdfb],
-.dark:not(.high-contrast) .bg-[#f3f7f4],
-.dark:not(.high-contrast) .bg-[#f9fbf9],
-.dark:not(.high-contrast) .bg-[#f8faf8],
+.dark:not(.high-contrast) .bg-\[\#fbfdfb\],
+.dark:not(.high-contrast) .bg-\[\#f3f7f4\],
+.dark:not(.high-contrast) .bg-\[\#f9fbf9\],
+.dark:not(.high-contrast) .bg-\[\#f8faf8\],
 .dark:not(.high-contrast) .bg-gray-50,
 .dark:not(.high-contrast) .bg-gray-100 {
   background-color: #05150d !important;
@@ -168,8 +168,8 @@ body {
 }
 
 .high-contrast .bg-white,
-.high-contrast .bg-[#f3f7f4],
-.high-contrast .bg-[#f9fbf9],
+.high-contrast .bg-\[\#f3f7f4\],
+.high-contrast .bg-\[\#f9fbf9\],
 .high-contrast .bg-emerald-50,
 .high-contrast .bg-emerald-50\/70,
 .high-contrast .bg-emerald-100 {
@@ -178,15 +178,14 @@ body {
   border-color: #facc15 !important;
 }
 
-.high-contrast .bg-[#072a1a],
-.high-contrast .bg-[#051f13],
+.high-contrast .bg-\[\#072a1a\],
+.high-contrast .bg-\[\#051f13\],
 .high-contrast .bg-emerald-950 {
   background-color: #020d07 !important;
   color: #ffff00 !important;
   border-color: #facc15 !important;
 }
 
-.high-contrast text-gray-900,
 .high-contrast .text-gray-900,
 .high-contrast .text-gray-800,
 .high-contrast .text-gray-700,
@@ -195,7 +194,7 @@ body {
   color: #ffffff !important;
 }
 
-.high-contrast .text-[#15803d],
+.high-contrast .text-\[\#15803d\],
 .high-contrast .text-emerald-400,
 .high-contrast .text-emerald-300,
 .high-contrast .text-emerald-700 {
@@ -281,4 +280,36 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #15803d;
   border-radius: 4px;
+}
+
+/* Print Styles for QR Code Architectural Plaque */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #printable-project-qr-card,
+  #printable-project-qr-card * {
+    visibility: visible;
+  }
+
+  #printable-project-qr-card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 90% !important;
+    max-width: 600px !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    border: 2px solid #072a1a !important;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }

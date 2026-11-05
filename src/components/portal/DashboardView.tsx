@@ -14,7 +14,8 @@ import {
   Leaf,
   Droplets,
   Award,
-  Sparkles
+  Sparkles,
+  QrCode
 } from 'lucide-react';
 import { PortalProject, UserProfile, PortalNotification } from '../../types';
 import { ProjectsPerformanceHeatmap } from './ProjectsPerformanceHeatmap';
@@ -39,6 +40,7 @@ interface DashboardViewProps {
   onDownloadBiophilicGuide?: (profile: any) => void;
   onRestoreDemoProjects?: () => void;
   onOpenHabitTracker?: () => void;
+  onOpenQrCode?: (project: PortalProject) => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -54,6 +56,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onDownloadBiophilicGuide,
   onRestoreDemoProjects,
   onOpenHabitTracker,
+  onOpenQrCode,
 }) => {
   const isArchitect = user.role === 'arquiteto' || user.role === 'especificador';
 
@@ -406,20 +409,36 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </div>
                 </div>
 
-                <div className="p-5 pt-0 grid grid-cols-2 gap-2.5">
+                <div className="p-5 pt-0 grid grid-cols-3 gap-1.5">
                   <button
+                    type="button"
                     onClick={() => onDownloadSpecPdf(proj)}
-                    className="py-2.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] font-bold text-xs rounded-xl border border-emerald-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="py-2.5 px-2 bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] font-bold text-xs rounded-xl border border-emerald-200 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                    title="Baixar Memorial Descritivo em PDF"
                   >
                     <Download className="w-3.5 h-3.5 text-[#15803d]" />
-                    <span>Memorial</span>
+                    <span className="truncate">PDF</span>
                   </button>
 
+                  {onOpenQrCode && (
+                    <button
+                      type="button"
+                      id={`btn-dash-qr-${proj.id}`}
+                      onClick={() => onOpenQrCode(proj)}
+                      className="py-2.5 px-2 bg-emerald-100/90 hover:bg-emerald-200 text-[#072a1a] font-bold text-xs rounded-xl border border-emerald-300 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                      title="Gerar Placa & QR Code Imprimível"
+                    >
+                      <QrCode className="w-3.5 h-3.5 text-[#15803d]" />
+                      <span className="truncate">QR</span>
+                    </button>
+                  )}
+
                   <button
+                    type="button"
                     onClick={() => onOpenProjectDetail(proj)}
-                    className="py-2.5 px-3 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold text-xs rounded-xl transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                    className="py-2.5 px-2 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold text-xs rounded-xl transition-colors flex items-center justify-center gap-1 cursor-pointer"
                   >
-                    <span>Detalhes</span>
+                    <span className="truncate">Ver</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>

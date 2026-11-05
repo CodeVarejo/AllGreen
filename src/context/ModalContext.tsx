@@ -15,12 +15,14 @@ interface ModalContextType {
   isTourOpen: boolean;
   isCloudStorageOpen: boolean;
   isHabitTrackerOpen: boolean;
+  isPublicLinkShareOpen: boolean;
 
   // Contextual modal data
   selectedProjectForLookup: ProjectSample | null;
   quoteContext: string;
   consultationPrefillType?: string;
   consultationPrefillProjectCode?: string;
+  publicLinkShareProjectCode?: string;
 
   // Modal open / close actions
   openSimulator: () => void;
@@ -59,6 +61,9 @@ interface ModalContextType {
   openHabitTracker: () => void;
   closeHabitTracker: () => void;
 
+  openPublicLinkShare: (projectCode?: string) => void;
+  closePublicLinkShare: () => void;
+
   closeAllModals: () => void;
 }
 
@@ -77,11 +82,13 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [isTourOpen, setIsTourOpen] = useState(false);
   const [isCloudStorageOpen, setIsCloudStorageOpen] = useState(false);
   const [isHabitTrackerOpen, setIsHabitTrackerOpen] = useState(false);
+  const [isPublicLinkShareOpen, setIsPublicLinkShareOpen] = useState(false);
 
   const [selectedProjectForLookup, setSelectedProjectForLookup] = useState<ProjectSample | null>(null);
   const [quoteContext, setQuoteContext] = useState<string>('');
   const [consultationPrefillType, setConsultationPrefillType] = useState<string | undefined>();
   const [consultationPrefillProjectCode, setConsultationPrefillProjectCode] = useState<string | undefined>();
+  const [publicLinkShareProjectCode, setPublicLinkShareProjectCode] = useState<string | undefined>();
 
   const openSimulator = useCallback(() => setIsSimulatorOpen(true), []);
   const closeSimulator = useCallback(() => setIsSimulatorOpen(false), []);
@@ -139,6 +146,15 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const openHabitTracker = useCallback(() => setIsHabitTrackerOpen(true), []);
   const closeHabitTracker = useCallback(() => setIsHabitTrackerOpen(false), []);
 
+  const openPublicLinkShare = useCallback((projectCode?: string) => {
+    setPublicLinkShareProjectCode(projectCode);
+    setIsPublicLinkShareOpen(true);
+  }, []);
+  const closePublicLinkShare = useCallback(() => {
+    setIsPublicLinkShareOpen(false);
+    setPublicLinkShareProjectCode(undefined);
+  }, []);
+
   const closeAllModals = useCallback(() => {
     setIsSimulatorOpen(false);
     setIsProjectLookupOpen(false);
@@ -152,6 +168,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setIsTourOpen(false);
     setIsCloudStorageOpen(false);
     setIsHabitTrackerOpen(false);
+    setIsPublicLinkShareOpen(false);
   }, []);
 
   return (
@@ -197,6 +214,10 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         closeCloudStorage,
         openHabitTracker,
         closeHabitTracker,
+        isPublicLinkShareOpen,
+        publicLinkShareProjectCode,
+        openPublicLinkShare,
+        closePublicLinkShare,
         closeAllModals,
       }}
     >

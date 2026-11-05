@@ -28,6 +28,7 @@ import { SamplesView } from './portal/SamplesView';
 import { SpecifierView } from './portal/SpecifierView';
 import { SettingsView } from './portal/SettingsView';
 import { ProjectDetailModal } from './portal/ProjectDetailModal';
+import { ProjectQrCodeModal } from './portal/ProjectQrCodeModal';
 import { NewProjectModal } from './portal/NewProjectModal';
 import { EditProjectModal } from './portal/EditProjectModal';
 import { ProjectVersionHistoryModal } from './portal/ProjectVersionHistoryModal';
@@ -52,6 +53,7 @@ interface ArchitectPortalProps {
   onRetakeQuiz?: () => void;
   onDownloadBiophilicGuide?: (profile: any) => void;
   onOpenHabitTracker?: () => void;
+  onOpenPublicLinkShare?: (code?: string) => void;
 }
 
 export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
@@ -63,6 +65,7 @@ export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
   onRetakeQuiz,
   onDownloadBiophilicGuide,
   onOpenHabitTracker,
+  onOpenPublicLinkShare,
 }) => {
   const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile>(user);
   const [activeTab, setActiveTab] = useState<PortalTabKey>('dashboard');
@@ -74,6 +77,7 @@ export const ArchitectPortal: React.FC<ArchitectPortalProps> = ({
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [selectedProjectForDetail, setSelectedProjectForDetail] = useState<PortalProject | null>(null);
+  const [selectedProjectForQrCode, setSelectedProjectForQrCode] = useState<PortalProject | null>(null);
   const [selectedProjectForVersionHistory, setSelectedProjectForVersionHistory] = useState<PortalProject | null>(null);
   const [selectedProjectForEdit, setSelectedProjectForEdit] = useState<PortalProject | null>(null);
   
@@ -642,6 +646,7 @@ Portal do Arquiteto: https://allgreendecor.com.br
         onTriggerSimulation={handleTriggerSimulation}
         onOpenCloudStorage={() => setIsCloudStorageModalOpen(true)}
         onOpenSettings={() => setActiveTab('settings')}
+        onOpenPublicLinkShare={onOpenPublicLinkShare ? () => onOpenPublicLinkShare() : undefined}
       />
 
       {/* Floating Real-Time Notification Alert Toast */}
@@ -748,6 +753,7 @@ Portal do Arquiteto: https://allgreendecor.com.br
                 onSelectTab={(t) => setActiveTab(t)}
                 onDownloadSpecPdf={handleDownloadSpecSheet}
                 onOpenProjectDetail={(p) => setSelectedProjectForDetail(p)}
+                onOpenQrCode={(p) => setSelectedProjectForQrCode(p)}
                 onActionClick={handleActionClick}
                 onRetakeQuiz={onRetakeQuiz}
                 onDownloadBiophilicGuide={onDownloadBiophilicGuide}
@@ -772,6 +778,7 @@ Portal do Arquiteto: https://allgreendecor.com.br
                 onOpenSimulator={onOpenSimulator}
                 onOpenNewProjectModal={() => setIsNewProjectModalOpen(true)}
                 onOpenProjectDetail={(p) => setSelectedProjectForDetail(p)}
+                onOpenQrCode={(p) => setSelectedProjectForQrCode(p)}
                 onDownloadSpecPdf={handleDownloadSpecSheet}
                 onSelectForComparison={handleSelectForComparison}
                 onOpenVersionHistory={handleOpenVersionHistory}
@@ -917,6 +924,15 @@ Portal do Arquiteto: https://allgreendecor.com.br
         }}
         onOpenVersionHistory={(proj) => handleOpenVersionHistory(proj)}
         onOpenEditProject={(proj) => handleOpenEditProject(proj)}
+        onOpenQrCode={(proj) => setSelectedProjectForQrCode(proj)}
+      />
+
+      {/* Printable Project QR Code Presentation Plaque Modal */}
+      <ProjectQrCodeModal
+        project={selectedProjectForQrCode}
+        isOpen={Boolean(selectedProjectForQrCode)}
+        onClose={() => setSelectedProjectForQrCode(null)}
+        architectUser={currentUserProfile}
       />
 
       {/* Edit Project Modal (creates a new snapshot version upon saving) */}

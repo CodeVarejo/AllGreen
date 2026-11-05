@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Leaf, Search, Menu as MenuIcon, X, Camera, UserCheck, Bell } from 'lucide-react';
+import { Leaf, Search, Menu as MenuIcon, X, Camera, UserCheck, Bell, Smartphone } from 'lucide-react';
 import { UserProfile } from '../types';
 import { isMacUser } from '../hooks/useKeyboardShortcuts';
 import { MobileMenuDrawer } from './MobileMenuDrawer';
@@ -25,6 +25,7 @@ interface NavbarProps {
   onOpenProjectPdfReport?: () => void;
   onOpenTour?: () => void;
   onOpenHabitTracker?: () => void;
+  onOpenPublicLinkShare?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -42,6 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenProjectPdfReport,
   onOpenTour,
   onOpenHabitTracker,
+  onOpenPublicLinkShare,
 }) => {
   const { t } = useLanguage();
   const { theme } = useAccessibility();
@@ -209,6 +211,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
+          {/* Testar no Celular / Link Público CTA (Visible on screens >= sm) */}
+          <button
+            type="button"
+            id="header-mobile-test-btn"
+            onClick={onOpenPublicLinkShare}
+            className="hidden sm:flex items-center gap-1.5 bg-white dark:bg-emerald-950/70 hover:bg-emerald-50 dark:hover:bg-emerald-900 text-[#0d3822] dark:text-[#86efac] border border-emerald-300/80 dark:border-emerald-700/80 px-2.5 sm:px-3 h-8.5 sm:h-10 rounded-full font-bold text-xs shadow-2xs transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
+            title="Abrir Link Oficial e QR Code para testar no celular"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-emerald-600 dark:text-[#86efac]" />
+            <span className="hidden xl:inline">Testar no Celular</span>
+            <span className="inline xl:hidden">Celular</span>
+          </button>
+
           {/* Portal do Arquiteto CTA (Screens >= 768px) */}
           <button
             type="button"
@@ -298,6 +313,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         onOpenProjectPdfReport={onOpenProjectPdfReport}
         onOpenTour={onOpenTour}
         onOpenHabitTracker={onOpenHabitTracker}
+        onOpenPublicLinkShare={onOpenPublicLinkShare}
         modKey={modKey}
         isAudioActive={isAudioActive}
         onToggleAudio={handleToggleAudio}

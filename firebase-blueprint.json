@@ -1,0 +1,82 @@
+{
+  "entities": {
+    "SimulatorProgress": {
+      "title": "SimulatorProgress",
+      "description": "Progresso e parâmetros do simulador de ambientes biofílicos com sincronização automática a cada 30 segundos para usuários logados.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "ID do usuário autenticado proprietário do progresso",
+          "maxLength": 128
+        },
+        "step": {
+          "type": "string",
+          "description": "Etapa atual do simulador (upload, analyzing, result)",
+          "enum": ["upload", "analyzing", "result"]
+        },
+        "roomType": {
+          "type": "string",
+          "description": "Tipo do ambiente selecionado (Living, Varanda, Corporativo, etc.)",
+          "maxLength": 128
+        },
+        "stylePreference": {
+          "type": "string",
+          "description": "Estilo biofílico selecionado para a parede verde",
+          "maxLength": 200
+        },
+        "wallWidth": {
+          "type": "number",
+          "description": "Largura da parede em metros"
+        },
+        "wallHeight": {
+          "type": "number",
+          "description": "Altura da parede em metros"
+        },
+        "activeArea": {
+          "type": "number",
+          "description": "Área calculada em m²"
+        },
+        "sliderPos": {
+          "type": "number",
+          "description": "Posição do slider de comparação antes/depois (0-100)"
+        },
+        "viewMode": {
+          "type": "string",
+          "description": "Modo de visualização no simulador",
+          "enum": ["slider", "side-by-side"]
+        },
+        "selectedSample": {
+          "type": "string",
+          "description": "URL da foto de amostra ou referência do ambiente",
+          "maxLength": 1000
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Data e hora ISO do último salvamento automático"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Data e hora ISO da criação do rascunho de simulação"
+        }
+      },
+      "required": [
+        "userId",
+        "step",
+        "roomType",
+        "stylePreference",
+        "wallWidth",
+        "wallHeight",
+        "activeArea"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/simulator_progress/{progressId}": {
+      "schema": {
+        "$ref": "#/entities/SimulatorProgress"
+      },
+      "description": "Coleção de rascunhos e progresso de simulação de ambientes biofílicos isolados por usuário"
+    }
+  }
+}

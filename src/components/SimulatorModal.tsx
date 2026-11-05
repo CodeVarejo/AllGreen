@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Camera,
   Upload,
@@ -19,24 +19,34 @@ import {
   SlidersHorizontal,
   Columns,
   MoveHorizontal,
-  Ruler
+  Ruler,
+  Cloud,
+  CheckCircle,
+  RotateCcw
 } from 'lucide-react';
-import { SimulationResult } from '../types';
+import { SimulationResult, UserProfile } from '../types';
 import { exportSimulationToPdf } from '../services/simulationPdfExport';
 import { useUnsavedChangesGuard } from '../hooks/useUnsavedChangesGuard';
 import { ShareHighlightButton } from './common/ShareHighlightButton';
 import { formatSimulationShare } from '../utils/nativeSocialShare';
+import {
+  saveSimulatorProgress,
+  loadSimulatorProgress,
+  SimulatorProgressData
+} from '../services/simulatorSyncService';
 
 interface SimulatorModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenQuoteWithData: (data: SimulationResult) => void;
+  currentUser?: UserProfile | null;
 }
 
 export const SimulatorModal: React.FC<SimulatorModalProps> = ({
   isOpen,
   onClose,
   onOpenQuoteWithData,
+  currentUser,
 }) => {
   const [step, setStep] = useState<'upload' | 'analyzing' | 'result'>('upload');
   const [selectedSample, setSelectedSample] = useState<string>('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80');
@@ -75,6 +85,133 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
       max: Math.round(activeArea * rateMax),
     };
   }, [activeArea, stylePreference]);
+
+  // =========================================================================
+  // FIRESTORE AUTO-SAVE LOGIC (Synchronize every 30 seconds if user is logged in)
+  // =========================================================================
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [lastSavedTime, setLastSavedTime] = useState<string | null>(null);
+  const [hasRestorableProgress, setHasRestorableProgress] = useState<SimulatorProgressData | null>(null);
+  const [showRestorePrompt, setShowRestorePrompt] = useState<boolean>(false);
+
+  // Check for restorable progress in Firestore when modal opens
+  useEffect(() => {
+    if (!isOpen || !currentUser) {
+      setHasRestorableProgress(null);
+      setShowRestorePrompt(false);
+      return;
+    }
+
+    let isSubscribed = true;
+    loadSimulatorProgress(currentUser.id).then((saved) => {
+      if (isSubscribed && saved) {
+        const isModified =
+          (saved.wallWidth && saved.wallWidth !== 3.8) ||
+          (saved.wallHeight && saved.wallHeight !== 2.7) ||
+          (saved.roomType && saved.roomType !== 'Escritório Corporativo');
+
+        if (isModified) {
+          setHasRestorableProgress(saved);
+          setShowRestorePrompt(true);
+        }
+      }
+    });
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [isOpen, currentUser]);
+
+  // Automatic synchronization to Firestore every 30 seconds for authenticated users
+  useEffect(() => {
+    if (!isOpen || !currentUser) {
+      setSyncStatus('idle');
+      return;
+    }
+
+    const performAutoSave = async () => {
+      setSyncStatus('saving');
+      try {
+        const resultSync = await saveSimulatorProgress(currentUser.id, {
+          step,
+          roomType,
+          stylePreference,
+          wallWidth,
+          wallHeight,
+          activeArea,
+          sliderPos,
+          viewMode,
+          selectedSample,
+        });
+
+        if (resultSync.success) {
+          setSyncStatus('saved');
+          const timeStr = new Date().toLocaleTimeString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          });
+          setLastSavedTime(timeStr);
+        } else {
+          setSyncStatus('idle');
+        }
+      } catch (err) {
+        console.warn('[Simulator Sync] Auto-save failed:', err);
+        setSyncStatus('error');
+      }
+    };
+
+    // Run the auto-save synchronization strictly every 30 seconds
+    const intervalTimer = setInterval(performAutoSave, 30000);
+
+    return () => clearInterval(intervalTimer);
+  }, [
+    isOpen,
+    currentUser,
+    step,
+    roomType,
+    stylePreference,
+    wallWidth,
+    wallHeight,
+    activeArea,
+    sliderPos,
+    viewMode,
+    selectedSample,
+  ]);
+
+  const handleManualSyncNow = async () => {
+    if (!currentUser) return;
+    setSyncStatus('saving');
+    const res = await saveSimulatorProgress(currentUser.id, {
+      step,
+      roomType,
+      stylePreference,
+      wallWidth,
+      wallHeight,
+      activeArea,
+      sliderPos,
+      viewMode,
+      selectedSample,
+    });
+    if (res.success) {
+      setSyncStatus('saved');
+      setLastSavedTime(new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    } else {
+      setSyncStatus('error');
+    }
+  };
+
+  const handleApplyRestoredProgress = () => {
+    if (!hasRestorableProgress) return;
+    if (hasRestorableProgress.roomType) setRoomType(hasRestorableProgress.roomType);
+    if (hasRestorableProgress.stylePreference) setStylePreference(hasRestorableProgress.stylePreference);
+    if (hasRestorableProgress.wallWidth) setWallWidth(hasRestorableProgress.wallWidth);
+    if (hasRestorableProgress.wallHeight) setWallHeight(hasRestorableProgress.wallHeight);
+    if (hasRestorableProgress.sliderPos !== undefined) setSliderPos(hasRestorableProgress.sliderPos);
+    if (hasRestorableProgress.viewMode) setViewMode(hasRestorableProgress.viewMode);
+    if (hasRestorableProgress.selectedSample) setSelectedSample(hasRestorableProgress.selectedSample);
+    setShowRestorePrompt(false);
+  };
 
   // Check whether user has unsaved simulation state
   const isDirty = customImage !== null || step === 'result' || simulationResult !== null;
@@ -238,14 +375,87 @@ export const SimulatorModal: React.FC<SimulatorModalProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={handleAttemptClose}
-            aria-label="Fechar Simulador"
-            className="w-9 h-9 rounded-full bg-emerald-950 text-gray-300 hover:text-white hover:bg-emerald-900 flex items-center justify-center transition-colors cursor-pointer shrink-0"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Firestore Auto-Save Indicator (30 seconds sync) */}
+            {currentUser ? (
+              <button
+                type="button"
+                id="btn-simulator-firestore-sync"
+                onClick={handleManualSyncNow}
+                title="Sincronizado automaticamente no Firestore a cada 30 segundos. Clique para forçar sincronização imediata."
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-700/60 text-xs cursor-pointer hover:border-[#86efac] transition-all"
+              >
+                {syncStatus === 'saving' ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#86efac]" />
+                    <span className="text-[10px] text-emerald-200 font-mono hidden sm:inline">Salvando...</span>
+                  </>
+                ) : syncStatus === 'saved' ? (
+                  <>
+                    <CheckCircle className="w-3.5 h-3.5 text-[#86efac]" />
+                    <span className="text-[10px] text-emerald-200 font-mono hidden sm:inline">
+                      Salvo ({lastSavedTime || '30s'})
+                    </span>
+                  </>
+                ) : syncStatus === 'error' ? (
+                  <>
+                    <Cloud className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="text-[10px] text-amber-300 font-mono hidden sm:inline">Reconectar nuvem</span>
+                  </>
+                ) : (
+                  <>
+                    <Cloud className="w-3.5 h-3.5 text-[#86efac]" />
+                    <span className="text-[10px] text-emerald-200 font-mono hidden sm:inline">Auto-Save 30s</span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <div
+                title="Faça login para salvar automaticamente seu progresso no Firestore a cada 30 segundos"
+                className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-950/50 border border-emerald-800/40 text-[10px] text-emerald-300/80 font-mono"
+              >
+                <Cloud className="w-3 h-3 text-emerald-400" />
+                <span>Visitante (Sem auto-save)</span>
+              </div>
+            )}
+
+            <button
+              onClick={handleAttemptClose}
+              aria-label="Fechar Simulador"
+              className="w-9 h-9 rounded-full bg-emerald-950 text-gray-300 hover:text-white hover:bg-emerald-900 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
+
+        {/* Firestore Restore Progress Notification Banner */}
+        {showRestorePrompt && hasRestorableProgress && (
+          <div className="bg-emerald-100 border-b border-emerald-300 p-3 px-4 sm:px-6 flex items-center justify-between gap-3 text-xs text-emerald-950 animate-in fade-in">
+            <div className="flex items-center gap-2">
+              <Cloud className="w-4 h-4 text-[#15803d] shrink-0" />
+              <span>
+                Encontramos um rascunho anterior salvo no Firestore ({hasRestorableProgress.roomType}, {hasRestorableProgress.wallWidth}m × {hasRestorableProgress.wallHeight}m). Deseja restaurar?
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleApplyRestoredProgress}
+                className="px-3 py-1 bg-[#072a1a] text-[#86efac] font-bold text-xs rounded-lg hover:bg-[#15803d] transition-colors cursor-pointer"
+              >
+                Restaurar Dados
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowRestorePrompt(false)}
+                className="px-2 py-1 text-gray-500 hover:text-gray-800 text-xs cursor-pointer"
+              >
+                Dispensar
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Modal Body */}
         <div className="p-4 sm:p-8 space-y-6 overflow-y-auto flex-1">

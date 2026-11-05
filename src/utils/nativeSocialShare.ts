@@ -1,5 +1,6 @@
 import { BiophilicProfileResult, PortalProject, SimulationResult, UserProfile } from '../types';
 import { ProjectReportPdfOptions } from './generateProjectReportPdf';
+import { getPublicBaseUrl } from './appUrl';
 
 export interface SocialSharePayload {
   title: string;
@@ -17,7 +18,7 @@ export interface ShareResult {
  * Invokes native Web Share API (navigator.share) with automatic fallback to clipboard copy.
  */
 export async function shareHighlights(payload: SocialSharePayload): Promise<ShareResult> {
-  const currentUrl = payload.url || (typeof window !== 'undefined' ? window.location.href : 'https://allgreendecor.com.br');
+  const currentUrl = payload.url || getPublicBaseUrl();
   const fullShareData = {
     title: payload.title,
     text: payload.text,
@@ -119,7 +120,7 @@ export function formatBiophilicProfileShare(
 
 Descubra seu perfil biofílico corporativo ou residencial na All Green Decor:`;
 
-  const baseUrl = typeof window !== 'undefined' ? `${window.location.origin}/#biophilic-quiz` : 'https://allgreendecor.com.br';
+  const baseUrl = `${getPublicBaseUrl()}/#biophilic-quiz`;
 
   return {
     title,
@@ -165,7 +166,7 @@ Cliente: ${client} | Área: ${area} m²
 Homologado pelo Green Building Council Brasil & IPT.
 Acesse o memorial completo e especificações BIM/CAD:`;
 
-  const baseUrl = typeof window !== 'undefined' ? `${window.location.origin}/#projects` : 'https://allgreendecor.com.br';
+  const baseUrl = `${getPublicBaseUrl()}/#projects`;
 
   return {
     title: shareTitle,
@@ -201,7 +202,7 @@ Tipologia: ${roomType} | Área Vegetada: ${area} m²
 
 Confira a simulação e solicite um projeto executivo completo:`;
 
-  const baseUrl = typeof window !== 'undefined' ? `${window.location.origin}/#simulator` : 'https://allgreendecor.com.br';
+  const baseUrl = `${getPublicBaseUrl()}/#simulator`;
 
   return {
     title,

@@ -24,8 +24,13 @@ import {
   Info,
   Sliders,
   DollarSign,
-  AlertTriangle
+  AlertTriangle,
+  Download,
+  FileText,
+  Printer
 } from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { generateComparisonMatrixPdf } from '../utils/generateComparisonMatrixPdf';
 import { ScrollReveal } from './ScrollReveal';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -45,6 +50,9 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({
   // Mode: 'side-by-side' (default interactive comparison) or 'full-table' (all-in-one matrix)
   const [viewMode, setViewMode] = useState<'side-by-side' | 'full-table'>('side-by-side');
   
+  // PDF Exporting State
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+
   // Side-by-Side State
   const [techAId, setTechAId] = useState<string>('preservado_tropical');
   const [techBId, setTechBId] = useState<string>('natural_hidroponico');
@@ -95,6 +103,36 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({
     setTechBId(presetBId);
   };
 
+  const handleExportPdf = () => {
+    setIsExportingPdf(true);
+    try {
+      generateComparisonMatrixPdf({
+        viewMode,
+        techA,
+        techB,
+        projectArea,
+        metricsA,
+        metricsB,
+        techFilter,
+        matrixRows: COMPARISON_MATRIX,
+      });
+      try {
+        confetti({
+          particleCount: 45,
+          spread: 60,
+          origin: { y: 0.7 },
+          colors: ['#86efac', '#15803d', '#072a1a'],
+        });
+      } catch (e) {
+        // no-op if confetti fails
+      }
+    } catch (err) {
+      console.error('Failed to export comparison matrix PDF:', err);
+    } finally {
+      setIsExportingPdf(false);
+    }
+  };
+
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case 'Droplets': return <Droplets className="w-4 h-4 text-[#15803d]" />;
@@ -138,9 +176,9 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({
           </div>
         </ScrollReveal>
 
-        {/* Mode Switcher Buttons */}
+        {/* Mode Switcher Buttons & PDF Export */}
         <ScrollReveal animation="fade-up" delay={0.08} distance={15}>
-          <div className="flex justify-center mt-6 px-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 px-2">
             <div className="bg-white p-1 sm:p-1.5 rounded-2xl sm:rounded-full border border-gray-200 shadow-sm flex flex-col xs:flex-row items-stretch sm:items-center gap-1 w-full xs:w-auto max-w-md">
               <button
                 type="button"
@@ -173,6 +211,20 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({
                 <span>{t('comparison.fullTable', 'Tabela Completa')}</span>
               </button>
             </div>
+
+            {/* Quick Stylized PDF Download Button for Current Matrix State */}
+            <button
+              type="button"
+              id="btn-export-matrix-pdf"
+              onClick={handleExportPdf}
+              disabled={isExportingPdf}
+              title="Gerar PDF da Matriz Selecionada para Impressão"
+              className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] border border-emerald-300 rounded-2xl sm:rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer active:scale-95 disabled:opacity-50"
+            >
+              <FileText className="w-4 h-4 text-[#15803d]" />
+              <span>{isExportingPdf ? 'Gerando Laudo...' : 'Exportar Matriz (PDF)'}</span>
+              <Download className="w-3.5 h-3.5 text-emerald-700" />
+            </button>
           </div>
         </ScrollReveal>
 
@@ -932,6 +984,18 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({
                   </button>
                 )}
 
+                <button
+                  type="button"
+                  id="btn-export-matrix-bottom"
+                  onClick={handleExportPdf}
+                  disabled={isExportingPdf}
+                  className="px-6 py-3 bg-[#072a1a] hover:bg-[#15803d] text-[#86efac] hover:text-white font-bold rounded-full text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer shadow-md active:scale-95 disabled:opacity-50"
+                >
+                  <FileText className="w-4 h-4 text-[#86efac]" />
+                  <span>{isExportingPdf ? 'Gerando Laudo Técnico...' : 'Exportar Matriz Selecionada (PDF)'}</span>
+                  <Download className="w-3.5 h-3.5" />
+                </button>
+
                 {onOpenPdfReport && (
                   <button
                     type="button"
@@ -953,44 +1017,57 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({
         {viewMode === 'full-table' && (
           <div className="mt-8 space-y-6">
             
-            {/* Filter Pills */}
+            {/* Filter Pills & Table PDF Export */}
             <ScrollReveal animation="fade-up" delay={0.1} distance={15}>
-              <div className="flex items-center justify-center gap-2 overflow-x-auto py-2">
+              <div className="flex flex-wrap items-center justify-between gap-3 py-2">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                  <button
+                    type="button"
+                    onClick={() => setTechFilter('all')}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      techFilter === 'all' ? 'bg-[#072a1a] text-white shadow-md' : 'bg-white text-gray-600 border hover:bg-emerald-50'
+                    }`}
+                  >
+                    Todas as Tecnologias
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTechFilter('preservado')}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      techFilter === 'preservado' ? 'bg-[#072a1a] text-white shadow-md' : 'bg-white text-gray-600 border hover:bg-emerald-50'
+                    }`}
+                  >
+                    Preservado Natural
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTechFilter('permanente')}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      techFilter === 'permanente' ? 'bg-[#072a1a] text-white shadow-md' : 'bg-white text-gray-600 border hover:bg-emerald-50'
+                    }`}
+                  >
+                    Permanente UV Premium
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTechFilter('natural')}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      techFilter === 'natural' ? 'bg-[#072a1a] text-white shadow-md' : 'bg-white text-gray-600 border hover:bg-emerald-50'
+                    }`}
+                  >
+                    Natural Vivo
+                  </button>
+                </div>
+
                 <button
                   type="button"
-                  onClick={() => setTechFilter('all')}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                    techFilter === 'all' ? 'bg-[#072a1a] text-white shadow-md' : 'bg-white text-gray-600 border hover:bg-emerald-50'
-                  }`}
+                  onClick={handleExportPdf}
+                  disabled={isExportingPdf}
+                  className="px-3.5 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-[#072a1a] border border-emerald-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95 disabled:opacity-50 ml-auto"
                 >
-                  Todas as Tecnologias
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTechFilter('preservado')}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                    techFilter === 'preservado' ? 'bg-[#072a1a] text-white shadow-md' : 'bg-white text-gray-600 border hover:bg-emerald-50'
-                  }`}
-                >
-                  Preservado Natural
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTechFilter('permanente')}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                    techFilter === 'permanente' ? 'bg-[#072a1a] text-white shadow-md' : 'bg-white text-gray-600 border hover:bg-emerald-50'
-                  }`}
-                >
-                  Permanente UV Premium
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTechFilter('natural')}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                    techFilter === 'natural' ? 'bg-[#072a1a] text-white shadow-md' : 'bg-white text-gray-600 border hover:bg-emerald-50'
-                  }`}
-                >
-                  Natural Vivo
+                  <FileText className="w-3.5 h-3.5 text-[#15803d]" />
+                  <span>{isExportingPdf ? 'Exportando...' : 'Exportar Tabela (PDF)'}</span>
+                  <Download className="w-3 h-3 text-emerald-700" />
                 </button>
               </div>
             </ScrollReveal>

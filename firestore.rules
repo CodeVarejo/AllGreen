@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // GLOBAL HELPERS
+    // ==========================================
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidSimulatorProgress(data) {
+      return data.keys().hasAll(['userId', 'step', 'roomType', 'stylePreference', 'wallWidth', 'wallHeight', 'activeArea'])
+        && data.userId is string
+        && data.userId.size() <= 128
+        && data.userId == request.auth.uid
+        && data.step in ['upload', 'analyzing', 'result']
+        && data.roomType is string
+        && data.roomType.size() <= 128
+        && data.stylePreference is string
+        && data.stylePreference.size() <= 200
+        && data.wallWidth is number
+        && data.wallWidth > 0
+        && data.wallWidth <= 100
+        && data.wallHeight is number
+        && data.wallHeight > 0
+        && data.wallHeight <= 100
+        && data.activeArea is number
+        && data.activeArea > 0
+        && (!('sliderPos' in data) || (data.sliderPos is number && data.sliderPos >= 0 && data.sliderPos <= 100))
+        && (!('viewMode' in data) || data.viewMode in ['slider', 'side-by-side'])
+        && (!('selectedSample' in data) || (data.selectedSample is string && data.selectedSample.size() <= 1000));
+    }
+
+    // Default Deny Catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ==========================================
+    // USER SIMULATOR PROGRESS AUTO-SYNC
+    // ==========================================
+    match /users/{userId}/simulator_progress/{progressId} {
+      allow get: if isOwner(userId) && isValidId(progressId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && isValidId(progressId)
+        && isValidSimulatorProgress(incoming())
+        && incoming().userId == userId;
+      allow update: if isOwner(userId)
+        && isValidId(progressId)
+        && isValidSimulatorProgress(incoming())
+        && incoming().userId == existing().userId;
+      allow delete: if isOwner(userId) && isValidId(progressId);
+    }
+  }
+}

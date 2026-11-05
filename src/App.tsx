@@ -26,7 +26,8 @@ import { ScrollReveal } from './components/ScrollReveal';
 import { LgpdBanner } from './components/LgpdBanner';
 import { BioTipWidget } from './components/BioTipWidget';
 import { ProjectSample, SimulationResult, UserProfile, PortalNotification, BiophilicProfileResult } from './types';
-import { DEFAULT_USER, INITIAL_PORTAL_NOTIFICATIONS } from './data/portalData';
+import { DEFAULT_USER, INITIAL_PORTAL_NOTIFICATIONS, INITIAL_PORTAL_PROJECTS } from './data/portalData';
+import { PROJECT_SAMPLES } from './data/mockData';
 import { generateBiophilicGuidePdf } from './utils/generateBiophilicGuidePdf';
 import { NotificationCenter } from './components/NotificationCenter';
 import { GlobalCommandPalette } from './components/GlobalCommandPalette';
@@ -40,6 +41,7 @@ import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { GuidedTour } from './components/GuidedTour';
 import { HabitTrackerModal } from './components/habits/HabitTrackerModal';
+import { PublicLinkShareModal } from './components/common/PublicLinkShareModal';
 import { OfflineIndicator } from './components/pwa/OfflineIndicator';
 import { startNatureNotificationScheduler, stopNatureNotificationScheduler } from './utils/natureNotificationService';
 
@@ -83,6 +85,10 @@ function AppContent() {
     isHabitTrackerOpen,
     openHabitTracker,
     closeHabitTracker,
+    isPublicLinkShareOpen,
+    publicLinkShareProjectCode,
+    openPublicLinkShare,
+    closePublicLinkShare,
     closeAllModals,
   } = useModals();
 
@@ -112,6 +118,63 @@ function AppContent() {
       }
     } catch (e) {}
   }, [openTour]);
+
+  // Deep-link support: Auto-open project technical report when scanned via QR code on mobile devices
+  useEffect(() => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const codeFromUrl = urlParams.get('project') || urlParams.get('projectCode') || urlParams.get('codigo');
+      if (codeFromUrl) {
+        const clean = codeFromUrl.trim().toUpperCase();
+        // 1. Check PROJECT_SAMPLES
+        const matched = PROJECT_SAMPLES.find((p) => p.code.toUpperCase() === clean);
+        if (matched) {
+          openProjectLookup(matched);
+        } else {
+          // 2. Check INITIAL_PORTAL_PROJECTS
+          const portalMatch = INITIAL_PORTAL_PROJECTS.find((p) => p.code.toUpperCase() === clean);
+          if (portalMatch) {
+            const mappedSample: ProjectSample = {
+              id: portalMatch.id,
+              code: portalMatch.code,
+              title: portalMatch.title,
+              category: 'Escritórios Corporativos',
+              client: portalMatch.client,
+              location: 'São Paulo, SP',
+              completionDate: portalMatch.dateCreated,
+              area: portalMatch.area || 24,
+              speciesUsed: portalMatch.speciesUsed || ['Samambaia Americana', 'Filodendro Brasil', 'Jiboia Verde'],
+              type: 'Jardim Preservado',
+              beforeImage: portalMatch.beforeImage || portalMatch.thumbnail,
+              afterImage: portalMatch.afterImage || portalMatch.thumbnail,
+              description: portalMatch.description || `Projeto de arquitetura biofílica para ${portalMatch.client}.`
+            };
+            openProjectLookup(mappedSample);
+          } else {
+            // 3. Fallback project representation
+            const fallbackSample: ProjectSample = {
+              id: `lookup_${clean}`,
+              code: clean,
+              title: `Projeto Biofílico ${clean}`,
+              category: 'Escritórios Corporativos',
+              client: 'Cliente Homologado Allgreen',
+              location: 'São Paulo, SP',
+              completionDate: '2024 / 2025',
+              area: 24,
+              speciesUsed: ['Samambaia Americana', 'Filodendro Brasil', 'Jiboia Verde'],
+              type: 'Jardim Preservado',
+              beforeImage: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80',
+              afterImage: 'https://images.unsplash.com/photo-1545243424-0ce743321e11?auto=format&fit=crop&w=1200&q=80',
+              description: `Ficha técnica do projeto biofílico com certificação acústica e créditos LEED/WELL.`
+            };
+            openProjectLookup(fallbackSample);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Error reading deep link project code:', e);
+    }
+  }, [openProjectLookup]);
 
   // Recurring local notification scheduler: reminds user to 'take a moment of nature'
   // based on their saved biophilic profile preferences
@@ -474,6 +537,7 @@ function AppContent() {
                   });
                 }}
                 onOpenHabitTracker={openHabitTracker}
+                onOpenPublicLinkShare={(code) => openPublicLinkShare(code)}
               />
             </ErrorBoundary>
           </motion.div>
@@ -503,6 +567,7 @@ function AppContent() {
               onOpenProjectPdfReport={openPdfReport}
               onOpenTour={openTour}
               onOpenHabitTracker={openHabitTracker}
+              onOpenPublicLinkShare={() => openPublicLinkShare()}
             />
 
             {/* Main Hero Section with interactive before/after slider */}
@@ -622,6 +687,7 @@ function AppContent() {
           isOpen={isSimulatorOpen}
           onClose={closeSimulator}
           onOpenQuoteWithData={handleOpenQuoteFromSimulation}
+          currentUser={currentUser}
         />
       </ErrorBoundary>
 
@@ -715,6 +781,15 @@ function AppContent() {
         <HabitTrackerModal
           isOpen={isHabitTrackerOpen}
           onClose={closeHabitTracker}
+        />
+      </ErrorBoundary>
+
+      {/* Link Oficial de Teste Mobile & Compartilhamento Público */}
+      <ErrorBoundary sectionName="Link Oficial de Teste Mobile">
+        <PublicLinkShareModal
+          isOpen={isPublicLinkShareOpen}
+          onClose={closePublicLinkShare}
+          initialProjectCode={publicLinkShareProjectCode}
         />
       </ErrorBoundary>
 

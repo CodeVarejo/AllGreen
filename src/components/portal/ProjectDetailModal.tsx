@@ -24,7 +24,8 @@ import {
   ChevronRight,
   ArrowLeft,
   LayoutDashboard,
-  TrendingUp
+  TrendingUp,
+  QrCode
 } from 'lucide-react';
 import { PortalProject, UserProfile } from '../../types';
 import { LeedWellSimulationEvolutionChart } from './LeedWellSimulationEvolutionChart';
@@ -41,6 +42,7 @@ interface ProjectDetailModalProps {
   onOpenVersionHistory: (project: PortalProject) => void;
   onOpenEditProject: (project: PortalProject) => void;
   onStatusChange?: (projectId: string, newStatus: PortalProject['status']) => void;
+  onOpenQrCode?: (project: PortalProject) => void;
 }
 
 export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
@@ -53,6 +55,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
   onOpenVersionHistory,
   onOpenEditProject,
   onStatusChange,
+  onOpenQrCode,
 }) => {
   const [activeDetailTab, setActiveDetailTab] = useState<'specs' | 'simulation_evolution'>('specs');
 
@@ -411,6 +414,19 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
           </div>
 
           <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            {onOpenQrCode && (
+              <button
+                type="button"
+                id="btn-detail-modal-qr-code"
+                onClick={() => onOpenQrCode(project)}
+                className="px-4 py-2.5 bg-emerald-100 hover:bg-emerald-200 text-[#072a1a] border border-emerald-300 font-bold rounded-xl text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95 min-h-[44px]"
+                title="Gerar placa física e QR Code para acesso mobile do cliente"
+              >
+                <QrCode className="w-4 h-4 text-[#15803d]" />
+                <span>Placa QR Code</span>
+              </button>
+            )}
+
             <ShareHighlightButton
               payload={() => formatProjectReportShare(project, user.name)}
               label="Compartilhar Destaques"

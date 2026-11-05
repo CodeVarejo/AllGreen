@@ -21,7 +21,9 @@ import {
   Sun,
   Moon,
   Activity,
-  Sparkles
+  Sparkles,
+  Smartphone,
+  QrCode
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { useAccessibility } from '../context/AccessibilityContext';
@@ -47,6 +49,7 @@ export interface MobileMenuDrawerProps {
   onOpenProjectPdfReport?: () => void;
   onOpenTour?: () => void;
   onOpenHabitTracker?: () => void;
+  onOpenPublicLinkShare?: () => void;
   modKey: string;
   isAudioActive?: boolean;
   onToggleAudio?: () => void;
@@ -69,6 +72,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
   onOpenProjectPdfReport,
   onOpenTour,
   onOpenHabitTracker,
+  onOpenPublicLinkShare,
   modKey,
   isAudioActive = false,
   onToggleAudio,
@@ -234,6 +238,23 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 <Calendar className="w-4 h-4 text-[#15803d] dark:text-emerald-400" />
                 <span>
                   {language === 'pt' ? 'Consultoria' : language === 'es' ? 'Consultoría' : 'Consultation'}
+                </span>
+              </button>
+            )}
+
+            {onOpenPublicLinkShare && (
+              <button
+                type="button"
+                id="drawer-mobile-test-btn"
+                onClick={() => {
+                  onClose();
+                  onOpenPublicLinkShare();
+                }}
+                className="col-span-2 p-3.5 rounded-2xl bg-gradient-to-r from-[#072a1a] to-[#0d3822] text-[#86efac] border border-emerald-600/50 flex items-center justify-center gap-2.5 font-bold text-xs shadow-sm hover:brightness-110 transition-all cursor-pointer text-center active:scale-95"
+              >
+                <Smartphone className="w-4 h-4 text-[#86efac]" />
+                <span className="text-white">
+                  {language === 'pt' ? 'Testar no Celular (Link Público & QR Code)' : 'Test on Mobile (Public Link & QR)'}
                 </span>
               </button>
             )}

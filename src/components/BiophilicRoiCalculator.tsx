@@ -30,6 +30,7 @@ import { RoiEnergyScatterPlot } from './RoiEnergyScatterPlot';
 import { LongTermRoiArchitectChart, GrowthScenario } from './LongTermRoiArchitectChart';
 import { ContextualOptimizationSidePanel } from './ContextualOptimizationSidePanel';
 import { InvestmentVsSavingsBarChart } from './InvestmentVsSavingsBarChart';
+import { BotanicalNoiseReductionChart } from './roi/BotanicalNoiseReductionChart';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -220,7 +221,9 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
   const [timeHorizonYears, setTimeHorizonYears] = useState<1 | 3 | 5>(3);
   const [growthScenario, setGrowthScenario] = useState<GrowthScenario>('conservative');
   const [isSidePanelOpen, setIsSidePanelOpen] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'bar_comparison' | 'projection' | 'long_term' | 'breakdown' | 'energy_scatter' | 'certifications' | 'ml_allocation'>('bar_comparison');
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'bar_comparison' | 'projection' | 'long_term' | 'breakdown' | 'energy_scatter' | 'certifications' | 'acoustic_noise' | 'ml_allocation'
+  >('bar_comparison');
 
   // Apply optimizations from contextual panel
   const handleApplyAdjustment = (adjustments: {
@@ -1183,6 +1186,23 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
 
                   <button
                     type="button"
+                    id="tab-acoustic-noise"
+                    onClick={() => setActiveTab('acoustic_noise')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      activeTab === 'acoustic_noise'
+                        ? 'bg-[#072a1a] text-[#86efac] shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Volume2 className="w-3.5 h-3.5 text-blue-500" />
+                    <span>Acústica (dB)</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] bg-blue-100 text-blue-900 font-bold">
+                      Recharts
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => setActiveTab('ml_allocation')}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                       activeTab === 'ml_allocation'
@@ -1576,6 +1596,14 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                       <p className="text-[11px] text-gray-600 leading-relaxed">
                         Amortecimento acústico comprovado por ensaio IPT. Reduz ecos em salas de reunião, call centers e open spaces.
                       </p>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('acoustic_noise')}
+                        className="mt-1 text-[11px] font-bold text-sky-700 hover:text-sky-900 flex items-center gap-1 cursor-pointer hover:underline"
+                      >
+                        <span>Ver Gráfico Comparativo Interativo de Decibéis (dB)</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </button>
                     </div>
 
                     {/* Stress & Heart-Rate */}
@@ -1628,6 +1656,16 @@ export const BiophilicRoiCalculator: React.FC<BiophilicRoiCalculatorProps> = ({
                     annualTotalGrossSavings={calculation.annualTotalGrossSavings}
                     annualHvacSavings={calculation.annualHvacSavings}
                     paybackMonths={calculation.paybackMonths}
+                  />
+                </div>
+              )}
+
+              {/* TAB: Gráfico Comparativo Interativo de Decibéis (dB) - Recharts */}
+              {activeTab === 'acoustic_noise' && (
+                <div className="animate-in fade-in duration-300">
+                  <BotanicalNoiseReductionChart
+                    currentProjectArea={area}
+                    onOpenQuote={onOpenQuote}
                   />
                 </div>
               )}

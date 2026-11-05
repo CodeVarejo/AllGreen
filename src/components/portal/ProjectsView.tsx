@@ -26,7 +26,8 @@ import {
   Cloud,
   CloudCheck,
   RefreshCw,
-  Upload
+  Upload,
+  QrCode
 } from 'lucide-react';
 import { PortalProject, UserProfile } from '../../types';
 import { useCloudStorage } from '../../context/CloudStorageContext';
@@ -45,6 +46,7 @@ interface ProjectsViewProps {
   onRestoreDemoProjects?: () => void;
   onOpenCloudStorage?: () => void;
   onSaveProjectToCloud?: (project: PortalProject) => void;
+  onOpenQrCode?: (project: PortalProject) => void;
 }
 
 export const ProjectsView: React.FC<ProjectsViewProps> = ({
@@ -61,6 +63,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
   onRestoreDemoProjects,
   onOpenCloudStorage,
   onSaveProjectToCloud,
+  onOpenQrCode,
 }) => {
   const { isConnected, isSyncing, cloudFiles, saveProject } = useCloudStorage();
   const [searchQuery, setSearchQuery] = useState('');
@@ -467,7 +470,20 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
                 {/* Footer Buttons */}
                 <div className="p-5 sm:p-6 pt-0 space-y-2">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-1.5">
+                    {onOpenQrCode && (
+                      <button
+                        type="button"
+                        id={`btn-project-qr-${proj.id}`}
+                        onClick={() => onOpenQrCode(proj)}
+                        className="py-2.5 px-2 bg-emerald-100/90 hover:bg-emerald-200 text-[#072a1a] font-bold text-xs rounded-xl border border-emerald-300 transition-all flex items-center justify-center gap-1 cursor-pointer shadow-2xs active:scale-95 min-h-[44px]"
+                        title="Gerar placa física e QR Code para acesso mobile do cliente"
+                      >
+                        <QrCode className="w-3.5 h-3.5 text-[#15803d]" />
+                        <span className="truncate">QR Code</span>
+                      </button>
+                    )}
+
                     <button
                       type="button"
                       onClick={() => onDownloadSpecPdf(proj)}

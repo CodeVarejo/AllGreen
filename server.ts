@@ -1,6 +1,7 @@
 process.env.DISABLE_HMR = 'true';
 
 import express from 'express';
+import http from 'http';
 import path from 'path';
 import fs from 'fs';
 import { analyzeRoomPhoto, answerBiophiliaQuestion } from './src/services/gemini.ts';
@@ -8,8 +9,18 @@ import { PROJECT_SAMPLES } from './src/data/mockData.ts';
 
 async function startServer() {
   const app = express();
-  const isProduction = process.env.NODE_ENV === 'production';
-  const PORT = isProduction && process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  const server = http.createServer(app);
+
+  // Parse port from CLI args (--port <number>) or fallback to 3000
+  let PORT = 3000;
+  const portArgIndex = process.argv.indexOf('--port');
+  if (portArgIndex !== -1 && process.argv[portArgIndex + 1]) {
+    const parsed = parseInt(process.argv[portArgIndex + 1], 10);
+    if (!isNaN(parsed)) PORT = parsed;
+  } else if (process.env.NODE_ENV === 'production' && process.env.PORT) {
+    const parsed = parseInt(process.env.PORT, 10);
+    if (!isNaN(parsed)) PORT = parsed;
+  }
 
   app.use(express.json({ limit: '15mb' }));
 
@@ -309,6 +320,7 @@ async function startServer() {
   // Serve static assets from public directory
   app.use(express.static(path.resolve(process.cwd(), 'public')));
 
+  const isProduction = process.env.NODE_ENV === 'production';
   const distPath = path.join(process.cwd(), 'dist');
   const hasDist = fs.existsSync(path.join(distPath, 'index.html'));
 
@@ -324,11 +336,18 @@ async function startServer() {
     const vite = await createViteServer({
       server: {
         middlewareMode: true,
-        hmr: false,
+        hmr: {
+          server,
+        },
       },
       appType: 'spa',
     });
     app.use(vite.middlewares);
+
+    // Prevent unmatched API requests from serving index.html
+    app.all('/api/*', (req, res) => {
+      res.status(404).json({ success: false, message: 'Rota de API não encontrada.' });
+    });
 
     app.use('*', async (req, res, next) => {
       const url = req.originalUrl;
@@ -344,9 +363,26 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`Port ${PORT} is already in use.`);
+    } else {
+      console.error('Server error:', err);
+    }
+  });
+
+  server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server All Green running on http://localhost:${PORT}`);
   });
+
+  const shutdown = () => {
+    console.log('Shutting down server gracefully...');
+    server.close(() => {
+      process.exit(0);
+    });
+  };
+  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', shutdown);
 }
 
 startServer();

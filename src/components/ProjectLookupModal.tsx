@@ -24,6 +24,13 @@ export const ProjectLookupModal: React.FC<ProjectLookupModalProps> = ({
   );
   const [errorMsg, setErrorMsg] = useState('');
 
+  React.useEffect(() => {
+    if (initialProject) {
+      setInputCode(initialProject.code);
+      setFoundProject(initialProject);
+    }
+  }, [initialProject]);
+
   if (!isOpen) return null;
 
   const handleLookup = async (e: React.FormEvent) => {
